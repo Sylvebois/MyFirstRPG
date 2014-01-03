@@ -1,4 +1,4 @@
-//on rempli le sol avec des tile par défaut
+//on rempli le sol avec des tile par dï¿½faut
 var ground = [
     [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
     [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
@@ -31,20 +31,20 @@ tilesetImage.onload = drawDungeon();
 
 
 function Room(x, y, width, height) {
-    //coordonnées de départ et d'arrivée de la pièce
+    //coordonnï¿½es de dï¿½part et d'arrivï¿½e de la piï¿½ce
     this.x1 = x;       
     this.y1 = y;
     this.x2 = x + width;
     this.y2 = y + height;
     
-    //largeur et hauteur de la pièce
+    //largeur et hauteur de la piï¿½ce
     this.w = width;        
     this.h = height; 
     
-    //milieu de la pièce
+    //milieu de la piï¿½ce
     this.mid = [Math.floor((this.x1 + this.x2)/2), Math.floor((this.y1 + this.y2)/2)];
     
-    //Vérifie si des pièces se chevauchent
+    //Vï¿½rifie si des piï¿½ces se chevauchent
     this.intersects = function(room) {
         if(Room.x1 <= room.x2 && Room.x2 >= room.x1 && Room.y1 <= room.y2 && room.y2 >= room.y1) {
             return true;
@@ -55,13 +55,13 @@ function Room(x, y, width, height) {
 }
  
 function placeRoom() {
-    var rooms = new Array();        //Tableau pour stocker les pièces
-    var newCenter = new Array();    //Variable pour tester le centre des pièces
+    var rooms = new Array();        //Tableau pour stocker les piï¿½ces
+    var newCenter = new Array();    //Variable pour tester le centre des piï¿½ces
     var minRoomSize = 2;
     var maxRoomSize = 5;
-    var nbRoom = rand(2,6,1);      //Nombre alÃ©atoire de pièces par niveau
+    var nbRoom = rand(2,6,1);      //Nombre alÃ©atoire de piï¿½ces par niveau
      
-    //créer x pièces de taille aléatoire
+    //crï¿½er x piï¿½ces de taille alï¿½atoire
     for(var i = 0; i <= nbRoom; i++) {
         var w = rand(minRoomSize, maxRoomSize, 1);
         var h = rand(minRoomSize, maxRoomSize, 1);
@@ -70,7 +70,7 @@ function placeRoom() {
         
         var newRoom = new Room(x, y, w, h);
         
-        //Test si deux piéces s'entrecoupe
+        //Test si deux piï¿½ces s'entrecoupe
         var failed = false;
         for (otherRoom in rooms) {
             failed = newRoom.intersects(otherRoom);
@@ -95,11 +95,11 @@ function placeRoom() {
 function createCorridor(oldCoord, newCoord) {
     var midPoint = [];
     
-    //Commence aléatoirement par la verticale ou l'horizontale
+    //Commence alï¿½atoirement par la verticale ou l'horizontale
     if(rand(0,1,1)) {
         midPoint = [newCoord[0], oldCoord[1]];
         
-        //Etape 1 : déplacement horizontal
+        //Etape 1 : dï¿½placement horizontal
         if(oldCoord[0] <= newCoord[0]) {
             for(var i = oldCoord[0]; i <= newCoord[0]; i++) {
                 ground[oldCoord[1]][i] = 199;
@@ -110,7 +110,7 @@ function createCorridor(oldCoord, newCoord) {
             }        
         }
         
-        //Etape 2 : déplacement vertical
+        //Etape 2 : dï¿½placement vertical
         if(midPoint[1] <= newCoord[1]) {
             for(var i = midPoint[1]; i <= newCoord[1]; i++) {
                 ground[i][midPoint[0]] = 199;
@@ -123,7 +123,7 @@ function createCorridor(oldCoord, newCoord) {
     } else {
         midPoint = [oldCoord[0], newCoord[1]];
         
-        //Etape 1 : déplacement vertical
+        //Etape 1 : dï¿½placement vertical
         if(oldCoord[1] <= newCoord[1]) {
             for(var i = oldCoord[1]; i <= newCoord[1]; i++) {
                 ground[i][oldCoord[0]] = 199;
@@ -133,7 +133,7 @@ function createCorridor(oldCoord, newCoord) {
                 ground[i][oldCoord[0]] = 199;
             }         
         }
-        //Etape 2 : déplacement horizontal
+        //Etape 2 : dï¿½placement horizontal
         if(midPoint[0] <= newCoord[0]) {
             for(var i = midPoint[0]; i <= newCoord[0]; i++) {
                 ground[midPoint[1]][i] = 199;
@@ -159,7 +159,7 @@ function drawDungeon() {
 
            var tile = ground[ r ][ c ];
            var tileRow = (tile / imageNumTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
-           var tileCol = (tile % imageNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la n°10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
+           var tileCol = (tile % imageNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la nï¿½10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
            tcxt.drawImage(tilesetImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (c*TILESIZE), (r*TILESIZE), TILESIZE, TILESIZE);
 /*
            tile = layer1[ r ][ c ];

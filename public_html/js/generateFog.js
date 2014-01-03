@@ -1,11 +1,11 @@
 /*
- * Brouillard se découvrant en fonction du champ de vision du héro
+ * Brouillard se dï¿½couvrant en fonction du champ de vision du hï¿½ro
  */
 
 //On commence par tout mettre en noir
 fcxt.fillRect(0, 0, fCanvas.width, fCanvas.height);
 
-//On crée un tableau pour s'y retrouver 0=noir, 1=semi-transparent, 2=découvert
+//On crï¿½e un tableau pour s'y retrouver 0=noir, 1=semi-transparent, 2=dï¿½couvert
 var fog = [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -36,7 +36,7 @@ function delFog(coord, champ) {
     var cmpSemi = 0;
     var cmpClear = 0;
     
-    //Les cases découvertes
+    //Les cases dï¿½couvertes
     for(var x = coord[0]-champ; x <= coord[0]+champ; x++){		
         var y1 = coord[1]-cmpClear;
         var y2 = coord[1]+cmpClear;
