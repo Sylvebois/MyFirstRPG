@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My First JavaScript RPG !</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="css/responsiveCanvas.css" />
+        <!--[if lt IE 9]>
+            <script type="text/javascript" src="js/excanvas.compiled.js"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="container">
+              <div class="canvas-container">
+                  <canvas id="terrain" width="1024" height="640"></canvas>
+                  <canvas id="joueur" width="1024" height="640"></canvas>
+                  <canvas id="fog" width="1024" height="640">Votre navigateur ne supporte pas CANVAS</canvas>
+              </div>
+            </div>
+          </div>
+        
+   <!-- <script type="text/javascript" src="js/responsiveCanvas.js"></script>-->  
+        <script type="text/javascript" src="js/main.js"></script> 
+        <script type="text/javascript" src="js/generateDungeon.js"></script>
+        <script type="text/javascript" src="js/generateHero.js"></script>
+                <script type="text/javascript" src="js/generateFog.js"></script>
+    </body>
+</html>
