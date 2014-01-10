@@ -1,5 +1,5 @@
 var hero = [0, 1, 2, 3, 4, 5];
-var heroVis = 2;                 //Champs de vision du h�ro
+var heroVis = 2;                 //Champs de vision du hero
 var posHero = startingPoint();
 
 var heroesNumTiles = 3;     // Nombre de tile sur une ligne de notre image
@@ -11,7 +11,7 @@ heroesImage.onload = drawHero(posHero, hero[5]);
 window.addEventListener('keydown', function(e) {    
     jcxt.clearRect(0, 0, jCanvas.width, jCanvas.height);
     
-    //Gestion des mouvements du h�ro
+    //Gestion des mouvements du hero
     switch(e.keyCode) {
         case 37:            //left
             if(posHero[0] > 0 && ground[posHero[1]][posHero[0]-1] !== 130) {
@@ -48,7 +48,7 @@ window.addEventListener('keydown', function(e) {
     }
 });
 
-//place le h�ro en fonction de la map
+//place le hero en fonction de la map
 function startingPoint() {
     var start = [0,0];
     
@@ -63,6 +63,6 @@ function startingPoint() {
 
 function drawHero(posHero, imgHero) {
     var tileRow = (imgHero / heroesNumTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
-    var tileCol = (imgHero % heroesNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la n�10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
+    var tileCol = (imgHero % heroesNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la 10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
     jcxt.drawImage(heroesImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (posHero[0]*TILESIZE), (posHero[1]*TILESIZE), TILESIZE, TILESIZE);
 }
