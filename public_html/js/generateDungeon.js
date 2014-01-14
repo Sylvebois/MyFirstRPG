@@ -24,7 +24,7 @@ var ground = [
 
 placeRoom();
 
-var imageNumTiles = 16;       // Nombre de tile sur une ligne de notre image
+var imageNumTiles = 16;       // Nombre de tuiles sur une ligne de notre image
 var tilesetImage = new Image();
 tilesetImage.src = 'images/tileset.png';
 tilesetImage.onload = drawDungeon();
@@ -61,7 +61,7 @@ function placeRoom() {
     var maxRoomSize = 5;
     var nbRoom = rand(2,6,1);      //Nombre aléatoire de pieces par niveau
      
-    //cr�er x pieces de taille aleatoire
+    //creer x pieces de taille aleatoire
     for(var i = 0; i <= nbRoom; i++) {
         var w = rand(minRoomSize, maxRoomSize, 1);
         var h = rand(minRoomSize, maxRoomSize, 1);
