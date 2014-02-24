@@ -1,4 +1,4 @@
-//on rempli le sol avec des tile par defaut
+//on rempli le sol avec des tuiles par defaut
 var ground = [
     [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
     [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
@@ -145,6 +145,7 @@ function createCorridor(oldCoord, newCoord) {
         }
     }
 }
+
 function createRoom(x1, x2, y1, y2) {
     for(var i = x1; i <= x2; i++) {
         for(var j = y1; j <= y2; j++) { 
@@ -161,12 +162,6 @@ function drawDungeon() {
            var tileRow = (tile / imageNumTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
            var tileCol = (tile % imageNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la 10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
            tcxt.drawImage(tilesetImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (c*TILESIZE), (r*TILESIZE), TILESIZE, TILESIZE);
-/*
-           tile = layer1[ r ][ c ];
-           tileRow = (tile / imageNumTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
-           tileCol = (tile % imageNumTiles) | 0;  // Permet de localiser le tile sur notre image par ex. on veut la n°10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
-           tcxt.drawImage(tilesetImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (c*TILESIZE), (r*TILESIZE), TILESIZE, TILESIZE);
-*/
         }
     }
 }
