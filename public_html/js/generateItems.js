@@ -32,7 +32,7 @@ itemsImage.src = 'images/items.png';
 tilesetImage.onload = placeItem(posHero, ground);
 
 function Artefact(abs, ord) {
-    var type = ['Zéro', 'Boomerang', 'Arc', 'Pistolet', 'Fléau', 'Epée', 'Livre', 'Lance', 'A', 'B'];
+    var type = ['Zéro', 'Boomerang', 'Arc', 'Pistolet', 'Fléau', 'Epée', 'Livre', 'Lance', 'Descendre', 'Monter'];
     
     //Position de l'item
     this.x = abs;
@@ -45,7 +45,7 @@ function Artefact(abs, ord) {
     this.mp = rand(-5,5,1);
     
     //Création du nom en fonction des caractéristiques
-    this.quelType = rand(0,9,1);    
+    this.quelType = rand(0,7,1);    
     this.name = type[this.quelType];
     
     var nbPlus5 = 0;
@@ -120,6 +120,30 @@ function placeItem(avoid, tabFree) {
     }
     
     nbItems = rand(cmp/14, cmp/7, 1);                    //nombre d'items à générer
+        
+    //Place l'escalier vers le haut (sous le héros) et vers le bas
+    var stairUp = new Artefact(avoid[0], avoid[1]);
+    stairUp.att = 0;
+    stairUp.def = 0;
+    stairUp.hp = 0;
+    stairUp.mp = 0;
+    stairUp.quelType = 9;
+    item[avoid[1]][avoid[0]] = stairUp;
+    
+    drawItem(avoid, stairUp);
+    
+    do {
+        coord = placeIt();
+    }while(coord === avoid[0] && coord[1] === avoid[1] || item[coord[1]][coord[0]]);
+    
+    var stairDown = new Artefact(coord[0], coord[1]);
+    stairDown.att = 0;
+    stairDown.def = 0;
+    stairDown.hp = 0;
+    stairDown.mp = 0;
+    stairDown.quelType = 8;
+    item[coord[1]][coord[0]] = stairDown;
+    drawItem(coord, stairDown);
     
     for(var k = nbItems; k >= 0 ; k--) {    
         do {
@@ -127,7 +151,6 @@ function placeItem(avoid, tabFree) {
         }while(coord === avoid[0] && coord[1] === avoid[1] || item[coord[1]][coord[0]]); //Ne place pas d'item sous la position de départ du héros ou s'il y a déjà un objet
         
         var tmp = new Artefact(coord[0], coord[1]);
-        alert(tmp.name+'\n'+tmp.x+' '+tmp.y);
         item[coord[1]][coord[0]] = tmp;
     
         drawItem(coord, tmp);
@@ -143,10 +166,20 @@ function drawItem(coord, art) {
 //Evènement quand le héros arrive sur la case
 function getItem(coord) {
     var tmp = item[coord[1]][coord[0]];
-    if(tmp) {
+    if(tmp && tmp.quelType !== 8 && tmp.quelType !== 9) {
         if(confirm('Vous avez trouvé un(e) ' +  tmp.name + '!\nLe prendre ?')) {
             icxt.clearRect(coord[0]*TILESIZE, coord[1]*TILESIZE, TILESIZE, TILESIZE);
             item[coord[1]][coord[0]] = 0;
+        }
+    }
+    else if(tmp.quelType === 8) {
+        if(confirm('Voulez-vous descendre au niveau suivant ?')) {
+            window.location.reload();
+        }
+    }
+    else if(tmp.quelType === 9) {
+        if(confirm('Voulez-vous monter au niveau précédent ?')) {
+            window.location.reload();    
         }
     }
 }
