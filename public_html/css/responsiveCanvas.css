@@ -1,4 +1,4 @@
-/* Make the canvas element responsive*/
+/* Make the canvas element responsive
 
 // Mobile
 body::before {
@@ -19,6 +19,7 @@ body::before {
     content: '{ "current": "large", "all": ["small", "medium", "large"] }'
   }
 }
+*/
 
 //Set the position of the canvas element with 3 div's
 .wrapper {
@@ -57,13 +58,22 @@ body::before {
    z-index: 1;
 }
 
-#joueur {
+#enemies {
    width: 100%;
    height: auto;
    position: absolute;
    top: 0;
    left: 0;
    z-index: 2;
+}
+
+#joueur {
+   width: 100%;
+   height: auto;
+   position: absolute;
+   top: 0;
+   left: 0;
+   z-index: 3;
 }
 
 #fog {

@@ -39,10 +39,10 @@ function Artefact(abs, ord) {
     this.y = ord;
     
     //Caractéristiques de l'item
-    this.att = rand(-5,5,1);
-    this.def = rand(-5,5,1);
-    this.hp = rand(-5,5,1);
-    this.mp = rand(-5,5,1);
+    this.st = rand(-5,5,1);
+    this.dx = rand(-5,5,1);
+    this.iq = rand(-5,5,1);
+    this.ht = rand(-5,5,1);
     
     //Création du nom en fonction des caractéristiques
     this.quelType = rand(0,7,1);    
@@ -51,15 +51,15 @@ function Artefact(abs, ord) {
     var nbPlus5 = 0;
     var nbMoins5 = 0;
 
-    (this.att === 5) ? nbPlus5++ : '';
-    (this.def === 5) ? nbPlus5++ : '';
-    (this.hp === 5) ? nbPlus5++ : '';
-    (this.mp === 5) ? nbPlus5++ : '';
+    (this.st === 5) ? nbPlus5++ : '';
+    (this.dx === 5) ? nbPlus5++ : '';
+    (this.iq === 5) ? nbPlus5++ : '';
+    (this.ht === 5) ? nbPlus5++ : '';
 
-    (this.att === -5) ? nbMoins5++ : '';
-    (this.def === -5) ? nbMoins5++ : '';
-    (this.hp === -5) ? nbMoins5++ : '';
-    (this.mp === -5) ? nbMoins5++ : '';
+    (this.st === -5) ? nbMoins5++ : '';
+    (this.dx === -5) ? nbMoins5++ : '';
+    (this.iq === -5) ? nbMoins5++ : '';
+    (this.ht === -5) ? nbMoins5++ : '';
 
     switch(nbPlus5) {
         case 1:
@@ -123,10 +123,10 @@ function placeItem(avoid, tabFree) {
         
     //Place l'escalier vers le haut (sous le héros) et vers le bas
     var stairUp = new Artefact(avoid[0], avoid[1]);
-    stairUp.att = 0;
-    stairUp.def = 0;
-    stairUp.hp = 0;
-    stairUp.mp = 0;
+    stairUp.st = 0;
+    stairUp.dx = 0;
+    stairUp.iq = 0;
+    stairUp.ht = 0;
     stairUp.quelType = 9;
     item[avoid[1]][avoid[0]] = stairUp;
     
@@ -137,10 +137,10 @@ function placeItem(avoid, tabFree) {
     }while(coord === avoid[0] && coord[1] === avoid[1] || item[coord[1]][coord[0]]);
     
     var stairDown = new Artefact(coord[0], coord[1]);
-    stairDown.att = 0;
-    stairDown.def = 0;
-    stairDown.hp = 0;
-    stairDown.mp = 0;
+    stairDown.st = 0;
+    stairDown.dx = 0;
+    stairDown.iq = 0;
+    stairDown.ht = 0;
     stairDown.quelType = 8;
     item[coord[1]][coord[0]] = stairDown;
     drawItem(coord, stairDown);

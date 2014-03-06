@@ -8,11 +8,13 @@ var COLTILECOUNT = 32;        // Nombre de tuiles qu'on met sur la largeur
 
 var tCanvas = document.getElementById('terrain');
 var iCanvas = document.getElementById('artefact');
+var eCanvas = document.getElementById('enemies');
 var jCanvas = document.getElementById('joueur');
 var fCanvas = document.getElementById('fog');
 
 var tcxt = tCanvas.getContext('2d');
 var icxt = iCanvas.getContext('2d');
+var ecxt = eCanvas.getContext('2d');
 var jcxt = jCanvas.getContext('2d');
 var fcxt = fCanvas.getContext('2d');
 

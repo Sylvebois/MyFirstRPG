@@ -20,6 +20,7 @@ window.addEventListener('keydown', function(e) {
             drawHero(posHero, hero[3]);
             delFog(posHero, heroVis);
             getItem(posHero);
+            fight(posHero);
             break;
         case 38:            //up
             if(posHero[1] > 0 && ground[posHero[1]-1][posHero[0]] !== 130) {
@@ -28,6 +29,7 @@ window.addEventListener('keydown', function(e) {
             drawHero(posHero, hero[2]);
             delFog(posHero, heroVis);
             getItem(posHero);
+            fight(posHero);
             break;
         case 39:            //right
             if(posHero[0] < COLTILECOUNT-1 && ground[posHero[1]][posHero[0]+1] !== 130) {
@@ -36,6 +38,7 @@ window.addEventListener('keydown', function(e) {
             drawHero(posHero, hero[0]);
             delFog(posHero, heroVis);
             getItem(posHero);
+            fight(posHero);
             break;
         case 40:            //down
             if(posHero[1] < ROWTILECOUNT-1 && ground[posHero[1]+1][posHero[0]] !== 130) {
@@ -44,6 +47,7 @@ window.addEventListener('keydown', function(e) {
             drawHero(posHero, hero[5]);
             delFog(posHero, heroVis);
             getItem(posHero);
+            fight(posHero);
             break;
         default:
             drawHero(posHero, hero[5]);
