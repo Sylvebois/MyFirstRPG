@@ -29,7 +29,7 @@ var item = [
 var itemsNumTiles = 5;     // Nombre de tuiles sur une ligne de notre image
 var itemsImage = new Image();
 itemsImage.src = 'images/items.png';
-tilesetImage.onload = placeItem(posHero, ground);
+tilesetImage.onload = placeItem(hero.x, hero.y, ground);
 
 function Artefact(abs, ord) {
     var type = ['Zéro', 'Boomerang', 'Arc', 'Pistolet', 'Fléau', 'Epée', 'Livre', 'Lance', 'Descendre', 'Monter'];
@@ -108,7 +108,7 @@ function Artefact(abs, ord) {
 }
 
 //Place un certain nombre d'items en fonction de la taille du donjon et de la position de départ du héros
-function placeItem(avoid, tabFree) {
+function placeItem(x, y, tabFree) {
     var cmp = 0;
     var nbItems = 0;
     var coord = [0,0];
@@ -122,19 +122,19 @@ function placeItem(avoid, tabFree) {
     nbItems = rand(cmp/14, cmp/7, 1);                    //nombre d'items à générer
         
     //Place l'escalier vers le haut (sous le héros) et vers le bas
-    var stairUp = new Artefact(avoid[0], avoid[1]);
+    var stairUp = new Artefact(x, y);
     stairUp.st = 0;
     stairUp.dx = 0;
     stairUp.iq = 0;
     stairUp.ht = 0;
     stairUp.quelType = 9;
-    item[avoid[1]][avoid[0]] = stairUp;
+    item[y][x] = stairUp;
     
-    drawItem(avoid, stairUp);
+    drawItem(stairUp);
     
     do {
         coord = placeIt();
-    }while(coord === avoid[0] && coord[1] === avoid[1] || item[coord[1]][coord[0]]);
+    }while(coord[0] === x && coord[1] === y || item[coord[1]][coord[0]]);
     
     var stairDown = new Artefact(coord[0], coord[1]);
     stairDown.st = 0;
@@ -143,33 +143,40 @@ function placeItem(avoid, tabFree) {
     stairDown.ht = 0;
     stairDown.quelType = 8;
     item[coord[1]][coord[0]] = stairDown;
-    drawItem(coord, stairDown);
+    drawItem(stairDown);
     
     for(var k = nbItems; k >= 0 ; k--) {    
         do {
             coord = placeIt();
-        }while(coord === avoid[0] && coord[1] === avoid[1] || item[coord[1]][coord[0]]); //Ne place pas d'item sous la position de départ du héros ou s'il y a déjà un objet
+        }while(coord[0] === x && coord[1] === y || item[coord[1]][coord[0]]); //Ne place pas d'item sous la position de départ du héros ou s'il y a déjà un objet
         
         var tmp = new Artefact(coord[0], coord[1]);
         item[coord[1]][coord[0]] = tmp;
     
-        drawItem(coord, tmp);
+        drawItem(tmp);
     }
 }
 
-function drawItem(coord, art) { 
+function drawItem(art) { 
     var tileRow = (art.quelType / itemsNumTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
     var tileCol = (art.quelType % itemsNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la 10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
-    icxt.drawImage(itemsImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (coord[0]*TILESIZE), (coord[1]*TILESIZE), TILESIZE, TILESIZE);
+    icxt.drawImage(itemsImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (art.x*TILESIZE), (art.y*TILESIZE), TILESIZE, TILESIZE);
 }
 
 //Evènement quand le héros arrive sur la case
-function getItem(coord) {
-    var tmp = item[coord[1]][coord[0]];
+function getItem(x, y) {
+    var tmp = item[y][x];
+    var texte = 'Vous avez trouvé un(e) ' +  tmp.name + '!\n' +
+                'Force : ' + tmp.st + '\n' +
+                'Dextérité : ' + tmp.dx + '\n' +
+                'Intelligence : ' + tmp.iq + '\n' +
+                'Santé : ' + tmp.ht + '\n\n' +
+                'Le prendre ?';
+        
     if(tmp && tmp.quelType !== 8 && tmp.quelType !== 9) {
-        if(confirm('Vous avez trouvé un(e) ' +  tmp.name + '!\nLe prendre ?')) {
-            icxt.clearRect(coord[0]*TILESIZE, coord[1]*TILESIZE, TILESIZE, TILESIZE);
-            item[coord[1]][coord[0]] = 0;
+        if(confirm(texte)) {
+            icxt.clearRect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE);
+            item[y][x] = 0;
         }
     }
     else if(tmp.quelType === 8) {

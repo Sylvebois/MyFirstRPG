@@ -35,7 +35,7 @@ var enemies = [
 var monstersNumTiles = 3;     // Nombre de tuiles sur une ligne de notre image
 var monstersImage = new Image();
 monstersImage.src = 'images/monsters.png';
-tilesetImage.onload = placeMonster(posHero, item, ground);
+tilesetImage.onload = placeMonster(hero.x, hero.y, item, ground);
 
 function Monster(x, y) {
     var type = ['Gobelin', 'Orc', 'Zombie', 'Squelette', 'Démon', 'Naga'];
@@ -132,7 +132,7 @@ function Monster(x, y) {
 }
 
 //Place un certain nombre d'items en fonction de la taille du donjon et de la position de départ du héros
-function placeMonster(avoidH, avoidI, tabFree) {
+function placeMonster(x, y, avoidI, tabFree) {
     var cmp = 0;
     var nbMonsters = 0;
     var coord = [0,0];
@@ -148,7 +148,7 @@ function placeMonster(avoidH, avoidI, tabFree) {
     for(var k = nbMonsters; k >= 0 ; k--) {    
         do {
             coord = placeIt();
-        }while(coord === avoidH[0] && coord[1] === avoidH[1] || avoidI[coord[1]][coord[0]] || enemies[coord[1]][coord[0]]); //Ne place pas de monstre sous la position de départ du héros ou s'il y a déjà un objet
+        }while(coord === x && coord[1] === y || avoidI[coord[1]][coord[0]] || enemies[coord[1]][coord[0]]); //Ne place pas de monstre sous la position de départ du héros ou s'il y a déjà un objet
         
         var tmp = new Monster(coord[0], coord[1]);
         enemies[coord[1]][coord[0]] = tmp;
@@ -163,6 +163,63 @@ function drawMonster(coord, enemy) {
     ecxt.drawImage(monstersImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (coord[0]*TILESIZE), (coord[1]*TILESIZE), TILESIZE, TILESIZE);
 }
 
-function fight(coordH) {
+function fight(x, y, joueur) {
+    var cmp = 0;
+
+    var tmp = enemies[y][x];
+    var texteCombat = '';
+    var texteIntro = 'Vous tombez nez à nez avec un(e) ' +  tmp.name + '!\n' +
+                    'Force : ' + tmp.st + '\n' +
+                    'Dextérité : ' + tmp.dx + '\n' +
+                    'Intelligence : ' + tmp.iq + '\n' +
+                    'Santé : ' + tmp.ht + '\n\n' +
+                    'Le combat va commencer !';
     
+    alert(texteIntro);
+    
+    while(joueur.ht > 0 || tmp.ht > 0) {
+        var coup = rand(1,6,1);
+        var parade = rand(1,6,1);
+        
+        //alternance attaque/défense entre joueur et ennemi
+        var attaqueDe = (cmp%2 === 0)? joueur : tmp;
+        var defenseDe = (cmp%2 === 0)? tmp : joueur;
+   
+        //En cas de coup critique
+        var att = (coup === 6)? Math.floor(attaqueDe.st+attaqueDe.dx+attaqueDe.iq/3)+coup*2 : Math.floor(attaqueDe.st+attaqueDe.dx+attaqueDe.iq/3)+coup;
+        var def = (parade === 6)? Math.floor(defenseDe.st+defenseDe.dx+defenseDe.iq/3)+parade*2 : Math.floor(defenseDe.st+defenseDe.dx+defenseDe.iq/3)+parade;
+        
+        texteCombat =   'Tour ' + (cmp+1) + ' :\n' +
+                        '---------\n' +
+                        attaqueDe.name + ' attaque l\'ennemi avec une puissance de ' + att + '\n' +
+                        defenseDe.name + ' se défend avec ' + def + ' points\n\n';
+        //Si dégâts
+        if(att > def) {
+            defenseDe.ht -= Math.floor((att-def)/2);
+            texteCombat += defenseDe.name + ' perd ' + Math.floor((att-def)/2) + ' points de vie\n' +
+                            'Il lui reste ' + defenseDe.ht + ' points de vie';
+        }
+        else {
+            texteCombat += defenseDe.name + ' arrive à parer le coup de ' + attaqueDe.name + ' et ne perd aucun point de vie';
+        }
+        
+        alert(texteCombat);
+        alert('pv joueur = '+joueur.ht+' - pv monstre = '+tmp.ht);
+        cmp++;
+        
+        //En cas de mort de l'un des belligérants
+        if(tmp.ht <= 0) {
+            alert(tmp.name + ' s\'effondre après ce dernier assaut');
+            ecxt.clearRect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE);
+            enemies[y][x] = 0;
+            break;
+        }
+        if(joueur.ht <= 0) {
+            alert('Vous êtes gravement blessé et ne pouvez plus vous défendre ...\n' + tmp.name + ' n\'hésite pas à vous donner le coup de grâce !');
+            if(confirm('GAME OVER !\nrecommencer ?')) {
+                window.location.reload();
+            }
+            break;
+        }
+    }
 }

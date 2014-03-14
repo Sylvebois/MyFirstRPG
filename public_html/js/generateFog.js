@@ -29,19 +29,19 @@ var fog = [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 ]; 
         
-delFog(posHero, heroVis);
+delFog(hero.x, hero.y, hero.vis);
 
 //On supprime en fonction de l'emplacement et du champ de vision
-function delFog(coord, champ) {            
+function delFog(xHero, yHero, champ) {            
     //Les cases decouvertes
     for(var tmp = champ; tmp >= 0; tmp --) {
         var cmpClear = 0;
         
-        for(var x = coord[0]-tmp; x <= coord[0]+tmp; x++){		
-            var y1 = coord[1]-cmpClear;
-            var y2 = coord[1]+cmpClear;
+        for(var x = xHero-tmp; x <= xHero+tmp; x++){		
+            var y1 = yHero-cmpClear;
+            var y2 = yHero+cmpClear;
 
-            (x < coord[0]) ? cmpClear++ : cmpClear--;
+            (x < xHero) ? cmpClear++ : cmpClear--;
             if(x >=0 && y1 >= 0 && y1 < ROWTILECOUNT){
                 fog[y1][x] = 2;
                 fcxt.clearRect(x*TILESIZE, y1*TILESIZE, TILESIZE, TILESIZE);
@@ -58,11 +58,11 @@ function delFog(coord, champ) {
     
     fcxt.fillStyle = 'rgba(0, 0, 0, 0.5)';
     
-    for(var x = coord[0]-champ-1; x <= coord[0]+champ+1; x++){		
-        var y1 = coord[1]-cmpSemi;
-        var y2 = coord[1]+cmpSemi;
+    for(var x = xHero-champ-1; x <= xHero+champ+1; x++){		
+        var y1 = yHero-cmpSemi;
+        var y2 = yHero+cmpSemi;
         
-        (x < coord[0]) ? cmpSemi++ : cmpSemi--;
+        (x < xHero) ? cmpSemi++ : cmpSemi--;
         
         if(x >=0 && y1 >= 0 && y1 < ROWTILECOUNT) {
             fog[y1][x] = 1;

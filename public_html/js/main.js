@@ -11,12 +11,14 @@ var iCanvas = document.getElementById('artefact');
 var eCanvas = document.getElementById('enemies');
 var jCanvas = document.getElementById('joueur');
 var fCanvas = document.getElementById('fog');
+var uCanvas = document.getElementById('ui');
 
 var tcxt = tCanvas.getContext('2d');
 var icxt = iCanvas.getContext('2d');
 var ecxt = eCanvas.getContext('2d');
 var jcxt = jCanvas.getContext('2d');
 var fcxt = fCanvas.getContext('2d');
+var ucxt = uCanvas.getContext('2d');
 
 //Génère un nombre aléatoire entre min-max et précise si ça doit être un entier
 function rand(min, max, integer) {
