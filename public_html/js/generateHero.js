@@ -22,10 +22,10 @@ function Hero(x, y) {
     this.name = 'Default';
     this.classPerso = 'Custom';
     this.level = 1;
-    this.st = 20;
-    this.dx = 20;
-    this.iq = 20;
-    this.ht = 20;
+    this.st = 15;
+    this.dx = 15;
+    this.iq = 10;
+    this.ht = 10;
     
     //Emplacement du personnage
     this.x = x;
