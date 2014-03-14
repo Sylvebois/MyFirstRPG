@@ -195,16 +195,17 @@ function fight(x, y, joueur) {
                         defenseDe.name + ' se défend avec ' + def + ' points\n\n';
         //Si dégâts
         if(att > def) {
-            defenseDe.ht -= Math.floor((att-def)/2);
-            texteCombat += defenseDe.name + ' perd ' + Math.floor((att-def)/2) + ' points de vie\n' +
-                            'Il lui reste ' + defenseDe.ht + ' points de vie';
+            var result = Math.floor((att-def)/2);
+            result = (result === 0)? 1 : result;
+            defenseDe.ht -= result;
+            texteCombat += defenseDe.name + ' perd ' + result + ' points de vie\n';
         }
         else {
-            texteCombat += defenseDe.name + ' arrive à parer le coup de ' + attaqueDe.name + ' et ne perd aucun point de vie';
+            texteCombat += defenseDe.name + ' arrive à parer le coup de ' + attaqueDe.name + ' et ne perd aucun point de vie\n';
         }
         
+        texteCombat += 'pv héros = '+joueur.ht+' - pv ennemi = '+tmp.ht;
         alert(texteCombat);
-        alert('pv joueur = '+joueur.ht+' - pv monstre = '+tmp.ht);
         cmp++;
         
         //En cas de mort de l'un des belligérants
