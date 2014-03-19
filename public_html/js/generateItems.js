@@ -130,7 +130,7 @@ function placeItem(x, y, tabFree) {
     stairUp.quelType = 9;
     item[y][x] = stairUp;
     
-    drawItem(stairUp);
+    drawIt(icxt, itemsImage, stairUp, stairUp.quelType, itemsNumTiles);
     
     do {
         coord = placeIt();
@@ -143,7 +143,7 @@ function placeItem(x, y, tabFree) {
     stairDown.ht = 0;
     stairDown.quelType = 8;
     item[coord[1]][coord[0]] = stairDown;
-    drawItem(stairDown);
+    drawIt(icxt, itemsImage, stairDown, stairDown.quelType, itemsNumTiles);
     
     for(var k = nbItems; k >= 0 ; k--) {    
         do {
@@ -153,14 +153,8 @@ function placeItem(x, y, tabFree) {
         var tmp = new Artefact(coord[0], coord[1]);
         item[coord[1]][coord[0]] = tmp;
     
-        drawItem(tmp);
+        drawIt(icxt, itemsImage, tmp, tmp.quelType, itemsNumTiles);;
     }
-}
-
-function drawItem(art) { 
-    var tileRow = (art.quelType / itemsNumTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
-    var tileCol = (art.quelType % itemsNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la 10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
-    icxt.drawImage(itemsImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (art.x*TILESIZE), (art.y*TILESIZE), TILESIZE, TILESIZE);
 }
 
 //Evènement quand le héros arrive sur la case

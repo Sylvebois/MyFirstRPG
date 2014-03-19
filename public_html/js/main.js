@@ -41,3 +41,10 @@ function placeIt() {
     
     return start;
 }
+
+//Dessine les objets
+function drawIt(cxt, img, obj, numImg, numTiles) {
+    var tileRow = (numImg / numTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
+    var tileCol = (numImg % numTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la 10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
+    cxt.drawImage(img, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (obj.x*TILESIZE), (obj.y*TILESIZE), TILESIZE, TILESIZE);    
+}

@@ -8,7 +8,7 @@ var hero = new Hero(posHero[0], posHero[1]);
 var heroesNumTiles = 3;     // Nombre de tuiles sur une ligne de notre image
 var heroesImage = new Image();
 heroesImage.src = 'images/hero.png';
-heroesImage.onload = drawHero(hero.x, hero.y, hero.direction['BAS']);
+heroesImage.onload = drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
 
 function Hero(x, y) {
     this.direction = {
@@ -33,6 +33,9 @@ function Hero(x, y) {
     
     //Champ de vision
     this.vis = 2;
+    
+    //Inventaire = 10 places
+    this.inv = [0,0,0,0,0,0,0,0,0,0];
 }
 
 window.addEventListener('keydown', function(e) {    
@@ -47,7 +50,7 @@ window.addEventListener('keydown', function(e) {
             else if(hero.x > 0 && enemies[hero.y][hero.x-1] !== 0) {
                 fight(hero.x-1, hero.y, hero);
             }
-            drawHero(hero.x, hero.y, hero.direction['GAUCHE']);
+            drawIt(jcxt, heroesImage, hero, hero.direction['GAUCHE'], heroesNumTiles);
             delFog(hero.x, hero.y, hero.vis);
             getItem(hero.x, hero.y);
             break;
@@ -58,7 +61,7 @@ window.addEventListener('keydown', function(e) {
             else if(hero.y > 0 && enemies[hero.y-1][hero.x] !== 0) {
                 fight(hero.x, hero.y-1, hero);
             }
-            drawHero(hero.x, hero.y, hero.direction['HAUT']);
+            drawIt(jcxt, heroesImage, hero, hero.direction['HAUT'], heroesNumTiles);
             delFog(hero.x, hero.y, hero.vis);
             getItem(hero.x, hero.y);
             break;
@@ -69,7 +72,7 @@ window.addEventListener('keydown', function(e) {
             else if(hero.x < COLTILECOUNT-1 && enemies[hero.y][hero.x+1] !== 0) {
                 fight(hero.x+1, hero.y, hero);
             }
-            drawHero(hero.x, hero.y, hero.direction['DROITE']);
+            drawIt(jcxt, heroesImage, hero, hero.direction['DROITE'], heroesNumTiles);
             delFog(hero.x, hero.y, hero.vis);
             getItem(hero.x, hero.y);
             break;
@@ -80,19 +83,13 @@ window.addEventListener('keydown', function(e) {
             else if(hero.y < ROWTILECOUNT-1 && enemies[hero.y+1][hero.x] !== 0) {
                 fight(hero.x, hero.y+1, hero);
             }
-            drawHero(hero.x, hero.y, hero.direction['BAS']);
+            drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
             delFog(hero.x, hero.y, hero.vis);
             getItem(hero.x, hero.y);
             break;
         default:
-            drawHero(hero.x, hero.y, hero.direction['BAS']);
+            drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
             break;
             
     }
 });
-
-function drawHero(x, y, imgHero) {
-    var tileRow = (imgHero / heroesNumTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
-    var tileCol = (imgHero % heroesNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la 10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
-    jcxt.drawImage(heroesImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (x*TILESIZE), (y*TILESIZE), TILESIZE, TILESIZE);
-}

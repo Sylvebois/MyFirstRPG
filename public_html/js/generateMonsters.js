@@ -153,14 +153,8 @@ function placeMonster(x, y, avoidI, tabFree) {
         var tmp = new Monster(coord[0], coord[1]);
         enemies[coord[1]][coord[0]] = tmp;
     
-        drawMonster(coord, tmp);
+        drawIt(ecxt, monstersImage, tmp, tmp.quelType, monstersNumTiles);
     }
-}
-
-function drawMonster(coord, enemy) { 
-    var tileRow = (enemy.quelType / monstersNumTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
-    var tileCol = (enemy.quelType % monstersNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la 10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
-    ecxt.drawImage(monstersImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (coord[0]*TILESIZE), (coord[1]*TILESIZE), TILESIZE, TILESIZE);
 }
 
 function fight(x, y, joueur) {
