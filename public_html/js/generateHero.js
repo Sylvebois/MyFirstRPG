@@ -19,7 +19,7 @@ function Hero(x, y) {
     };
     
     //Définition de la feuille de personnage
-    this.name = 'Default';
+    this.name = 'Mon Héros';
     this.classPerso = 'Custom';
     this.level = 1;
     this.st = 15;
@@ -36,56 +36,77 @@ function Hero(x, y) {
     
     //Inventaire = 10 places
     this.inv = [0,0,0,0,0,0,0,0,0,0];
+    
+    //Emplacement d'équipement
+    this.equip = {
+        'TETE'  : 0,
+        'COU'   : 0,
+        'TORSE' : 0,
+        'JAMBES': 0,
+        'PIEDS' : 0,
+        'MAING' : 0,
+        'MAIND' : 0,
+    }
 }
 
-window.addEventListener('keydown', function(e) {    
+addEvent(window, 'keydown', function(e) {    
     jcxt.clearRect(0, 0, jCanvas.width, jCanvas.height);
     
     //Gestion des déplacements du hero (mouvements, brouillard, rencontres ...)
     switch(e.keyCode) {
         case 37:            //left
-            if(hero.x > 0 && ground[hero.y][hero.x-1] !== 130 && enemies[hero.y][hero.x-1] === 0) {
+            if(hero.x > 0 && ground[hero.y][hero.x-1] !== 130 && enemies[hero.y][hero.x-1] === 0 && uCanvas.className === 'hidden') {
                 hero.x -= 1;
             }
-            else if(hero.x > 0 && enemies[hero.y][hero.x-1] !== 0) {
+            else if(hero.x > 0 && enemies[hero.y][hero.x-1] !== 0 && uCanvas.className === 'hidden') {
                 fight(hero.x-1, hero.y, hero);
             }
             drawIt(jcxt, heroesImage, hero, hero.direction['GAUCHE'], heroesNumTiles);
             delFog(hero.x, hero.y, hero.vis);
-            getItem(hero.x, hero.y);
+            getItem(hero);
             break;
         case 38:            //up
-            if(hero.y > 0 && ground[hero.y-1][hero.x] !== 130 && enemies[hero.y-1][hero.x] === 0) {
+            if(hero.y > 0 && ground[hero.y-1][hero.x] !== 130 && enemies[hero.y-1][hero.x] === 0 && uCanvas.className === 'hidden') {
                 hero.y -= 1;
             }
-            else if(hero.y > 0 && enemies[hero.y-1][hero.x] !== 0) {
+            else if(hero.y > 0 && enemies[hero.y-1][hero.x] !== 0 && uCanvas.className === 'hidden') {
                 fight(hero.x, hero.y-1, hero);
             }
             drawIt(jcxt, heroesImage, hero, hero.direction['HAUT'], heroesNumTiles);
             delFog(hero.x, hero.y, hero.vis);
-            getItem(hero.x, hero.y);
+            getItem(hero);
             break;
         case 39:            //right
-            if(hero.x < COLTILECOUNT-1 && ground[hero.y][hero.x+1] !== 130 && enemies[hero.y][hero.x+1] === 0) {
+            if(hero.x < COLTILECOUNT-1 && ground[hero.y][hero.x+1] !== 130 && enemies[hero.y][hero.x+1] === 0 && uCanvas.className === 'hidden') {
                 hero.x += 1;
             }
-            else if(hero.x < COLTILECOUNT-1 && enemies[hero.y][hero.x+1] !== 0) {
+            else if(hero.x < COLTILECOUNT-1 && enemies[hero.y][hero.x+1] !== 0 && uCanvas.className === 'hidden') {
                 fight(hero.x+1, hero.y, hero);
             }
             drawIt(jcxt, heroesImage, hero, hero.direction['DROITE'], heroesNumTiles);
             delFog(hero.x, hero.y, hero.vis);
-            getItem(hero.x, hero.y);
+            getItem(hero);
             break;
         case 40:            //down
-            if(hero.y < ROWTILECOUNT-1 && ground[hero.y+1][hero.x] !== 130 && enemies[hero.y+1][hero.x] === 0) {
+            if(hero.y < ROWTILECOUNT-1 && ground[hero.y+1][hero.x] !== 130 && enemies[hero.y+1][hero.x] === 0 && uCanvas.className === 'hidden') {
                 hero.y += 1;
             }
-            else if(hero.y < ROWTILECOUNT-1 && enemies[hero.y+1][hero.x] !== 0) {
+            else if(hero.y < ROWTILECOUNT-1 && enemies[hero.y+1][hero.x] !== 0 && uCanvas.className === 'hidden') {
                 fight(hero.x, hero.y+1, hero);
             }
             drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
             delFog(hero.x, hero.y, hero.vis);
-            getItem(hero.x, hero.y);
+            getItem(hero);
+            break;
+        case 73:            //Inventory
+            if(uCanvas.className === 'hidden') {
+                showInv(hero, itemsImage, itemsNumTiles);
+                equipIt (hero, itemsImage, itemsNumTiles);
+            }
+            else {
+                hideInv();
+            }
+            drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
             break;
         default:
             drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);

@@ -38,6 +38,12 @@ function Artefact(abs, ord) {
     this.x = abs;
     this.y = ord;
     
+    //Position pour l'inventaire
+    this.startX = 0;
+    this.startY = 0;
+    this.endX = 0;
+    this.endY = 0;
+    
     //Caractéristiques de l'item
     this.st = rand(-5,5,1);
     this.dx = rand(-5,5,1);
@@ -47,6 +53,14 @@ function Artefact(abs, ord) {
     //Création du nom en fonction des caractéristiques
     this.quelType = rand(0,7,1);    
     this.name = type[this.quelType];
+    
+    //Emplacement pour l'équipement
+    if(this.quelType <= 0) {
+        this.equip = 'MAING';
+    }
+    else if(this.quelType > 0 && this.quelType <= 7) {
+        this.equip = 'MAIND';
+    }
     
     var nbPlus5 = 0;
     var nbMoins5 = 0;
@@ -158,8 +172,8 @@ function placeItem(x, y, tabFree) {
 }
 
 //Evènement quand le héros arrive sur la case
-function getItem(x, y) {
-    var tmp = item[y][x];
+function getItem(joueur) {
+    var tmp = item[joueur.y][joueur.x];
     var texte = 'Vous avez trouvé un(e) ' +  tmp.name + '!\n' +
                 'Force : ' + tmp.st + '\n' +
                 'Dextérité : ' + tmp.dx + '\n' +
@@ -169,8 +183,13 @@ function getItem(x, y) {
         
     if(tmp && tmp.quelType !== 8 && tmp.quelType !== 9) {
         if(confirm(texte)) {
-            icxt.clearRect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE);
-            item[y][x] = 0;
+            if(!takeIt(tmp, joueur)){
+                icxt.clearRect(joueur.x*TILESIZE, joueur.y*TILESIZE, TILESIZE, TILESIZE);
+                item[joueur.y][joueur.x] = 0;      
+            }
+            else {
+                alert('Vous n\'avez plus de place pour prendre cet objet');
+            }
         }
     }
     else if(tmp.quelType === 8) {
@@ -184,3 +203,17 @@ function getItem(x, y) {
         }
     }
 }
+
+//Vérifie s'il y a encore de la place pour prendre l'Artefact
+function takeIt(item, joueur){
+     var noMoreSpace = true;
+
+     for(var i = 0; i < joueur.inv.length; i++) {
+         if(!joueur.inv[i]) {
+             joueur.inv[i] = item;
+             noMoreSpace = false;
+             break;
+         }
+     }
+     return noMoreSpace;
+ }

@@ -20,6 +20,15 @@ var jcxt = jCanvas.getContext('2d');
 var fcxt = fCanvas.getContext('2d');
 var ucxt = uCanvas.getContext('2d');
 
+//Assure une comptabilité avec IE pour la gestion des évènements
+function addEvent(element, event, func) { // Compatibilité IE
+        if (element.attachEvent) {
+            element.attachEvent('on' + event, func);
+        } else {
+            element.addEventListener(event, func, true);
+        }
+    }
+    
 //Génère un nombre aléatoire entre min-max et précise si ça doit être un entier
 function rand(min, max, integer) {
    if (!integer) {
