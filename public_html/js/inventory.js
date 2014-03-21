@@ -156,12 +156,18 @@ function equipIt (joueur, imgItems, numItems) {
             for(valeur in joueur.equip) {
                 if(posX > zonesEquip[valeur + 'SX'] && posX < zonesEquip[valeur + 'EX'] && posY > zonesEquip[valeur + 'SY'] && posY < zonesEquip[valeur + 'EY']){  
                     if(!joueur.equip[valeur]) {
-                        joueur.equip[valeur] = storage.artefact;
-                        joueur.equip[valeur].startX = zonesEquip[valeur + 'SX'];
-                        joueur.equip[valeur].endX = zonesEquip[valeur + 'EX'];
-                        joueur.equip[valeur].startY = zonesEquip[valeur + 'SY'];
-                        joueur.equip[valeur].endY = zonesEquip[valeur + 'EY'];
-                        joueur.calcStat(valeur, true);
+                        if(joueur.endHt + storage.artefact.ht > 0) {
+                            joueur.equip[valeur] = storage.artefact;
+                            joueur.equip[valeur].startX = zonesEquip[valeur + 'SX'];
+                            joueur.equip[valeur].endX = zonesEquip[valeur + 'EX'];
+                            joueur.equip[valeur].startY = zonesEquip[valeur + 'SY'];
+                            joueur.equip[valeur].endY = zonesEquip[valeur + 'EY'];
+                            joueur.calcStat(valeur, true);   
+                        }
+                        else {
+                            alert('Cela ne semble pas être une bonne idée ...');
+                            takeIt(storage.artefact, joueur);
+                        }
                     }
                     else {
                         alert('Emplacement déjà occupé, action annulée');
