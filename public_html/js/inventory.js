@@ -84,6 +84,7 @@ function equipIt (joueur, imgItems, numItems) {
                     storage.dragging = true;
                     storage.origin = valeur;
                     storage.artefact = joueur.equip[valeur];
+                    joueur.calcStat(valeur, false);
                     joueur.equip[valeur] = 0;
                 }
             }
@@ -147,7 +148,7 @@ function equipIt (joueur, imgItems, numItems) {
                     alert('Plus de place dans l\'inventaire, action annulée');
                     joueur.equip[storage.origin] = storage.artefact;
                 }
-                
+                                
                 vide = false;
             }  
             
@@ -160,6 +161,7 @@ function equipIt (joueur, imgItems, numItems) {
                         joueur.equip[valeur].endX = zonesEquip[valeur + 'EX'];
                         joueur.equip[valeur].startY = zonesEquip[valeur + 'SY'];
                         joueur.equip[valeur].endY = zonesEquip[valeur + 'EY'];
+                        joueur.calcStat(valeur, true);
                     }
                     else {
                         alert('Emplacement déjà occupé, action annulée');
@@ -168,7 +170,8 @@ function equipIt (joueur, imgItems, numItems) {
                             takeIt(storage.artefact, joueur);
                         }
                         else {
-                            joueur.equip[storage.origin] = storage.artefact;    
+                            joueur.equip[storage.origin] = storage.artefact;
+                            joueur.calcStat(storage.origin, true);
                         }
                     }
                     vide = false;
@@ -181,7 +184,8 @@ function equipIt (joueur, imgItems, numItems) {
                     takeIt(storage.artefact, joueur);
                 }
                 else {
-                    joueur.equip[storage.origin] = storage.artefact;    
+                    joueur.equip[storage.origin] = storage.artefact;
+                    joueur.calcStat(storage.origin, true);
                 }
             }
 

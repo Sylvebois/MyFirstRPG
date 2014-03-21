@@ -49,22 +49,6 @@ function Monster(x, y) {
     this.quelType = rand(0,5,1);    
     this.name = type[this.quelType] + ' désarmé';
     
-    this.arme = 0;
-    
-    //Compare son arme actuelle avec celle au sol, choisit la plus puissante et modifie le nom du monstre
-    this.compareArme = function(ArmeSol) {
-        if(!Monster.arme) {
-            var totActu = Monster.arme.st + Monster.arme.dx + Monster.arme.iq + Monster.arme.ht;
-            var totSol = ArmeSol.st + ArmeSol.dx + ArmeSol.iq + ArmeSol.ht;
-            
-            Monster.arme = (totSol > totActu)? ArmeSol : Monster.arme;
-        }
-        else {
-            Monster.arme = ArmeSol;
-        }   
-        Monster.name = type[Monster.quelType] + ' équipé d\'un(e) ' + Monster.arme.name;
-    };
-    
     //Caractéristiques ; l'ordre d'importance dépend du type de monstre
     switch(this.quelType) {
         case 0:
@@ -129,6 +113,47 @@ function Monster(x, y) {
                 break;
 
     }
+    
+    this.endSt = this.st;
+    this.endDx = this.dx;
+    this.endIq = this.iq;
+    this.endHt = this.ht;
+    
+    this.equip = {'MAIND' : 0};
+    
+    //Compare son equip['MAIND'] actuelle avec celle au sol, choisit la plus puissante et modifie le nom du monstre
+    this.compareArme = function(ArmeSol) {
+        if(this.equip['MAIND']) {
+            var totActu = this.equip['MAIND'].st + this.equip['MAIND'].dx + this.equip['MAIND'].iq + this.equip['MAIND'].ht;
+            var totSol = ArmeSol.st + ArmeSol.dx + ArmeSol.iq + ArmeSol.ht;
+            
+            if(totSol > totActu) {   
+                this.calcStat('MAIND', false);
+                this.equip['MAIND'] = ArmeSol;
+                this.calcStat('MAIND', true);
+            }
+        }
+        else {
+            this.equip['MAIND'] = ArmeSol;
+            this.calcStat('MAIND', true);            
+        }   
+        this.name = type[this.quelType] + ' équipé d\'un(e) ' + this.equip['MAIND'].name;
+    };
+    
+    this.calcStat = function(place, equipped) {
+        if(equipped) {
+            this.endSt += this.equip[place].st;
+            this.endDx += this.equip[place].dx;
+            this.endIq += this.equip[place].iq;
+            this.endHt += this.equip[place].ht;    
+        }
+        else {
+            this.endSt -= this.equip[place].st;
+            this.endDx -= this.equip[place].dx;
+            this.endIq -= this.equip[place].iq;
+            this.endHt -= this.equip[place].ht;     
+        }
+    };
 }
 
 //Place un certain nombre d'items en fonction de la taille du donjon et de la position de départ du héros
@@ -163,25 +188,29 @@ function fight(x, y, joueur) {
     var tmp = enemies[y][x];
     var texteCombat = '';
     var texteIntro = 'Vous tombez nez à nez avec un(e) ' +  tmp.name + '!\n' +
-                    'Force : ' + tmp.st + '\n' +
-                    'Dextérité : ' + tmp.dx + '\n' +
-                    'Intelligence : ' + tmp.iq + '\n' +
-                    'Santé : ' + tmp.ht + '\n\n' +
+                    'Force : ' + tmp.endSt + '\n' +
+                    'Dextérité : ' + tmp.endDx + '\n' +
+                    'Intelligence : ' + tmp.endIq + '\n' +
+                    'Santé : ' + tmp.endHt + '\n\n' +
                     'Le combat va commencer !';
     
     alert(texteIntro);
     
-    while(joueur.ht > 0 || tmp.ht > 0) {
+    while(joueur.endDt > 0 || tmp.endHt > 0) {
         var coup = rand(1,6,1);
         var parade = rand(1,6,1);
         
         //alternance attaque/défense entre joueur et ennemi
         var attaqueDe = (cmp%2 === 0)? joueur : tmp;
         var defenseDe = (cmp%2 === 0)? tmp : joueur;
+        
+        //Puissance brute d'attaque et de défense
+        var attaquePow = Math.floor(attaqueDe.endSt + attaqueDe.endDx + attaqueDe.endIq/3);
+        var defPow = Math.floor(defenseDe.endSt + defenseDe.endDx + defenseDe.endIq/3);
    
-        //En cas de coup critique
-        var att = (coup === 6)? Math.floor(attaqueDe.st+attaqueDe.dx+attaqueDe.iq/3)+coup*2 : Math.floor(attaqueDe.st+attaqueDe.dx+attaqueDe.iq/3)+coup;
-        var def = (parade === 6)? Math.floor(defenseDe.st+defenseDe.dx+defenseDe.iq/3)+parade*2 : Math.floor(defenseDe.st+defenseDe.dx+defenseDe.iq/3)+parade;
+        //Ajout du jet de dé et de coup critique
+        var att = (coup === 6)? attaquePow + 2*coup : attaquePow + coup;
+        var def = (parade === 6)? defPow + 2*parade : defPow + parade;
         
         texteCombat =   'Tour ' + (cmp+1) + ' :\n' +
                         '---------\n' +
@@ -191,25 +220,25 @@ function fight(x, y, joueur) {
         if(att > def) {
             var result = Math.floor((att-def)/2);
             result = (result === 0)? 1 : result;
-            defenseDe.ht -= result;
+            defenseDe.endHt -= result;
             texteCombat += defenseDe.name + ' perd ' + result + ' points de vie\n';
         }
         else {
             texteCombat += defenseDe.name + ' arrive à parer le coup de ' + attaqueDe.name + ' et ne perd aucun point de vie\n';
         }
         
-        texteCombat += 'pv héros = '+joueur.ht+' - pv ennemi = '+tmp.ht;
+        texteCombat += 'pv héros = '+joueur.endHt+' - pv ennemi = '+tmp.endHt;
         alert(texteCombat);
         cmp++;
         
         //En cas de mort de l'un des belligérants
-        if(tmp.ht <= 0) {
+        if(tmp.endHt <= 0) {
             alert(tmp.name + ' s\'effondre après ce dernier assaut');
             ecxt.clearRect(x*TILESIZE, y*TILESIZE, TILESIZE, TILESIZE);
             enemies[y][x] = 0;
             break;
         }
-        if(joueur.ht <= 0) {
+        if(joueur.endHt <= 0) {
             alert('Vous êtes gravement blessé et ne pouvez plus vous défendre ...\n' + tmp.name + ' n\'hésite pas à vous donner le coup de grâce !');
             if(confirm('GAME OVER !\nrecommencer ?')) {
                 window.location.reload();

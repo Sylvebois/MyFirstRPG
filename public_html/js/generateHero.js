@@ -47,6 +47,27 @@ function Hero(x, y) {
         'MAING' : 0,
         'MAIND' : 0,
     }
+    
+    //Caractéristiques avec les équipements
+    this.endSt = this.st;
+    this.endDx = this.dx;
+    this.endIq = this.iq;
+    this.endHt = this.ht;
+    
+    this.calcStat = function(place, equipped) {
+        if(equipped) {
+            this.endSt += this.equip[place].st;
+            this.endDx += this.equip[place].dx;
+            this.endIq += this.equip[place].iq;
+            this.endHt += this.equip[place].ht;    
+        }
+        else {
+            this.endSt -= this.equip[place].st;
+            this.endDx -= this.equip[place].dx;
+            this.endIq -= this.equip[place].iq;
+            this.endHt -= this.equip[place].ht;     
+        }
+    };
 }
 
 addEvent(window, 'keydown', function(e) {    
