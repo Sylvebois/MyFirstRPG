@@ -19,6 +19,7 @@ What will come :
 - Give the monsters an AI (move, attitude toward the Hero, equip with items ...)
 - Moving back to previous levels
 - Saving the game to play later
+- Taking into account the monsters with equipped items for combat
 - Advanced combat system (close combat, ranged combat, magic ...)
 - Inventory (dropping items, restrictions for placing equipements ...)
 - ...
