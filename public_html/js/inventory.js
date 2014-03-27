@@ -2,15 +2,16 @@
  * Affiche et permet de gérer l'inventaire du héros
  */
 
+var invImage = new Image();
+invImage.src = 'images/inv.png';
+
 function showInv(joueur, imgItems, numItems){
     var cmp = 0;
     var xCoteGauche = (TILESIZE*COLTILECOUNT)/4;
     var xCoteDroit = (TILESIZE*COLTILECOUNT)/2 + 5*TILESIZE;
     
     uCanvas.className = '';
-    
-    var invImage = new Image();
-    invImage.src = 'images/inv.png';
+
     ucxt.drawImage(invImage, 0, 0, invImage.width, invImage.height, xCoteGauche, TILESIZE, (TILESIZE*COLTILECOUNT)/2, (TILESIZE*ROWTILECOUNT)-(2*TILESIZE));
     
     //Dessine les armes dans les slots d'équipement

@@ -7,14 +7,14 @@ body::before {
 }
  
 // Tablet
-@media (min-width: 480px) {
+@media viewport and (min-width: 480px) {
   body::before {
     content: '{ "current": "medium", "all": ["small", "medium"] }'
   }
 }
  
 // Desktop
-@media (min-width: 640px) {
+@media viewport and (min-width: 640px) {
    body::before {
     content: '{ "current": "large", "all": ["small", "medium", "large"] }'
   }
