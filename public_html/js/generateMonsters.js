@@ -35,7 +35,7 @@ var enemies = [
 var monstersNumTiles = 3;     // Nombre de tuiles sur une ligne de notre image
 var monstersImage = new Image();
 monstersImage.src = 'images/monsters.png';
-tilesetImage.onload = placeMonster(hero.x, hero.y, item, ground);
+tilesetImage.onload = placeMonster(hero.x, hero.y, item, ground, DIFFICULTY);
 
 function Monster(x, y) {
     var type = ['Gobelin', 'Orc', 'Zombie', 'Squelette', 'Démon', 'Naga'];
@@ -157,10 +157,26 @@ function Monster(x, y) {
 }
 
 //Place un certain nombre d'items en fonction de la taille du donjon et de la position de départ du héros
-function placeMonster(x, y, avoidI, tabFree) {
+function placeMonster(x, y, avoidI, tabFree, difficulty) {
+    var hard = 1;
     var cmp = 0;
     var nbMonsters = 0;
     var coord = [0,0];
+    
+    switch(difficulty) {
+        case 'easy' :
+            hard = 0.5;
+            break;
+        case 'normal' :
+            hard = 1;
+            break;
+        case 'hard' :
+            hard = 1.5;
+            break;
+        case 'extreme' :
+            hard = 2;
+            break;
+    }
     
     for(var i = tabFree.length-1; i >= 0; i--) {
         for(var j = tabFree[i].length-1; j >= 0; j--) {
@@ -168,7 +184,7 @@ function placeMonster(x, y, avoidI, tabFree) {
         }
     }
     
-    nbMonsters = rand(cmp/14, cmp/7, 1);                    //nombre de monstres à générer
+    nbMonsters = Math.ceil(rand(cmp/14, cmp/7, 1)*hard);                    //nombre de monstres à générer en fonction du niveau de difficulté
     
     for(var k = nbMonsters; k >= 0 ; k--) {    
         do {

@@ -6,6 +6,9 @@ var TILESIZE = 32;            //Dimensions d'une tuile
 var ROWTILECOUNT = 20;        // Nombre de tuiles qu'on met sur la hauteur
 var COLTILECOUNT = 32;        // Nombre de tuiles qu'on met sur la largeur
 
+var DIFFICULTY = setDifficulty();
+alert('Ce niveau est ' + DIFFICULTY);
+
 var tCanvas = document.getElementById('terrain');
 var iCanvas = document.getElementById('artefact');
 var eCanvas = document.getElementById('enemies');
@@ -56,4 +59,14 @@ function drawIt(cxt, img, obj, numImg, numTiles) {
     var tileRow = (numImg / numTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
     var tileCol = (numImg % numTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la 10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
     cxt.drawImage(img, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (obj.x*TILESIZE), (obj.y*TILESIZE), TILESIZE, TILESIZE);    
+}
+
+//Donne le niveau de difficulté (génération de monstres et d'items) d'étage
+function setDifficulty() {
+    var difficulty = ['easy', 'normal', 'hard', 'extreme'];
+    var lvlDiff = rand(0,3,1);
+
+    lvlDiff = (lvlDiff === 3)? rand(0,3,1) : lvlDiff;   //Fait un deuxième tour pour diminuer les chances d'un lvl extrême
+    
+    return difficulty[lvlDiff];
 }
