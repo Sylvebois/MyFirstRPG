@@ -342,7 +342,7 @@ function getItem(joueur) {
             window.location.reload();
         }
     }
-    else if(tmp.quelType === 9) {
+    else if(tmp.quelType === 9 && createForm.className === 'hidden') {
         if(confirm('Voulez-vous monter au niveau précédent ?')) {
             window.location.reload();    
         }

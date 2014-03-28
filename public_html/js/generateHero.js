@@ -75,11 +75,17 @@ addEvent(window, 'keydown', function(e) {
     
     //Gestion des déplacements du hero (mouvements, brouillard, rencontres ...)
     switch(e.keyCode) {
+        case 13:            //Enter key
+            if(!createForm.className) {
+                submitHero();
+            }
+            drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
+            break;
         case 37:            //left
-            if(hero.x > 0 && ground[hero.y][hero.x-1] !== 130 && enemies[hero.y][hero.x-1] === 0 && uCanvas.className === 'hidden') {
+            if(hero.x > 0 && ground[hero.y][hero.x-1] !== 130 && enemies[hero.y][hero.x-1] === 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
                 hero.x -= 1;
             }
-            else if(hero.x > 0 && enemies[hero.y][hero.x-1] !== 0 && uCanvas.className === 'hidden') {
+            else if(hero.x > 0 && enemies[hero.y][hero.x-1] !== 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
                 fight(hero.x-1, hero.y, hero);
             }
             drawIt(jcxt, heroesImage, hero, hero.direction['GAUCHE'], heroesNumTiles);
@@ -87,10 +93,10 @@ addEvent(window, 'keydown', function(e) {
             getItem(hero);
             break;
         case 38:            //up
-            if(hero.y > 0 && ground[hero.y-1][hero.x] !== 130 && enemies[hero.y-1][hero.x] === 0 && uCanvas.className === 'hidden') {
+            if(hero.y > 0 && ground[hero.y-1][hero.x] !== 130 && enemies[hero.y-1][hero.x] === 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
                 hero.y -= 1;
             }
-            else if(hero.y > 0 && enemies[hero.y-1][hero.x] !== 0 && uCanvas.className === 'hidden') {
+            else if(hero.y > 0 && enemies[hero.y-1][hero.x] !== 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
                 fight(hero.x, hero.y-1, hero);
             }
             drawIt(jcxt, heroesImage, hero, hero.direction['HAUT'], heroesNumTiles);
@@ -98,10 +104,10 @@ addEvent(window, 'keydown', function(e) {
             getItem(hero);
             break;
         case 39:            //right
-            if(hero.x < COLTILECOUNT-1 && ground[hero.y][hero.x+1] !== 130 && enemies[hero.y][hero.x+1] === 0 && uCanvas.className === 'hidden') {
+            if(hero.x < COLTILECOUNT-1 && ground[hero.y][hero.x+1] !== 130 && enemies[hero.y][hero.x+1] === 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
                 hero.x += 1;
             }
-            else if(hero.x < COLTILECOUNT-1 && enemies[hero.y][hero.x+1] !== 0 && uCanvas.className === 'hidden') {
+            else if(hero.x < COLTILECOUNT-1 && enemies[hero.y][hero.x+1] !== 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
                 fight(hero.x+1, hero.y, hero);
             }
             drawIt(jcxt, heroesImage, hero, hero.direction['DROITE'], heroesNumTiles);
@@ -109,10 +115,10 @@ addEvent(window, 'keydown', function(e) {
             getItem(hero);
             break;
         case 40:            //down
-            if(hero.y < ROWTILECOUNT-1 && ground[hero.y+1][hero.x] !== 130 && enemies[hero.y+1][hero.x] === 0 && uCanvas.className === 'hidden') {
+            if(hero.y < ROWTILECOUNT-1 && ground[hero.y+1][hero.x] !== 130 && enemies[hero.y+1][hero.x] === 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
                 hero.y += 1;
             }
-            else if(hero.y < ROWTILECOUNT-1 && enemies[hero.y+1][hero.x] !== 0 && uCanvas.className === 'hidden') {
+            else if(hero.y < ROWTILECOUNT-1 && enemies[hero.y+1][hero.x] !== 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
                 fight(hero.x, hero.y+1, hero);
             }
             drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
@@ -120,7 +126,7 @@ addEvent(window, 'keydown', function(e) {
             getItem(hero);
             break;
         case 73:            //Inventory
-            if(uCanvas.className === 'hidden') {
+            if(uCanvas.className === 'hidden' && createForm.className === 'hidden') {
                 showInv(hero, itemsImage, itemsNumTiles);
                 equipIt (hero, itemsImage, itemsNumTiles);
             }
@@ -131,7 +137,6 @@ addEvent(window, 'keydown', function(e) {
             break;
         default:
             drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
-            break;
-            
+            break;     
     }
 });

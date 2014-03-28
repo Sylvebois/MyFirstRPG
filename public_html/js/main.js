@@ -7,7 +7,6 @@ var ROWTILECOUNT = 20;        // Nombre de tuiles qu'on met sur la hauteur
 var COLTILECOUNT = 32;        // Nombre de tuiles qu'on met sur la largeur
 
 var DIFFICULTY = setDifficulty();
-alert('Ce niveau est ' + DIFFICULTY);
 
 var tCanvas = document.getElementById('terrain');
 var iCanvas = document.getElementById('artefact');
@@ -22,6 +21,8 @@ var ecxt = eCanvas.getContext('2d');
 var jcxt = jCanvas.getContext('2d');
 var fcxt = fCanvas.getContext('2d');
 var ucxt = uCanvas.getContext('2d');
+
+var createForm = document.getElementById('createHero');
 
 //Assure une comptabilité avec IE pour la gestion des évènements
 function addEvent(element, event, func) { // Compatibilité IE
@@ -69,4 +70,49 @@ function setDifficulty() {
     lvlDiff = (lvlDiff === 3)? rand(0,3,1) : lvlDiff;   //Fait un deuxième tour pour diminuer les chances d'un lvl extrême
     
     return difficulty[lvlDiff];
+}
+
+//Affiche la valeur à côté des sliders sur le formulaire de création du personnage
+function showSpecsOnForm() {
+    var st = document.getElementById('force');
+    var dx = document.getElementById('dexterite');
+    var iq = document.getElementById('intellect');
+    var ht = document.getElementById('sante');
+    var points = 50-st.value-dx.value-iq.value-ht.value;
+    
+    document.getElementById('showSt').innerHTML = st.value;
+    document.getElementById('showDx').innerHTML = dx.value;
+    document.getElementById('showIq').innerHTML = iq.value;
+    document.getElementById('showHt').innerHTML = ht.value;
+    document.getElementById('nbPoints').innerHTML = points;
+    
+    st.max = ((50-dx.value-iq.value-ht.value) <= 0)? 1 : (50-dx.value-iq.value-ht.value);
+    dx.max = ((50-st.value-iq.value-ht.value) <= 0)? 1 : (50-st.value-iq.value-ht.value);
+    iq.max = ((50-dx.value-st.value-ht.value) <= 0)? 1 : (50-dx.value-st.value-ht.value);
+    ht.max = ((50-dx.value-iq.value-st.value) <= 0)? 1 : (50-dx.value-iq.value-st.value);    
+}
+
+//Valide et masque le formulaire de création
+function submitHero() {    
+    var nom = document.getElementById('nom').value;
+    var st = document.getElementById('force').value;
+    var dx = document.getElementById('dexterite').value;
+    var iq = document.getElementById('intellect').value;
+    var ht = document.getElementById('sante').value;
+    
+    hero.name = (nom)? nom : 'Votre Héros';
+    hero.st = st;
+    hero.dx = dx;
+    hero.iq = iq;
+    hero.ht = ht;
+    
+    createForm.className = 'hidden';
+}
+
+//Test s'il faut afficher le formulaire
+function testForm() {
+    var nom = document.getElementById('nom').value;
+    if(nom) {
+        createForm.className = 'hidden'; 
+    }
 }

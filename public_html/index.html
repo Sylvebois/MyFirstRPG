@@ -9,16 +9,36 @@
             <script type="text/javascript" src="js/ext/excanvas.compiled.js"></script>
         <![endif]-->
     </head>
-    <body>
+    <body onload="testForm();showSpecsOnForm()">
         <div class="wrapper">
             <div class="container">
               <div class="canvas-container">
-                  <canvas id="terrain" width="1024" height="640"></canvas>
-                  <canvas id="artefact" width="1024" height="640"></canvas>
-                  <canvas id="enemies" width="1024" height="640"></canvas>
-                  <canvas id="joueur" width="1024" height="640"></canvas>
-                  <canvas id="fog" width="1024" height="640"></canvas>
-                  <canvas id="ui" class="hidden" width="1024" height="640">Votre navigateur ne supporte pas CANVAS</canvas>
+                <canvas id="terrain" width="1024" height="640"></canvas>
+                <canvas id="artefact" width="1024" height="640"></canvas>
+                <canvas id="enemies" width="1024" height="640"></canvas>
+                <canvas id="joueur" width="1024" height="640"></canvas>
+                <canvas id="fog" width="1024" height="640"></canvas>
+                <canvas id="ui" class="hidden" width="1024" height="640">Votre navigateur ne supporte pas CANVAS</canvas>
+                <form id="createHero" method="get" action="#" onchange="showSpecsOnForm()">
+                    <p>
+                        <label for="nom">Votre nom : </label>
+                        <input type="text" name="nom" id="nom" placeholder="Nom du héros" />
+                    </p>
+                    <p>Il vous reste <span id="nbPoints"></span> points à répartir</p>
+                    <p>                   
+                        <label for="force">Force : </label>
+                        <input type="range" name="force" id="force" min="1" max="46" value="1" /><span id="showSt"></span><br />
+                        <label for="dexterite">Dexterité : </label>
+                        <input type="range" name="dexterite" id="dexterite" min="1" max="46" value="1" /><span id="showDx"></span><br />
+                        <label for="intellect">Intelligence : </label>
+                        <input type="range" name="intellect" id="intellect" min="1" max="46" value="1" /><span id="showIq"></span><br />
+                        <label for="sante">Santé : </label>
+                        <input type="range" name="sante" id="sante" min="1" max="46" value="1"/><span id="showHt"></span><br />
+                    </p>
+                    <p>
+                        <input type="button" value="Go !" onclick="submitHero()" />
+                    </p>
+                </form>
               </div>
             </div>
           </div>
