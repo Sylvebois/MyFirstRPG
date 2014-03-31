@@ -24,4 +24,5 @@ What will come :
 - Inventory (dropping items, restrictions for placing equipements ...)
 - Add info about an item when hovering it with the mouse
 - Create a responsive design
+- Make the game compatible with Chrome and IE
 - ...
