@@ -21,79 +21,69 @@ body::before {
 }
 */
 
-//Set the position of the canvas element with 3 div's
+.hidden {
+    display: none;
+}
+
+//Les canvas sont positionnés grâce à 3 div
 .wrapper {
-   display: table;
-   padding: 0;
-   width: 100%;
-   height: 100%;
-   position: absolute;
+    display: table;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
 }
  
 .container {
-   display: table-cell;
-   vertical-align: middle;
+    display: table-cell;
+    vertical-align: middle;
 }
  
 .canvas-container {
-   position: relative;
-   max-width: 1024px;
-   min-width: 320px;
-   margin: 0 auto;
+    position: relative;
+    max-width: 1024px;
+    min-width: 320px;
+    margin: 0 auto;
 }
- 
+
+//Mise en place de la "couche de fond"
 #terrain {
-   width: 100%;
-   height: auto;
-   background-color: pink;
-   z-index: 0;
+    width: 100%;
+    height: auto; 
+    background-color: pink;
+    z-index: 0;
+}
+
+//Mise en place des couches suivantes
+#artefact, #enemies, #joueur, #fog, #ui {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 #artefact {
-   width: 100%;
-   height: auto;
-   position: absolute;
-   top: 0;
-   left: 0;
-   z-index: 1;
+    z-index: 1;
 }
 
 #enemies {
-   width: 100%;
-   height: auto;
-   position: absolute;
-   top: 0;
-   left: 0;
-   z-index: 2;
+    z-index: 2;
 }
 
 #joueur {
-   width: 100%;
-   height: auto;
-   position: absolute;
-   top: 0;
-   left: 0;
-   z-index: 3;
+    z-index: 3;
 }
 
 #fog {
-   width: 100%;
-   height: auto;
-   position: absolute;
-   top: 0;
-   left: 0;
-   z-index: 25;
+    z-index: 25;
 }
 
 #ui {
-   width: 100%;
-   height: auto;
-   position: absolute;
-   top: 0;
-   left: 0;
-   z-index: 50;
+    z-index: 50;
 }
 
+//Formulaire de création du perssonnage
 #createHero {
    background-color: white;
    padding: 15px;
@@ -103,8 +93,4 @@ body::before {
    top: 0;
    left: 0;
    z-index: 55;  
-}
-
-.hidden {
-    display: none;
 }
