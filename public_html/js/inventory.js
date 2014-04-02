@@ -55,22 +55,23 @@ function hideInv() {
 }
 
 //Gestion du drag'n'drop pour équiper les items
-function equipIt (joueur, imgItems, numItems) {
+function equipIt (joueur, imgItems, numItems) {    
     var storage = {};
     storage.artefact = 0;
     storage.origin = '';
     storage.dragging = false;
     
     addEvent(uCanvas, 'mousedown', function(e) {
-        var s = storage;
-        s.target = e.target || event.srcElement; // Compatibilité IE
-        s.offsetX = e.clientX - s.target.offsetLeft;
-        s.offsetY = e.clientY - s.target.offsetTop;
+        var dim = getDim();
+        var posX = (e.clientX - dim[2]) * dim[0];
+        var posY = (e.clientY - dim[3]) * dim[1]; 
+        
+        document.getElementById('test').innerHTML = 'dim[0] = ' + dim[0] + ' - dim[1] = ' + dim[1] + ' - dim[2] = ' + dim[2] + ' - dim[3] = ' + dim[3];
         
         //Si on clique dans la zone correspondant à un slot de l'inventaire et qu'il y a un objet 
         for (var i = 0 ; i < joueur.inv.length ; i++) {
             if(!storage.dragging && joueur.inv[i]){
-                if(s.offsetX > joueur.inv[i].startX && s.offsetX < joueur.inv[i].endX && s.offsetY > joueur.inv[i].startY && s.offsetY < joueur.inv[i].endY) {
+                if(posX > joueur.inv[i].startX && posX < joueur.inv[i].endX && posY > joueur.inv[i].startY && posY < joueur.inv[i].endY) {
                     storage.dragging = true;
                     storage.origin = 'inv';
                     storage.artefact = joueur.inv[i];
@@ -81,7 +82,7 @@ function equipIt (joueur, imgItems, numItems) {
         //Si on clique dans la zone correspondant à un slot d'équipement et qu'il y a un objet 
         for (valeur in joueur.equip) {
             if(!storage.dragging && joueur.equip[valeur]){
-                if(s.offsetX > joueur.equip[valeur].startX && s.offsetX < joueur.equip[valeur].endX && s.offsetY > joueur.equip[valeur].startY && s.offsetY < joueur.equip[valeur].endY) {
+                if(posX > joueur.equip[valeur].startX && posX < joueur.equip[valeur].endX && posY > joueur.equip[valeur].startY && posY < joueur.equip[valeur].endY) {
                     storage.dragging = true;
                     storage.origin = valeur;
                     storage.artefact = joueur.equip[valeur];
@@ -93,8 +94,9 @@ function equipIt (joueur, imgItems, numItems) {
     });
 
     addEvent(uCanvas, 'mouseup', function(e) {
-        var posX = e.clientX - e.target.offsetLeft;
-        var posY = e.clientY - e.target.offsetTop;
+        var dim = getDim();
+        var posX = (e.clientX - dim[2]) * dim[0];
+        var posY = (e.clientY - dim[3]) * dim[1]; 
         
         var vide = true;
         
@@ -145,7 +147,7 @@ function equipIt (joueur, imgItems, numItems) {
             if( posX > zoneInv['sx1'] && posX < zoneInv['ex1'] && posY > zoneInv['sy1'] && posY < zoneInv['ey1'] ||
                 posX > zoneInv['sx2'] && posX < zoneInv['ex2'] && posY > zoneInv['sy2'] && posY < zoneInv['ey2']) {
             
-                if(takeIt(storage.artefact, joueur)) {
+                if(!takeIt(storage.artefact, joueur)) {
                     alert('Plus de place dans l\'inventaire, action annulée');
                     joueur.equip[storage.origin] = storage.artefact;
                 }
@@ -206,8 +208,9 @@ function equipIt (joueur, imgItems, numItems) {
     });
 
     addEvent(document, 'mousemove', function(e) {
-        var posX = e.clientX - e.target.offsetLeft;
-        var posY = e.clientY - e.target.offsetTop;
+        var dim = getDim();
+        var posX = (e.clientX - dim[2]) * dim[0];
+        var posY = (e.clientY - dim[3]) * dim[1]; 
             
         if (storage.dragging) {
             var tileRow = (storage.artefact.quelType / numItems) | 0;
@@ -218,5 +221,22 @@ function equipIt (joueur, imgItems, numItems) {
             ucxt.drawImage(imgItems, tileCol*TILESIZE, tileRow*TILESIZE, TILESIZE, TILESIZE, posX, posY, TILESIZE, TILESIZE);
         }
     });
+}
+
+//Récupère les infos de dimensions pour la gestion de l'inventaire
+function getDim() {
+    var wrapper = document.getElementsByClassName('wrapper')[0];
+    var container = document.getElementsByClassName('container')[0];
+    var canvasContainer = document.getElementsByClassName('canvas-container')[0];
+    
+    var coefWidth = 1024/canvasContainer.offsetWidth;
+    var coefHeight = 645/canvasContainer.offsetHeight;
+    
+    var totalOffsetX = canvasContainer.offsetLeft + container.offsetLeft + wrapper.offsetLeft;
+    var totalOffsetY = canvasContainer.offsetTop + container.offsetTop + wrapper.offsetTop;
+    
+    var result = [coefWidth, coefHeight, totalOffsetX, totalOffsetY];
+    
+    return result;
 }
 
