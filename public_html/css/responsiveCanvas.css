@@ -1,36 +1,13 @@
-/* Make the canvas element responsive
-
-// Mobile
-body::before {
-  display: none;
-  content: '{ "current": "small", "all": ["small"] }';
-}
- 
-// Tablet
-@media viewport and (min-width: 480px) {
-  body::before {
-    content: '{ "current": "medium", "all": ["small", "medium"] }'
-  }
-}
- 
-// Desktop
-@media viewport and (min-width: 640px) {
-   body::before {
-    content: '{ "current": "large", "all": ["small", "medium", "large"] }'
-  }
-}
-*/
-
 .hidden {
     display: none;
 }
 
-//Les canvas sont positionnés grâce à 3 div
+/* Les canvas sont positionnés grâce à 3 div */
 .wrapper {
     display: table;
     padding: 0;
-    width: 100%;
-    height: 100%;
+    width: 95%;
+    height: 95%;
     position: absolute;
 }
  
@@ -46,7 +23,7 @@ body::before {
     margin: 0 auto;
 }
 
-//Mise en place de la "couche de fond"
+/* Mise en place de la "couche de fond" */
 #terrain {
     width: 100%;
     height: auto; 
@@ -54,8 +31,8 @@ body::before {
     z-index: 0;
 }
 
-//Mise en place des couches suivantes
-#artefact, #enemies, #joueur, #fog, #ui {
+/* Mise en place des couches suivantes */
+#artefact, #enemies, #joueur, #fog, #ui, #createHero {
     width: 100%;
     height: auto;
     position: absolute;
@@ -83,14 +60,10 @@ body::before {
     z-index: 50;
 }
 
-//Formulaire de création du perssonnage
+/* Formulaire de création du perssonnage */
 #createHero {
    background-color: white;
    padding: 15px;
-   width: 100%;
-   height: 100%;
-   position: absolute;
-   top: 0;
-   left: 0;
+   height: 100% !important;
    z-index: 55;  
 }
