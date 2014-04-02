@@ -35,7 +35,7 @@ var enemies = [
 var monstersNumTiles = 3;     // Nombre de tuiles sur une ligne de notre image
 var monstersImage = new Image();
 monstersImage.src = 'images/monsters.png';
-tilesetImage.onload = placeMonster(hero.x, hero.y, item, ground, DIFFICULTY);
+monstersImage.onload = placeMonster(hero.x, hero.y, item, ground, DIFFICULTY);
 
 function Monster(x, y) {
     var type = ['Gobelin', 'Orc', 'Zombie', 'Squelette', 'Démon', 'Naga'];

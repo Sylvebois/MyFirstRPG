@@ -29,7 +29,7 @@ var item = [
 var itemsNumTiles = 5;     // Nombre de tuiles sur une ligne de notre image
 var itemsImage = new Image();
 itemsImage.src = 'images/items.png';
-tilesetImage.onload = placeItem(hero.x, hero.y, ground, DIFFICULTY);
+itemsImage.onload = placeItem(hero.x, hero.y, ground, DIFFICULTY);
 
 function Artefact(abs, ord) {
     var type = ['Zéro', 'Boomerang', 'Arc', 'Pistolet', 'Fléau', 'Epée', 'Livre', 'Lance', 'Descendre', 'Monter'];
@@ -328,7 +328,7 @@ function getItem(joueur) {
         
     if(tmp && tmp.quelType !== 8 && tmp.quelType !== 9) {
         if(confirm(texte)) {
-            if(!takeIt(tmp, joueur)){
+            if(takeIt(tmp, joueur)){
                 icxt.clearRect(joueur.x*TILESIZE, joueur.y*TILESIZE, TILESIZE, TILESIZE);
                 item[joueur.y][joueur.x] = 0;      
             }
@@ -351,14 +351,14 @@ function getItem(joueur) {
 
 //Vérifie s'il y a encore de la place pour prendre l'Artefact
 function takeIt(item, joueur){
-     var noMoreSpace = true;
+     var taken = false;
 
      for(var i = 0; i < joueur.inv.length; i++) {
          if(!joueur.inv[i]) {
              joueur.inv[i] = item;
-             noMoreSpace = false;
+             taken = true;
              break;
          }
      }
-     return noMoreSpace;
+     return taken;
  }
