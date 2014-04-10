@@ -2,6 +2,14 @@
     display: none;
 }
 
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}
+
 /* Les canvas sont positionnés grâce à 3 div */
 .wrapper {
     display: table;
@@ -62,8 +70,28 @@
 
 /* Formulaire de création du perssonnage */
 #createHero {
-   background-color: white;
-   padding: 15px;
+   background: url('../images/scroll.png') no-repeat;
+   padding-top: 90px;
+   padding-left: 150px;
    height: 100% !important;
+   
+   font-family: Arial, sans-serif;
+   font-size: 1.1em;
+   font-weight: bold;
+   
    z-index: 55;  
+}
+
+#createHero label {
+    display: inline-block;
+    vertical-align: top;
+    width: 150px;
+}
+
+#createHero input, #createHero label {
+    margin-top: 12px;
+}
+
+#paraPoints {
+    margin: 20px 0;
 }

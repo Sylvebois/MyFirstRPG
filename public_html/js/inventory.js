@@ -8,7 +8,6 @@ invImage.src = 'images/inv.png';
 function showInv(joueur, imgItems, numItems){
     var cmp = 0;
     var xCoteGauche = (TILESIZE*COLTILECOUNT)/4;
-    var xCoteDroit = (TILESIZE*COLTILECOUNT)/2 + 5*TILESIZE;
     
     uCanvas.className = '';
 

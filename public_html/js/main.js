@@ -8,6 +8,7 @@ var COLTILECOUNT = 32;        // Nombre de tuiles qu'on met sur la largeur
 
 var DIFFICULTY = setDifficulty();
 
+//Récupère les canvas et leur contexte
 var tCanvas = document.getElementById('terrain');
 var iCanvas = document.getElementById('artefact');
 var eCanvas = document.getElementById('enemies');
@@ -22,6 +23,7 @@ var jcxt = jCanvas.getContext('2d');
 var fcxt = fCanvas.getContext('2d');
 var ucxt = uCanvas.getContext('2d');
 
+//Récupère le formulaire de création du héros
 var createForm = document.getElementById('createHero');
 
 //Assure une comptabilité avec IE pour la gestion des évènements
@@ -80,16 +82,26 @@ function showSpecsOnForm() {
     var ht = document.getElementById('sante');
     var points = 50-st.value-dx.value-iq.value-ht.value;
     
-    document.getElementById('showSt').innerHTML = st.value;
-    document.getElementById('showDx').innerHTML = dx.value;
-    document.getElementById('showIq').innerHTML = iq.value;
-    document.getElementById('showHt').innerHTML = ht.value;
-    document.getElementById('nbPoints').innerHTML = points;
+    document.getElementById('showSt').innerHTML = ' ' + st.value;
+    document.getElementById('showDx').innerHTML = ' ' + dx.value;
+    document.getElementById('showIq').innerHTML = ' ' + iq.value;
+    document.getElementById('showHt').innerHTML = ' ' + ht.value;
+    document.getElementById('nbPoints').innerHTML = ' ' + points;
     
     st.max = ((50-dx.value-iq.value-ht.value) <= 0)? 1 : (50-dx.value-iq.value-ht.value);
     dx.max = ((50-st.value-iq.value-ht.value) <= 0)? 1 : (50-st.value-iq.value-ht.value);
     iq.max = ((50-dx.value-st.value-ht.value) <= 0)? 1 : (50-dx.value-st.value-ht.value);
-    ht.max = ((50-dx.value-iq.value-st.value) <= 0)? 1 : (50-dx.value-iq.value-st.value);    
+    ht.max = ((50-dx.value-iq.value-st.value) <= 0)? 1 : (50-dx.value-iq.value-st.value);
+    
+    if(points > 0) {
+        document.getElementById('nbPoints').className = 'green';
+    }
+    else if (points < 0 || isNaN(points)) {
+        document.getElementById('nbPoints').className = 'red';
+    }
+    else {
+        document.getElementById('nbPoints').className = '';
+    }
 }
 
 //Valide et masque le formulaire de création
@@ -99,14 +111,26 @@ function submitHero() {
     var dx = document.getElementById('dexterite').value;
     var iq = document.getElementById('intellect').value;
     var ht = document.getElementById('sante').value;
+    var total = 50-st-dx-iq-ht;
     
-    hero.name = (nom)? nom : 'Votre Héros';
-    hero.st = st;
-    hero.dx = dx;
-    hero.iq = iq;
-    hero.ht = ht;
-    
-    createForm.className = 'hidden';
+    if(!nom) {
+        alert('Vous devez donner un nom à votre héros');
+    }
+    else if(total > 0) {
+        alert('Vous avez encore des points à distribuer !');
+    }
+    else if (total < 0 || isNaN(total)) {
+        alert('Il y a un petit problème :\n- Trop de points distribués\n- Vous avez entré autre chose que des chiffres\n- ?!?');
+    }
+    else {
+        hero.name = nom;
+        hero.st = st;
+        hero.dx = dx;
+        hero.iq = iq;
+        hero.ht = ht;
+
+        createForm.className = 'hidden';   
+    }
 }
 
 //Test s'il faut afficher le formulaire

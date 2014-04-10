@@ -24,10 +24,10 @@ var ground = [
 
 placeRoom();
 
-var imageNumTiles = 16;       // Nombre de tuiles sur une ligne de notre image
-var tilesetImage = new Image();
-tilesetImage.src = 'images/tileset.png';
-tilesetImage.onload = drawDungeon();
+var groundNumTiles = 16;       // Nombre de tuiles sur une ligne de notre image
+var groundImage = new Image();
+groundImage.src = 'images/tileset.png';
+groundImage.onload = drawDungeon();
 
 
 function Room(x, y, width, height) {
@@ -159,9 +159,9 @@ function drawDungeon() {
         for (var c = 0; c < COLTILECOUNT; c++) {      //on passe sur chaque colonne
 
            var tile = ground[ r ][ c ];
-           var tileRow = (tile / imageNumTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
-           var tileCol = (tile % imageNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la 10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
-           tcxt.drawImage(tilesetImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (c*TILESIZE), (r*TILESIZE), TILESIZE, TILESIZE);
+           var tileRow = (tile / groundNumTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
+           var tileCol = (tile % groundNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la 10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
+           tcxt.drawImage(groundImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (c*TILESIZE), (r*TILESIZE), TILESIZE, TILESIZE);
         }
     }
 }
