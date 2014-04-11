@@ -27,7 +27,11 @@ placeRoom();
 var groundNumTiles = 16;       // Nombre de tuiles sur une ligne de notre image
 var groundImage = new Image();
 groundImage.src = 'images/tileset.png';
-groundImage.onload = drawDungeon();
+groundImage.onload = function() {       //Permet de s'assurer que l'image est bien chargée
+    drawDungeon();
+};
+
+
 
 
 function Room(x, y, width, height) {

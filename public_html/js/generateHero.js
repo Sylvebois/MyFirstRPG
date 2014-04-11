@@ -8,7 +8,9 @@ var hero = new Hero(posHero[0], posHero[1]);
 var heroesNumTiles = 3;     // Nombre de tuiles sur une ligne de notre image
 var heroesImage = new Image();
 heroesImage.src = 'images/hero.png';
-heroesImage.onload = drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
+heroesImage.onload = function() {       //Permet de s'assurer que l'image est bien chargée
+    drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
+};
 
 function Hero(x, y) {
     this.direction = {

@@ -29,7 +29,9 @@ var item = [
 var itemsNumTiles = 5;     // Nombre de tuiles sur une ligne de notre image
 var itemsImage = new Image();
 itemsImage.src = 'images/items.png';
-itemsImage.onload = placeItem(hero.x, hero.y, ground, DIFFICULTY);
+itemsImage.onload = function(){         //Permet de s'assurer que l'image est bien chargée
+    placeItem(hero.x, hero.y, ground, DIFFICULTY);
+};
 
 function Artefact(abs, ord) {
     var type = ['Zéro', 'Boomerang', 'Arc', 'Pistolet', 'Fléau', 'Epée', 'Livre', 'Lance', 'Descendre', 'Monter'];
