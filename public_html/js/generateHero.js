@@ -47,8 +47,8 @@ function Hero(x, y) {
         'JAMBES': 0,
         'PIEDS' : 0,
         'MAING' : 0,
-        'MAIND' : 0,
-    }
+        'MAIND' : 0
+    };
     
     //Caractéristiques avec les équipements
     this.endSt = this.st;
@@ -72,73 +72,76 @@ function Hero(x, y) {
     };
 }
 
+//Gestion des déplacements et des fenêtres d'info concernant le héros
 addEvent(window, 'keydown', function(e) {    
     jcxt.clearRect(0, 0, jCanvas.width, jCanvas.height);
     
-    //Gestion des déplacements du hero (mouvements, brouillard, rencontres ...)
-    switch(e.keyCode) {
-        case 13:            //Enter key
-            if(!createForm.className) {
-                submitHero();
-            }
-            drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
-            break;
-        case 37:            //left
-            if(hero.x > 0 && ground[hero.y][hero.x-1] !== 130 && enemies[hero.y][hero.x-1] === 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
-                hero.x -= 1;
-            }
-            else if(hero.x > 0 && enemies[hero.y][hero.x-1] !== 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
-                fight(hero.x-1, hero.y, hero);
-            }
-            drawIt(jcxt, heroesImage, hero, hero.direction['GAUCHE'], heroesNumTiles);
-            delFog(hero.x, hero.y, hero.vis);
-            getItem(hero);
-            break;
-        case 38:            //up
-            if(hero.y > 0 && ground[hero.y-1][hero.x] !== 130 && enemies[hero.y-1][hero.x] === 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
-                hero.y -= 1;
-            }
-            else if(hero.y > 0 && enemies[hero.y-1][hero.x] !== 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
-                fight(hero.x, hero.y-1, hero);
-            }
-            drawIt(jcxt, heroesImage, hero, hero.direction['HAUT'], heroesNumTiles);
-            delFog(hero.x, hero.y, hero.vis);
-            getItem(hero);
-            break;
-        case 39:            //right
-            if(hero.x < COLTILECOUNT-1 && ground[hero.y][hero.x+1] !== 130 && enemies[hero.y][hero.x+1] === 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
-                hero.x += 1;
-            }
-            else if(hero.x < COLTILECOUNT-1 && enemies[hero.y][hero.x+1] !== 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
-                fight(hero.x+1, hero.y, hero);
-            }
-            drawIt(jcxt, heroesImage, hero, hero.direction['DROITE'], heroesNumTiles);
-            delFog(hero.x, hero.y, hero.vis);
-            getItem(hero);
-            break;
-        case 40:            //down
-            if(hero.y < ROWTILECOUNT-1 && ground[hero.y+1][hero.x] !== 130 && enemies[hero.y+1][hero.x] === 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
-                hero.y += 1;
-            }
-            else if(hero.y < ROWTILECOUNT-1 && enemies[hero.y+1][hero.x] !== 0 && uCanvas.className === 'hidden' && createForm.className === 'hidden') {
-                fight(hero.x, hero.y+1, hero);
-            }
-            drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
-            delFog(hero.x, hero.y, hero.vis);
-            getItem(hero);
-            break;
-        case 73:            //Inventory
-            if(uCanvas.className === 'hidden' && createForm.className === 'hidden') {
+    if(!createForm.className) {
+        if(e.keyCode === 13) {
+            submitHero();
+        }
+        drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
+    }
+    else if(!uCanvas.className) {
+        if(e.keyCode === 73) {
+            hideInv();   
+        }
+        drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
+    }
+    else {
+        switch(e.keyCode) {
+           case 37:            //left
+               if(hero.x > 0 && ground[hero.y][hero.x-1] !== 130 && enemies[hero.y][hero.x-1] === 0) {
+                   hero.x -= 1;
+               }
+               else if(hero.x > 0 && enemies[hero.y][hero.x-1] !== 0) {
+                   fight(hero.x-1, hero.y, hero);
+               }
+               drawIt(jcxt, heroesImage, hero, hero.direction['GAUCHE'], heroesNumTiles);
+               delFog(hero.x, hero.y, hero.vis);
+               getItem(hero);
+               break;
+           case 38:            //up
+               if(hero.y > 0 && ground[hero.y-1][hero.x] !== 130 && enemies[hero.y-1][hero.x] === 0) {
+                   hero.y -= 1;
+               }
+               else if(hero.y > 0 && enemies[hero.y-1][hero.x] !== 0) {
+                   fight(hero.x, hero.y-1, hero);
+               }
+               drawIt(jcxt, heroesImage, hero, hero.direction['HAUT'], heroesNumTiles);
+               delFog(hero.x, hero.y, hero.vis);
+               getItem(hero);
+               break;
+           case 39:            //right
+               if(hero.x < COLTILECOUNT-1 && ground[hero.y][hero.x+1] !== 130 && enemies[hero.y][hero.x+1] === 0) {
+                   hero.x += 1;
+               }
+               else if(hero.x < COLTILECOUNT-1 && enemies[hero.y][hero.x+1] !== 0) {
+                   fight(hero.x+1, hero.y, hero);
+               }
+               drawIt(jcxt, heroesImage, hero, hero.direction['DROITE'], heroesNumTiles);
+               delFog(hero.x, hero.y, hero.vis);
+               getItem(hero);
+               break;
+           case 40:            //down
+                if(hero.y < ROWTILECOUNT-1 && ground[hero.y+1][hero.x] !== 130 && enemies[hero.y+1][hero.x] === 0) {
+                    hero.y += 1;
+                }
+                else if(hero.y < ROWTILECOUNT-1 && enemies[hero.y+1][hero.x] !== 0) {
+                    fight(hero.x, hero.y+1, hero);
+                }
+                drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
+                delFog(hero.x, hero.y, hero.vis);
+                getItem(hero);
+                break;
+            case 73:            //Inventory
                 showInv(hero, itemsImage, itemsNumTiles);
                 equipIt (hero, itemsImage, itemsNumTiles);
-            }
-            else {
-                hideInv();
-            }
-            drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
-            break;
-        default:
-            drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
-            break;     
+                drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
+                break;
+            default:
+                drawIt(jcxt, heroesImage, hero, hero.direction['BAS'], heroesNumTiles);
+                break;     
+       }   
     }
 });
