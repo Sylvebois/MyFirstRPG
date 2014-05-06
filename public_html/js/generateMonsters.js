@@ -7,38 +7,6 @@
  * 
  */
 
-
-//On cree un tableau vide pour commencer
-var enemies = [
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-]; 
-
-var monstersNumTiles = 3;     // Nombre de tuiles sur une ligne de notre image
-var monstersImage = new Image();
-monstersImage.src = 'images/monsters.png';
-monstersImage.onload = function() {     //Permet de s'assurer que l'image est bien chargée
-    placeMonster(hero.x, hero.y, item, ground, DIFFICULTY);
-};
-
 function Monster(x, y) {
     var type = ['Gobelin', 'Orc', 'Zombie', 'Squelette', 'Démon', 'Naga'];
     var charPoints = 50;
@@ -123,23 +91,23 @@ function Monster(x, y) {
     
     this.equip = {'MAIND' : 0};
     
-    //Compare son equip['MAIND'] actuelle avec celle au sol, choisit la plus puissante et modifie le nom du monstre
+    //Compare son equip.MAIND actuelle avec celle au sol, choisit la plus puissante et modifie le nom du monstre
     this.compareArme = function(ArmeSol) {
-        if(this.equip['MAIND']) {
-            var totActu = this.equip['MAIND'].st + this.equip['MAIND'].dx + this.equip['MAIND'].iq + this.equip['MAIND'].ht;
+        if(this.equip.MAIND) {
+            var totActu = this.equip.MAIND.st + this.equip.MAIND.dx + this.equip.MAIND.iq + this.equip.MAIND.ht;
             var totSol = ArmeSol.st + ArmeSol.dx + ArmeSol.iq + ArmeSol.ht;
             
             if(totSol > totActu) {   
                 this.calcStat('MAIND', false);
-                this.equip['MAIND'] = ArmeSol;
+                this.equip.MAIND = ArmeSol;
                 this.calcStat('MAIND', true);
             }
         }
         else {
-            this.equip['MAIND'] = ArmeSol;
+            this.equip.MAIND = ArmeSol;
             this.calcStat('MAIND', true);            
         }   
-        this.name = type[this.quelType] + ' équipé d\'un(e) ' + this.equip['MAIND'].name;
+        this.name = type[this.quelType] + ' équipé d\'un(e) ' + this.equip.MAIND.name;
     };
     
     this.calcStat = function(place, equipped) {
@@ -156,42 +124,56 @@ function Monster(x, y) {
             this.endHt -= this.equip[place].ht;     
         }
     };
+    
+    this.prepareCookie = function() {
+        var cookieString = '';
+        var value = [this.quelType, this.st, this.dx, this.iq, this.ht, this.x, this.y];
+        
+        for(var i = 0; i < value.length; i++){
+            cookieString += (i === 0)? '' : ' -- ';
+            cookieString += value[i].toString();    
+        }
+        
+        cookieString += ' -- equip.MAIND:';
+        cookieString += (typeof(this.equip.MAIND) === 'object')? this.equip.MAIND.prepareCookie() : '0';   
+        
+        return cookieString;
+    };
+    
+    this.restore = function(cookie) {
+        var monsterStat = cookie.split(' -- equip.');
+        var monsterTab = monsterStat[0].split(' -- ');
+        var partOfString = '';
+        
+        this.quelType = parseInt(monsterTab[0]);
+        this.st = parseInt(monsterTab[1]);
+        this.dx = parseInt(monsterTab[2]);
+        this.iq = parseInt(monsterTab[3]);
+        this.ht = parseInt(monsterTab[4]);
+        this.x = parseInt(monsterTab[5]);
+        this.y = parseInt(monsterTab[6]);
+
+        partOfString = getPartOfString(monsterStat[1], 'MAIND:');
+        if(partOfString === '0') {
+            this.name = type[this.quelType] + ' désarmé';   
+        }
+        else {
+            this.equip.MAIND = new Artefact(0, 0);
+            this.equip.MAIND.restore(partOfString);
+            this.name = type[this.quelType] + ' équipé d\'un(e) ' + this.equip.MAIND.name;           
+        }
+    };   
 }
 
 //Place un certain nombre d'items en fonction de la taille du donjon et de la position de départ du héros
-function placeMonster(x, y, avoidI, tabFree, difficulty) {
-    var hard = 1;
-    var cmp = 0;
-    var nbMonsters = 0;
+function placeMonster(xHero, yHero, avoidI, tabFree, difficulty) {
     var coord = [0,0];
-    
-    switch(difficulty) {
-        case 'easy' :
-            hard = 0.5;
-            break;
-        case 'normal' :
-            hard = 1;
-            break;
-        case 'hard' :
-            hard = 1.5;
-            break;
-        case 'extreme' :
-            hard = 2;
-            break;
-    }
-    
-    for(var i = tabFree.length-1; i >= 0; i--) {
-        for(var j = tabFree[i].length-1; j >= 0; j--) {
-            (tabFree[i][j] === 199) ? cmp++ : '';       //compte le nombre de cases disponible
-        }
-    }
-    
-    nbMonsters = Math.ceil(rand(cmp/14, cmp/7, 1)*hard);                    //nombre de monstres à générer en fonction du niveau de difficulté
+    var nbMonsters = nbToGenerate(tabFree, difficulty);
     
     for(var k = nbMonsters; k >= 0 ; k--) {    
         do {
             coord = placeIt();
-        }while(coord === x && coord[1] === y || avoidI[coord[1]][coord[0]] || enemies[coord[1]][coord[0]]); //Ne place pas de monstre sous la position de départ du héros ou s'il y a déjà un objet
+        }while((coord[0] === xHero && coord[1] === yHero) || (avoidI[coord[1]][coord[0]]) || (enemies[coord[1]][coord[0]])); //Ne place pas de monstre sous la position de départ du héros ou s'il y a déjà un objet
         
         var tmp = new Monster(coord[0], coord[1]);
         enemies[coord[1]][coord[0]] = tmp;

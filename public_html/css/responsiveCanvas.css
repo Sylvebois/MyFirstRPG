@@ -1,3 +1,7 @@
+body {
+    overflow: hidden;
+}
+
 .hidden {
     display: none;
 }
@@ -21,7 +25,7 @@
  
 .container {
     display: table-cell;
-    vertical-align: middle;
+    vertical-align: top;
 }
  
 .canvas-container {
@@ -70,28 +74,58 @@
 
 /* Formulaire de création du perssonnage */
 #createHero {
-   background: url('../images/scroll.png') no-repeat;
-   padding-top: 90px;
-   padding-left: 150px;
-   height: 100% !important;
-   
-   font-family: Arial, sans-serif;
-   font-size: 1.1em;
-   font-weight: bold;
-   
-   z-index: 55;  
+    background-color: rgba(0,0,0,0);
+    height: 100% !important;
+    font-family: Arial, sans-serif;
+    z-index: 55;  
 }
 
 #createHero label {
     display: inline-block;
     vertical-align: top;
-    width: 150px;
 }
 
-#createHero input, #createHero label {
-    margin-top: 12px;
+/* Adapte le forumlaire en fonction du support */
+@media screen and (min-device-width: 1024px) {
+    #createHero {
+        padding-top: 90px;
+        padding-left: 150px;
+        font-size: 1.1em;
+        font-weight: bold;
+     }
+
+     #createHero label {
+        width: 150px;
+     }
+
+     #createHero input, #createHero label {
+        margin-top: 12px;
+     }
+
+     #paraPoints {
+        margin: 20px 0;
+     }
 }
 
-#paraPoints {
-    margin: 20px 0;
+@media screen and (min-device-width: 480px) and (max-device-width: 1023px) {
+    #createHero {
+        padding-top: 45px;
+        padding-left: 75px;
+     }
+
+     #createHero label {
+        width: 75px;
+     }
+}
+
+@media screen and (max-device-width: 479px) {
+    #createHero {
+        padding-top: 20px;
+        padding-left: 30px;
+        font-size: 1em;
+     }
+
+     #createHero label {
+        width: 75px;
+     }
 }

@@ -1,38 +1,3 @@
-//on rempli le sol avec des tuiles par defaut
-var ground = [
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130],
-    [130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130,130]
-];
-
-placeRoom();
-
-var groundNumTiles = 16;       // Nombre de tuiles sur une ligne de notre image
-var groundImage = new Image();
-groundImage.src = 'images/tileset.png';
-groundImage.onload = function() {       //Permet de s'assurer que l'image est bien chargée
-    drawDungeon();
-};
-
-
-
 
 function Room(x, y, width, height) {
     //coordonnees de depart et d'arrivee de la piece
@@ -59,8 +24,8 @@ function Room(x, y, width, height) {
 }
  
 function placeRoom() {
-    var rooms = new Array();        //Tableau pour stocker les pieces
-    var newCenter = new Array();    //Variable pour tester le centre des pieces
+    var rooms = [];        //Tableau pour stocker les pieces
+    var newCenter = [];    //Variable pour tester le centre des pieces
     var minRoomSize = 2;
     var maxRoomSize = 5;
     var nbRoom = rand(2,6,1);      //Nombre aléatoire de pieces par niveau
@@ -76,7 +41,7 @@ function placeRoom() {
         
         //Test si deux pieces s'entrecoupe
         var failed = false;
-        for (otherRoom in rooms) {
+        for (var otherRoom in rooms) {
             failed = newRoom.intersects(otherRoom);
             if(failed) {
                 break;
@@ -84,7 +49,7 @@ function placeRoom() {
         }
         if (!failed) {
             createRoom(newRoom.x1, newRoom.x2, newRoom.y1, newRoom.y2);
-            var newCenter = newRoom.mid;
+            newCenter = newRoom.mid;
             
             if(rooms.length !== 0) {
                 var prevCenter = rooms[rooms.length-1].mid;
@@ -98,56 +63,53 @@ function placeRoom() {
 
 function createCorridor(oldCoord, newCoord) {
     var midPoint = [];
+    var i = 0;
     
     //Commence aleatoirement par la verticale ou l'horizontale
     if(rand(0,1,1)) {
         midPoint = [newCoord[0], oldCoord[1]];
         
-        //Etape 1 : deplacement horizontal
-        if(oldCoord[0] <= newCoord[0]) {
-            for(var i = oldCoord[0]; i <= newCoord[0]; i++) {
-                ground[oldCoord[1]][i] = 199;
-            }   
-        } else {
-            for(var i = oldCoord[0]; i >= newCoord[0]; i--) {
-                ground[oldCoord[1]][i] = 199;
-            }        
-        }
-        
-        //Etape 2 : deplacement vertical
-        if(midPoint[1] <= newCoord[1]) {
-            for(var i = midPoint[1]; i <= newCoord[1]; i++) {
-                ground[i][midPoint[0]] = 199;
-            }   
-        } else {
-            for(var i = midPoint[1]; i >= newCoord[1]; i--) {
-                ground[i][midPoint[0]] = 199;
-            }         
-        }
-    } else {
+        //Deplacement horizontal puis vertical
+        hMove(oldCoord, newCoord);
+        vMove(midPoint, newCoord);
+    } 
+    else {
         midPoint = [oldCoord[0], newCoord[1]];
         
-        //Etape 1 : deplacement vertical
-        if(oldCoord[1] <= newCoord[1]) {
-            for(var i = oldCoord[1]; i <= newCoord[1]; i++) {
-                ground[i][oldCoord[0]] = 199;
-            }   
-        } else {
-            for(var i = oldCoord[1]; i >= newCoord[1]; i--) {
-                ground[i][oldCoord[0]] = 199;
-            }         
-        }
-        //Etape 2 : deplacement horizontal
-        if(midPoint[0] <= newCoord[0]) {
-            for(var i = midPoint[0]; i <= newCoord[0]; i++) {
-                ground[midPoint[1]][i] = 199;
-            }   
-        } else {
-            for(var i = midPoint[0]; i >= newCoord[0]; i--) {
-                ground[midPoint[1]][i] = 199;
-            }        
-        }
+        //Deplacement vertical puis horizontal
+        vMove(oldCoord, newCoord);
+        hMove(midPoint, newCoord);
     }
+}
+
+function vMove(aCoord, bCoord) {
+    var i = 0;
+    
+    if(aCoord[1] <= bCoord[1]) {
+        for(i = aCoord[1]; i <= bCoord[1]; i++) {
+            ground[i][aCoord[0]] = 199;
+        }   
+    } 
+    else {
+        for(i = aCoord[1]; i >= bCoord[1]; i--) {
+            ground[i][aCoord[0]] = 199;
+        }         
+    }    
+}
+
+function hMove(aCoord, bCoord) {
+    var i = 0;
+    
+    if(aCoord[0] <= bCoord[0]) {
+        for(i = aCoord[0]; i <= bCoord[0]; i++) {
+            ground[aCoord[1]][i] = 199;
+        }   
+    } 
+    else {
+        for(i = aCoord[0]; i >= bCoord[0]; i--) {
+            ground[aCoord[1]][i] = 199;
+        }        
+    }    
 }
 
 function createRoom(x1, x2, y1, y2) {
@@ -161,10 +123,10 @@ function createRoom(x1, x2, y1, y2) {
 function drawDungeon() {
     for (var r = 0; r < ROWTILECOUNT; r++) {         //Sur chaque ligne
         for (var c = 0; c < COLTILECOUNT; c++) {      //on passe sur chaque colonne
-
            var tile = ground[ r ][ c ];
            var tileRow = (tile / groundNumTiles) | 0;  //Bitewise OR operation = Math.floor en plus rapide
            var tileCol = (tile % groundNumTiles) | 0;  //Permet de localiser le tile sur notre image par ex. on veut la 10 --> math.floor(10/16) = 0 et math.floor(10%16) = 10
+           
            tcxt.drawImage(groundImage, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, (c*TILESIZE), (r*TILESIZE), TILESIZE, TILESIZE);
         }
     }

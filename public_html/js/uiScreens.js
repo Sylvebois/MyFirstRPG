@@ -1,26 +1,18 @@
 /* 
- * Affiche et permet de gérer l'inventaire du héros
+ * Affiche et permet de gérer les écrand d'options et d'inventaire du héros
  */
 
-var invImage = new Image();
-invImage.src = 'images/inv.png';
-
+//Affiche l'inventaire
 function showInv(joueur, imgItems, numItems){
     var cmp = 0;
     var xCoteGauche = (TILESIZE*COLTILECOUNT)/4;
+    var tileRow = 0;
+    var tileCol = 0;
     
     uCanvas.className = '';
+    uCanvas.className = 'inventaire';
 
     ucxt.drawImage(invImage, 0, 0, invImage.width, invImage.height, xCoteGauche, TILESIZE, (TILESIZE*COLTILECOUNT)/2, (TILESIZE*ROWTILECOUNT)-(2*TILESIZE));
-    
-    //Dessine les armes dans les slots d'équipement
-    for(valeur in joueur.equip) {
-        if(joueur.equip[valeur]) {
-            var tileRow = (joueur.equip[valeur].quelType / numItems) | 0;
-            var tileCol = (joueur.equip[valeur].quelType % numItems) | 0;
-            ucxt.drawImage(imgItems, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, joueur.equip[valeur].startX , joueur.equip[valeur].startY, 2*TILESIZE, 2*TILESIZE);                      
-        }
-    }
     
     //Dessine les slots de l'inventaire
     for(var j = 4*TILESIZE; j < (TILESIZE*ROWTILECOUNT)/2; j += 2*TILESIZE) {
@@ -32,8 +24,8 @@ function showInv(joueur, imgItems, numItems){
                 ucxt.strokeRect(xCoteGauche + i, (TILESIZE*ROWTILECOUNT)/2 + j, 2*TILESIZE, 2*TILESIZE);
                 
                 if(joueur.inv[cmp]){
-                    var tileRow = (joueur.inv[cmp].quelType / numItems) | 0;
-                    var tileCol = (joueur.inv[cmp].quelType % numItems) | 0;
+                    tileRow = (joueur.inv[cmp].quelType / numItems) | 0;
+                    tileCol = (joueur.inv[cmp].quelType % numItems) | 0;
                     ucxt.drawImage(imgItems, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, xCoteGauche + i, (TILESIZE*ROWTILECOUNT)/2 + j, 2*TILESIZE, 2*TILESIZE);                    
                     
                     joueur.inv[cmp].startX = xCoteGauche + i;
@@ -46,12 +38,17 @@ function showInv(joueur, imgItems, numItems){
             }
         }    
     }
+    
+    //Dessine les armes dans les slots d'équipement
+    for(var valeur in joueur.equip) {
+        if(joueur.equip[valeur]) {
+            tileRow = (joueur.equip[valeur].quelType / numItems) | 0;
+            tileCol = (joueur.equip[valeur].quelType % numItems) | 0;
+            ucxt.drawImage(imgItems, (tileCol*TILESIZE), (tileRow*TILESIZE), TILESIZE, TILESIZE, joueur.equip[valeur].startX , joueur.equip[valeur].startY, 2*TILESIZE, 2*TILESIZE);                      
+        }
+    }
 }
 
-function hideInv() {
-    uCanvas.className = 'hidden'; 
-    ucxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
-}
 
 //Gestion du drag'n'drop pour équiper les items
 function equipIt (joueur, imgItems, numItems) {    
@@ -65,7 +62,7 @@ function equipIt (joueur, imgItems, numItems) {
         var posX = (e.clientX - dim[2]) * dim[0];
         var posY = (e.clientY - dim[3]) * dim[1]; 
         
-        document.getElementById('test').innerHTML = 'dim[0] = ' + dim[0] + ' - dim[1] = ' + dim[1] + ' - dim[2] = ' + dim[2] + ' - dim[3] = ' + dim[3];
+        //document.getElementById('test').innerHTML = 'dim[0] = ' + dim[0] + ' - dim[1] = ' + dim[1] + ' - dim[2] = ' + dim[2] + ' - dim[3] = ' + dim[3];
         
         //Si on clique dans la zone correspondant à un slot de l'inventaire et qu'il y a un objet 
         for (var i = 0 ; i < joueur.inv.length ; i++) {
@@ -78,8 +75,9 @@ function equipIt (joueur, imgItems, numItems) {
                 }
             }
         }
+        
         //Si on clique dans la zone correspondant à un slot d'équipement et qu'il y a un objet 
-        for (valeur in joueur.equip) {
+        for (var valeur in joueur.equip) {
             if(!storage.dragging && joueur.equip[valeur]){
                 if(posX > joueur.equip[valeur].startX && posX < joueur.equip[valeur].endX && posY > joueur.equip[valeur].startY && posY < joueur.equip[valeur].endY) {
                     storage.dragging = true;
@@ -109,6 +107,7 @@ function equipIt (joueur, imgItems, numItems) {
             'sy2' : (TILESIZE*ROWTILECOUNT)/2 + 6*TILESIZE,
             'ey2' : (TILESIZE*ROWTILECOUNT)/2 + 8*TILESIZE
         };
+        
         var zonesEquip = {
             'COUSX' : (TILESIZE*COLTILECOUNT)/4 + TILESIZE,
             'COUSY' : 2*TILESIZE,
@@ -143,8 +142,8 @@ function equipIt (joueur, imgItems, numItems) {
         
         if(storage.dragging) {
             //Si on lache l'objet dans une zone d'inventaire
-            if( posX > zoneInv['sx1'] && posX < zoneInv['ex1'] && posY > zoneInv['sy1'] && posY < zoneInv['ey1'] ||
-                posX > zoneInv['sx2'] && posX < zoneInv['ex2'] && posY > zoneInv['sy2'] && posY < zoneInv['ey2']) {
+            if( posX > zoneInv.sx1 && posX < zoneInv.ex1 && posY > zoneInv.sy1 && posY < zoneInv.ey1 ||
+                posX > zoneInv.sx2 && posX < zoneInv.ex2 && posY > zoneInv.sy2 && posY < zoneInv.ey2) {
             
                 if(!takeIt(storage.artefact, joueur)) {
                     alert('Plus de place dans l\'inventaire, action annulée');
@@ -155,7 +154,7 @@ function equipIt (joueur, imgItems, numItems) {
             }  
             
             //Si on lache l'objet dans un slot d'équipement
-            for(valeur in joueur.equip) {
+            for(var valeur in joueur.equip) {
                 if(posX > zonesEquip[valeur + 'SX'] && posX < zonesEquip[valeur + 'EX'] && posY > zonesEquip[valeur + 'SY'] && posY < zonesEquip[valeur + 'EY']){  
                     if(!joueur.equip[valeur]) {
                         if(joueur.endHt + storage.artefact.ht > 0) {
@@ -164,7 +163,7 @@ function equipIt (joueur, imgItems, numItems) {
                             joueur.equip[valeur].endX = zonesEquip[valeur + 'EX'];
                             joueur.equip[valeur].startY = zonesEquip[valeur + 'SY'];
                             joueur.equip[valeur].endY = zonesEquip[valeur + 'EY'];
-                            joueur.calcStat(valeur, true);   
+                            joueur.calcStat(valeur, true);
                         }
                         else {
                             alert('Cela ne semble pas être une bonne idée ...');
@@ -204,6 +203,8 @@ function equipIt (joueur, imgItems, numItems) {
         
         ucxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
         showInv(joueur, imgItems, numItems);
+        
+       document.getElementById('test').innerHTML = 'Points de vie = ' + joueur.endHt;
     });
 
     addEvent(document, 'mousemove', function(e) {
@@ -222,20 +223,7 @@ function equipIt (joueur, imgItems, numItems) {
     });
 }
 
-//Récupère les infos de dimensions pour la gestion de l'inventaire
-function getDim() {
-    var wrapper = document.getElementsByClassName('wrapper')[0];
-    var container = document.getElementsByClassName('container')[0];
-    var canvasContainer = document.getElementsByClassName('canvas-container')[0];
+//A FAIRE !!! -- Transfert de l'inventaire vers la map -- A FAIRE !!!
+function dropIt() {
     
-    var coefWidth = 1024/canvasContainer.offsetWidth;
-    var coefHeight = 645/canvasContainer.offsetHeight;
-    
-    var totalOffsetX = canvasContainer.offsetLeft + container.offsetLeft + wrapper.offsetLeft;
-    var totalOffsetY = canvasContainer.offsetTop + container.offsetTop + wrapper.offsetTop;
-    
-    var result = [coefWidth, coefHeight, totalOffsetX, totalOffsetY];
-    
-    return result;
 }
-

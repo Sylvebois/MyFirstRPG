@@ -2,37 +2,6 @@
  * Placement aléatoire des items
  */
 
-//On cree un tableau vide pour commencer
-var item = [
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-]; 
-
-var itemsNumTiles = 5;     // Nombre de tuiles sur une ligne de notre image
-var itemsImage = new Image();
-itemsImage.src = 'images/items.png';
-itemsImage.onload = function(){         //Permet de s'assurer que l'image est bien chargée
-    placeItem(hero.x, hero.y, ground, DIFFICULTY);
-};
-
 function Artefact(abs, ord) {
     var type = ['Zéro', 'Boomerang', 'Arc', 'Pistolet', 'Fléau', 'Epée', 'Livre', 'Lance', 'Descendre', 'Monter'];
     var primCar = ['de force', 'de dextérité', 'd\'intelligence', 'de santé'];
@@ -250,52 +219,61 @@ function Artefact(abs, ord) {
     else if(this.quelType > 0 && this.quelType <= 7) {
         this.equip = 'MAIND';
     }
+    
+    this.prepareCookie = function() {
+        var cookieString = '';
+        var value = [this.quelType, this.quelSpec, this.quelQual, this.st, this.dx, this.iq, this.ht, this.x, this.y, this.startX, this.startY, this.endX, this.endY];
+        
+        for(var i = 0; i < value.length; i++){
+            cookieString += (i === 0)? '' : ' -- ';
+            cookieString += value[i].toString();   
+        }
+        
+        return cookieString;
+    };
+    
+    this.restore = function(cookie) {
+        var itemTab = cookie.split(' -- ');
+        
+        this.quelType = parseInt(itemTab[0]);
+        this.quelSpec = parseInt(itemTab[1]);
+        this.quelQual = parseInt(itemTab[2]);
+        this.st = parseInt(itemTab[3]);
+        this.dx = parseInt(itemTab[4]);
+        this.iq = parseInt(itemTab[5]);
+        this.ht = parseInt(itemTab[6]);
+        this.x = parseInt(itemTab[7]);
+        this.y = parseInt(itemTab[8]);
+        this.startX = parseInt(itemTab[9]);
+        this.startY = parseInt(itemTab[10]);
+        this.endX = parseInt(itemTab[11]);
+        this.endY = parseInt(itemTab[12]);
+        
+        this.name = type[this.quelType] + ' ' + primCar[this.quelSpec] + ' ' + qualite[this.quelQual];
+    };   
 }
 
 //Place un certain nombre d'items en fonction de la taille du donjon et de la position de départ du héros
-function placeItem(x, y, tabFree, difficulty) {
-    var hard = 1;
-    var cmp = 0;
-    var nbItems = 0;
+function placeItem(xHero, yHero, tabFree, difficulty, level) {
     var coord = [0,0];
-
-    switch(difficulty) {
-        case 'easy' :
-            hard = 1.5;
-            break;
-        case 'normal' :
-            hard = 1;
-            break;
-        case 'hard' :
-            hard = 0.5;
-            break;
-        case 'extreme' :
-            hard = 0;
-            break;
-    }
-    
-    for(var i = tabFree.length-1; i >= 0; i--) {
-        for(var j = tabFree[i].length-1; j >= 0; j--) {
-            (tabFree[i][j] === 199) ? cmp++ : '';       //compte le nombre de cases disponible
-        }
-    }
-
-    nbItems = Math.ceil(rand(cmp/14, cmp/7, 1)*hard);                    //nombre d'items à générer en fonction du niveau de difficulté
+    var nbItems = nbToGenerate(tabFree, difficulty);
         
     //Place l'escalier vers le haut (sous le héros) et vers le bas
-    var stairUp = new Artefact(x, y);
-    stairUp.st = 0;
-    stairUp.dx = 0;
-    stairUp.iq = 0;
-    stairUp.ht = 0;
-    stairUp.quelType = 9;
-    item[y][x] = stairUp;
-    
-    drawIt(icxt, itemsImage, stairUp, stairUp.quelType, itemsNumTiles);
+    if(level > 1) {
+        var stairUp = new Artefact(xHero, yHero);
+        stairUp.st = 0;
+        stairUp.dx = 0;
+        stairUp.iq = 0;
+        stairUp.ht = 0;
+        stairUp.quelType = 9;
+        item[yHero][xHero] = stairUp;
+
+        drawIt(icxt, itemsImage, stairUp, stairUp.quelType, itemsNumTiles);   
+    }
     
     do {
         coord = placeIt();
-    }while(coord[0] === x && coord[1] === y || item[coord[1]][coord[0]]);
+    }while((coord[0] === xHero && coord[1] === yHero) || (item[coord[1]][coord[0]]));   //Ne place pas stairDown sous la position de départ du héros ou s'il y a déjà un objet
     
     var stairDown = new Artefact(coord[0], coord[1]);
     stairDown.st = 0;
@@ -309,17 +287,17 @@ function placeItem(x, y, tabFree, difficulty) {
     for(var k = nbItems; k >= 0 ; k--) {    
         do {
             coord = placeIt();
-        }while(coord[0] === x && coord[1] === y || item[coord[1]][coord[0]]); //Ne place pas d'item sous la position de départ du héros ou s'il y a déjà un objet
+        }while((coord[0] === xHero && coord[1] === yHero) || (item[coord[1]][coord[0]])); //Ne place pas d'item sous la position de départ du héros ou s'il y a déjà un objet
         
         var tmp = new Artefact(coord[0], coord[1]);
         item[coord[1]][coord[0]] = tmp;
     
-        drawIt(icxt, itemsImage, tmp, tmp.quelType, itemsNumTiles);;
+        drawIt(icxt, itemsImage, tmp, tmp.quelType, itemsNumTiles);
     }
 }
 
 //Evènement quand le héros arrive sur la case
-function getItem(joueur) {
+function getItem(joueur, level) {
     var tmp = item[joueur.y][joueur.x];
     var texte = 'Vous avez trouvé un(e) ' +  tmp.name + '!\n' +
                 'Force : ' + tmp.st + '\n' +
@@ -335,18 +313,36 @@ function getItem(joueur) {
                 item[joueur.y][joueur.x] = 0;      
             }
             else {
-                alert('Vous n\'avez plus de place pour prendre cet objet');
+                alert('Vous n\'avez plus de place pour prendre cet objet ...');
             }
         }
     }
     else if(tmp.quelType === 8) {
         if(confirm('Voulez-vous descendre au niveau suivant ?')) {
-            window.location.reload();
+            cleanIt(tCanvas, tcxt, 'ground');
+            cleanIt(iCanvas, icxt, 'item');
+            cleanIt(eCanvas, ecxt, 'enemies');
+            cleanIt(jCanvas, jcxt);
+            cleanIt(fCanvas, fcxt, 'fog');
+            cleanIt(uCanvas, ucxt);
+            
+            level++;
+            
+            launch(joueur,level);
         }
     }
     else if(tmp.quelType === 9 && createForm.className === 'hidden') {
         if(confirm('Voulez-vous monter au niveau précédent ?')) {
-            window.location.reload();    
+            cleanIt(tCanvas, tcxt, 'ground');
+            cleanIt(iCanvas, icxt, 'item');
+            cleanIt(eCanvas, ecxt, 'enemies');
+            cleanIt(jCanvas, jcxt);
+            cleanIt(fCanvas, fcxt, 'fog');
+            cleanIt(uCanvas, ucxt);
+            
+            level--;
+            
+            load(joueur,level);
         }
     }
 }
