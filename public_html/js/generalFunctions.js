@@ -176,11 +176,8 @@ function launch(hero, level) {
     
     //5. Les ennemis
     placeMonster(hero.x, hero.y, item, ground, difficulty);
-
-    if(!controlKeysAdded) {
-        addEvent(window, 'keydown', function(e){
-            controlKeys(e, hero, level);
-            controlKeysAdded = true;
-        });
-    }
+    
+    controlKeys.hero = hero;
+    controlKeys.level = level;
+    addEvent(window, 'keydown', controlKeys);
 }

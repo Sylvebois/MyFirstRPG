@@ -60,6 +60,26 @@ function Hero(x, y) {
         }
     };
     
+    this.resetValues = function() {
+        this.name = 'ERREUR';
+        this.level = 1;
+        this.st = 15;
+        this.dx = 15;
+        this.iq = 10;
+        this.ht = 10;
+        this.x = 0;
+        this.y = 0;
+        this.vis = 2;
+        
+        for(var i = this.inv.lenght-1; i >= 0; i--){
+            this.inv[i] = 0;
+        }
+        
+        for(var value in this.equip){
+            this.equip[value] = 0;
+        }
+    }
+    
     this.createCookie = function() {
         var cookieString = 'heroStat = ';
         var value = [this.name, this.level, this.st, this.dx, this.iq, this.ht, this.x, this.y, this.vis];
@@ -117,73 +137,81 @@ function Hero(x, y) {
 }
 
 //Gestion des déplacements et des fenêtres d'info concernant le héros
-function controlKeys(e, hero, level){
-    if(uCanvas.className === 'inventaire') {
-        if(e.keyCode === 73 || e.keyCode === 27) {
-            cleanIt(uCanvas, ucxt);   
+var controlKeys = {
+    'hero' : '',
+    'level' : 0,
+    handleEvent: function(e){        
+        if(uCanvas.className === 'inventaire') {
+            if(e.keyCode === 73 || e.keyCode === 27) {
+                cleanIt(uCanvas, ucxt);   
+            }
         }
-    }
-    else if(uCanvas.className === 'options') {
-        if(e.keyCode === 79 || e.keyCode === 27) {
-            cleanIt(uCanvas, ucxt);   
+        else if(uCanvas.className === 'options') {
+            if(e.keyCode === 79 || e.keyCode === 27) {
+                cleanIt(uCanvas, ucxt);   
+            }
         }
-    }
-    else {
-        jcxt.clearRect(0, 0, jCanvas.width, jCanvas.height);
+        else {
+            jcxt.clearRect(0, 0, jCanvas.width, jCanvas.height);
 
-        switch(e.keyCode) {
-           case 37:            //left
-               if(hero.x > 0 && ground[hero.y][hero.x-1] !== 130 && enemies[hero.y][hero.x-1] === 0) {
-                   hero.x -= 1;
-               }
-               else if(hero.x > 0 && enemies[hero.y][hero.x-1] !== 0) {
-                   fight(hero.x-1, hero.y, hero);
-               }
-               drawIt(jcxt, heroesImage, hero, hero.direction.GAUCHE, heroesNumTiles);
-               delFog(hero.x, hero.y, hero.vis);
-               getItem(hero, level);
-               break;
-           case 38:            //up
-               if(hero.y > 0 && ground[hero.y-1][hero.x] !== 130 && enemies[hero.y-1][hero.x] === 0) {
-                   hero.y -= 1;
-               }
-               else if(hero.y > 0 && enemies[hero.y-1][hero.x] !== 0) {
-                   fight(hero.x, hero.y-1, hero);
-               }
-               drawIt(jcxt, heroesImage, hero, hero.direction.HAUT, heroesNumTiles);
-               delFog(hero.x, hero.y, hero.vis);
-               getItem(hero, level);
-               break;
-           case 39:            //right
-               if(hero.x < COLTILECOUNT-1 && ground[hero.y][hero.x+1] !== 130 && enemies[hero.y][hero.x+1] === 0) {
-                   hero.x += 1;
-               }
-               else if(hero.x < COLTILECOUNT-1 && enemies[hero.y][hero.x+1] !== 0) {
-                   fight(hero.x+1, hero.y, hero);
-               }
-               drawIt(jcxt, heroesImage, hero, hero.direction.DROITE, heroesNumTiles);
-               delFog(hero.x, hero.y, hero.vis);
-               getItem(hero, level);
-               break;
-           case 40:            //down
-                if(hero.y < ROWTILECOUNT-1 && ground[hero.y+1][hero.x] !== 130 && enemies[hero.y+1][hero.x] === 0) {
-                    hero.y += 1;
-                }
-                else if(hero.y < ROWTILECOUNT-1 && enemies[hero.y+1][hero.x] !== 0) {
-                    fight(hero.x, hero.y+1, hero);
-                }
-                drawIt(jcxt, heroesImage, hero, hero.direction.BAS, heroesNumTiles);
-                delFog(hero.x, hero.y, hero.vis);
-                getItem(hero, level);
-                break;
-            case 73:            //inventory
-                showInv(hero, itemsImage, itemsNumTiles);
-                equipIt(hero, itemsImage, itemsNumTiles);
-                drawIt(jcxt, heroesImage, hero, hero.direction.BAS, heroesNumTiles);
-                break;
-            default:
-                drawIt(jcxt, heroesImage, hero, hero.direction.BAS, heroesNumTiles);
-                break;     
-       }   
+            switch(e.keyCode) {
+               case 37:            //left
+                   if(this.hero.x > 0 && ground[this.hero.y][this.hero.x-1] !== 130 && enemies[this.hero.y][this.hero.x-1] === 0) {
+                       this.hero.x -= 1;
+                   }
+                   else if(this.hero.x > 0 && enemies[this.hero.y][this.hero.x-1] !== 0) {
+                       fight(this.hero.x-1, this.hero.y, hero);
+                   }
+                   drawIt(jcxt, heroesImage, this.hero, this.hero.direction.GAUCHE, heroesNumTiles);
+                   delFog(this.hero.x, this.hero.y, this.hero.vis);
+                   getItem(this.hero, this.level);
+                   break;
+               case 38:            //up
+                   if(this.hero.y > 0 && ground[this.hero.y-1][this.hero.x] !== 130 && enemies[this.hero.y-1][this.hero.x] === 0) {
+                       this.hero.y -= 1;
+                   }
+                   else if(this.hero.y > 0 && enemies[this.hero.y-1][this.hero.x] !== 0) {
+                       fight(this.hero.x, this.hero.y-1, hero);
+                   }
+                   drawIt(jcxt, heroesImage, this.hero, this.hero.direction.HAUT, heroesNumTiles);
+                   delFog(this.hero.x, this.hero.y, this.hero.vis);
+                   getItem(this.hero, this.level);
+                   break;
+               case 39:            //right
+                   if(this.hero.x < COLTILECOUNT-1 && ground[this.hero.y][this.hero.x+1] !== 130 && enemies[this.hero.y][this.hero.x+1] === 0) {
+                       this.hero.x += 1;
+                   }
+                   else if(this.hero.x < COLTILECOUNT-1 && enemies[this.hero.y][this.hero.x+1] !== 0) {
+                       fight(this.hero.x+1, this.hero.y, hero);
+                   }
+                   drawIt(jcxt, heroesImage, this.hero, this.hero.direction.DROITE, heroesNumTiles);
+                   delFog(this.hero.x, this.hero.y, this.hero.vis);
+                   getItem(this.hero, this.level);
+                   break;
+               case 40:            //down
+                    if(this.hero.y < ROWTILECOUNT-1 && ground[this.hero.y+1][this.hero.x] !== 130 && enemies[this.hero.y+1][this.hero.x] === 0) {
+                        this.hero.y += 1;
+                    }
+                    else if(this.hero.y < ROWTILECOUNT-1 && enemies[this.hero.y+1][this.hero.x] !== 0) {
+                        fight(this.hero.x, this.hero.y+1, hero);
+                    }
+                    drawIt(jcxt, heroesImage, this.hero, this.hero.direction.BAS, heroesNumTiles);
+                    delFog(this.hero.x, this.hero.y, this.hero.vis);
+                    getItem(this.hero, this.level);
+                    break;
+                case 73:            //inventory
+                    showInv(this.hero, itemsImage, itemsNumTiles);
+                    manageInv(this.hero, itemsImage, itemsNumTiles);
+                    drawIt(jcxt, heroesImage, this.hero, this.hero.direction.BAS, heroesNumTiles);
+                    break;
+                case 27:
+                case 79:            //options
+                    showOpt(this.hero);
+                    drawIt(jcxt, heroesImage, this.hero, this.hero.direction.BAS, heroesNumTiles);
+                default:
+                    drawIt(jcxt, heroesImage, this.hero, this.hero.direction.BAS, heroesNumTiles);
+                    break;     
+           }   
+        }
     }
-}
+};

@@ -331,7 +331,7 @@ function getItem(joueur, level) {
             launch(joueur,level);
         }
     }
-    else if(tmp.quelType === 9 && createForm.className === 'hidden') {
+    else if(tmp.quelType === 9 && document.getElementById('createHero').className === 'hidden') {
         if(confirm('Voulez-vous monter au niveau précédent ?')) {
             cleanIt(tCanvas, tcxt, 'ground');
             cleanIt(iCanvas, icxt, 'item');

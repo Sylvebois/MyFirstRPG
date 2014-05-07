@@ -1,5 +1,5 @@
 /* 
- * Affiche et permet de gérer les écrand d'options et d'inventaire du héros
+ * Affiche et permet de gérer les ecrans d'options et d'inventaire du héros
  */
 
 //Affiche l'inventaire
@@ -39,6 +39,9 @@ function showInv(joueur, imgItems, numItems){
         }    
     }
     
+    //Dessine le slot pour lacher un item
+    ucxt.strokeRect(21*TILESIZE, 16*TILESIZE, 2*TILESIZE, 2*TILESIZE);
+    
     //Dessine les armes dans les slots d'équipement
     for(var valeur in joueur.equip) {
         if(joueur.equip[valeur]) {
@@ -49,20 +52,18 @@ function showInv(joueur, imgItems, numItems){
     }
 }
 
-
 //Gestion du drag'n'drop pour équiper les items
-function equipIt (joueur, imgItems, numItems) {    
-    var storage = {};
-    storage.artefact = 0;
-    storage.origin = '';
-    storage.dragging = false;
+function manageInv (joueur, imgItems, numItems) {    
+    var storage = {
+        'artefact' : 0,
+        'origin' : '',
+        'dragging' : false    
+    };
     
     addEvent(uCanvas, 'mousedown', function(e) {
         var dim = getDim();
         var posX = (e.clientX - dim[2]) * dim[0];
         var posY = (e.clientY - dim[3]) * dim[1]; 
-        
-        //document.getElementById('test').innerHTML = 'dim[0] = ' + dim[0] + ' - dim[1] = ' + dim[1] + ' - dim[2] = ' + dim[2] + ' - dim[3] = ' + dim[3];
         
         //Si on clique dans la zone correspondant à un slot de l'inventaire et qu'il y a un objet 
         for (var i = 0 ; i < joueur.inv.length ; i++) {
@@ -95,7 +96,14 @@ function equipIt (joueur, imgItems, numItems) {
         var posX = (e.clientX - dim[2]) * dim[0];
         var posY = (e.clientY - dim[3]) * dim[1]; 
         
-        var vide = true;
+        var wrongPlace = true;
+        
+        var dropZone = {
+            'sx' : 21*TILESIZE,
+            'ex' : 23*TILESIZE,
+            'sy' : 16*TILESIZE,
+            'ey' : 18*TILESIZE
+        };
         
         var zoneInv = {
             'sx1' : (TILESIZE*COLTILECOUNT)/4 + TILESIZE,
@@ -139,8 +147,7 @@ function equipIt (joueur, imgItems, numItems) {
             'PIEDSEY' : 13*TILESIZE
         };
         
-        
-        if(storage.dragging) {
+        if(storage.dragging) {            
             //Si on lache l'objet dans une zone d'inventaire
             if( posX > zoneInv.sx1 && posX < zoneInv.ex1 && posY > zoneInv.sy1 && posY < zoneInv.ey1 ||
                 posX > zoneInv.sx2 && posX < zoneInv.ex2 && posY > zoneInv.sy2 && posY < zoneInv.ey2) {
@@ -150,8 +157,18 @@ function equipIt (joueur, imgItems, numItems) {
                     joueur.equip[storage.origin] = storage.artefact;
                 }
                                 
-                vide = false;
+                wrongPlace = false;
             }  
+            
+            //Si on veut sortir l'objet de son inventaire
+            else if(posX > dropZone.sx && posX < dropZone.ex && posY > dropZone.sy && posY < dropZone.ey) {
+                if(!dropIt(joueur, storage)) {
+                    alert('Il n\'y a plus de place autour de vous pour déposer cet objet');
+                }
+                else {
+                    wrongPlace = false;
+                }
+            }
             
             //Si on lache l'objet dans un slot d'équipement
             for(var valeur in joueur.equip) {
@@ -181,12 +198,13 @@ function equipIt (joueur, imgItems, numItems) {
                             joueur.calcStat(storage.origin, true);
                         }
                     }
-                    vide = false;
+                    
+                    wrongPlace = false;
                 }
             }
             
             //Si on lache l'objet n'importe où ailleurs
-            if(vide) {
+            if(wrongPlace) {
                 if(storage.origin === 'inv') {
                     takeIt(storage.artefact, joueur);
                 }
@@ -201,10 +219,9 @@ function equipIt (joueur, imgItems, numItems) {
             storage.dragging = false;
         }
         
+        document.getElementById('test').innerHTML = 'endSt = ' + joueur.endSt + ' - endDx = ' + joueur.endDx + '<br />';
         ucxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
         showInv(joueur, imgItems, numItems);
-        
-       document.getElementById('test').innerHTML = 'Points de vie = ' + joueur.endHt;
     });
 
     addEvent(document, 'mousemove', function(e) {
@@ -223,7 +240,91 @@ function equipIt (joueur, imgItems, numItems) {
     });
 }
 
-//A FAIRE !!! -- Transfert de l'inventaire vers la map -- A FAIRE !!!
-function dropIt() {
+// Transfert des objets de l'inventaire vers la map
+function dropIt(joueur, storage) {
+    var dropped = false;
     
+    if(!item[joueur.y][joueur.x]) { 
+        item[joueur.y][joueur.x] = storage.artefact; 
+        item[joueur.y][joueur.x].x = joueur.x;
+        item[joueur.y][joueur.x].y = joueur.y;
+        
+        drawIt(icxt, itemsImage, item[joueur.y][joueur.x], item[joueur.y][joueur.x].quelType, itemsNumTiles);
+        
+        dropped = true;
+    }
+    else {
+        for(var i = joueur.x+1; i <= joueur.x-1; i--) {
+            for(var j = joueur.y+1; j <= joueur.y-1; j--) {
+                if(!item[j][i]){
+                    item[j][i] = storage.artefact;
+                    item[j][i].x = i;
+                    item[j][i].y = j;
+                    
+                    drawIt(icxt, itemsImage, item[j][i], item[j][i].quelType, itemsNumTiles);
+
+                    dropped = true;
+                    break;
+                }
+            }
+        }      
+    }
+
+    return dropped;
+}
+
+//Affiche les options
+function showOpt(hero) {
+    uCanvas.className = '';
+    uCanvas.className = 'options';
+    
+    ucxt.drawImage(formImage,0,0);
+    
+    ucxt.font = (2*TILESIZE) + 'px Verdana';
+    ucxt.fillText('MyFirstRpg !', (COLTILECOUNT*TILESIZE)/2 - 5*TILESIZE, 5*TILESIZE, 10*TILESIZE);
+    ucxt.fillRect((COLTILECOUNT*TILESIZE)/2 - 5*TILESIZE, 5*TILESIZE + 10 , 10*TILESIZE, 5);
+
+    ucxt.font = TILESIZE + 'px Verdana';
+    ucxt.fillText('Abandonner partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 - 3*TILESIZE, 6*TILESIZE);
+    ucxt.fillText('Sauvegarder partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 - TILESIZE, 6*TILESIZE);
+    ucxt.fillText('Charger partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 + TILESIZE, 6*TILESIZE);
+    
+    var optScreen = {
+        handleEvent: function(e) {
+            var dim = getDim();
+            var posX = (e.clientX - dim[2]) * dim[0];
+            var posY = (e.clientY - dim[3]) * dim[1]; 
+
+            if( posX >= (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 3*TILESIZE &&
+                posY >= (ROWTILECOUNT*TILESIZE)/2 - 4*TILESIZE && posY <= (ROWTILECOUNT*TILESIZE)/2 - 3*TILESIZE) {
+
+                if(confirm('Voulez-vous revenir à l\'écran d\'accueil ?\n(les données non sauvegardées seront perdues)')){
+                    cleanIt(tCanvas, tcxt, 'ground');
+                    cleanIt(iCanvas, icxt, 'item');
+                    cleanIt(eCanvas, ecxt, 'enemies');
+                    cleanIt(jCanvas, jcxt);
+                    cleanIt(fCanvas, fcxt, 'fog');
+                    cleanIt(uCanvas, ucxt);
+
+                    removeEvent(uCanvas, 'click', this);
+                    removeEvent(window, 'keydown', controlKeys);
+                    hero.resetValues();
+                    init();   
+                }
+            }
+            else if(posX >= (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 3*TILESIZE &&
+                    posY >= (ROWTILECOUNT*TILESIZE)/2 - 2*TILESIZE && posY <= (ROWTILECOUNT*TILESIZE)/2 - TILESIZE) {
+
+                save();
+            }
+            else if(posX >= (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 3*TILESIZE &&
+                    posY >= (ROWTILECOUNT*TILESIZE)/2 && posY <= (ROWTILECOUNT*TILESIZE)/2 + TILESIZE) {
+
+                removeEvent(uCanvas, 'click', this);
+                load();
+            }
+        }
+    };
+    
+    addEvent(uCanvas, 'click', optScreen);
 }

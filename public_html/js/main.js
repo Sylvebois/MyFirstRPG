@@ -7,8 +7,6 @@ var TILESIZE = 32;            //Dimensions d'une tuile
 var ROWTILECOUNT = 20;        // Nombre de tuiles qu'on met sur la hauteur
 var COLTILECOUNT = 32;        // Nombre de tuiles qu'on met sur la largeur
 
-var controlKeysAdded = false;
-
 //Récupère les canvas et leur contexte
 var tCanvas = document.getElementById('terrain');
 var iCanvas = document.getElementById('artefact');
@@ -144,7 +142,7 @@ var fog = [
 function init() {   
     uCanvas.className = '';
     
-    formImage.onload = function() { //Permet de s'assurer que l'image est bien chargée ?
+    if(formImage.complete){ //Permet de s'assurer que l'image est bien chargée ?
         //Ecran d'accueil : background
         ucxt.drawImage(formImage,0,0);
         
@@ -156,72 +154,99 @@ function init() {
         ucxt.font = TILESIZE + 'px Verdana';
         ucxt.fillText('Nouvelle partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 - TILESIZE, 6*TILESIZE);
         ucxt.fillText('Charger partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 + TILESIZE, 6*TILESIZE);
+    }
+    else {
+        formImage.onload = function() { 
+            //Ecran d'accueil : background
+            ucxt.drawImage(formImage,0,0);
+            
+            //Ecran d'accueil : textes
+            ucxt.font = (2*TILESIZE) + 'px Verdana';
+            ucxt.fillText('MyFirstRpg !', (COLTILECOUNT*TILESIZE)/2 - 5*TILESIZE, 5*TILESIZE, 10*TILESIZE);
+            ucxt.fillRect((COLTILECOUNT*TILESIZE)/2 - 5*TILESIZE, 5*TILESIZE + 10 , 10*TILESIZE, 5);
+
+            ucxt.font = TILESIZE + 'px Verdana';
+            ucxt.fillText('Nouvelle partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 - TILESIZE, 6*TILESIZE);
+            ucxt.fillText('Charger partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 + TILESIZE, 6*TILESIZE);     
+        };
+    }
+    
+
+  
+    var homeScreen = {
+        handleEvent: function(e){
+            var dim = getDim();
+            var posX = (e.clientX - dim[2]) * dim[0];
+            var posY = (e.clientY - dim[3]) * dim[1]; 
+
+            if( posX >= (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 3*TILESIZE &&
+                posY >= (ROWTILECOUNT*TILESIZE)/2 - 2*TILESIZE && posY <= (ROWTILECOUNT*TILESIZE)/2 - TILESIZE) {
+
+                ucxt.clearRect(0, 0, COLTILECOUNT*TILESIZE, ROWTILECOUNT*TILESIZE);
+                removeEvent(uCanvas, 'click', this);
+                start();
+            }
+            else if(posX >= (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 3*TILESIZE &&
+                    posY >= (ROWTILECOUNT*TILESIZE)/2 && posY <= (ROWTILECOUNT*TILESIZE)/2 + TILESIZE) {
+
+                ucxt.clearRect(0, 0, COLTILECOUNT*TILESIZE, ROWTILECOUNT*TILESIZE);
+                removeEvent(uCanvas, 'click', this);
+                load();
+            }    
+        }
     };
     
-    addEvent(uCanvas, 'click', function(e) {
-        var dim = getDim();
-        var posX = (e.clientX - dim[2]) * dim[0];
-        var posY = (e.clientY - dim[3]) * dim[1]; 
-                                                   
-        if( posX >= (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 3*TILESIZE &&
-            posY >= (ROWTILECOUNT*TILESIZE)/2 - 2*TILESIZE && posY <= (ROWTILECOUNT*TILESIZE)/2 - TILESIZE) {
-            
-            ucxt.clearRect(0, 0, COLTILECOUNT*TILESIZE, ROWTILECOUNT*TILESIZE);
-            start();
-        }
-        else if(posX >= (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 3*TILESIZE &&
-                posY >= (ROWTILECOUNT*TILESIZE)/2 && posY <= (ROWTILECOUNT*TILESIZE)/2 + TILESIZE) {
-            
-            ucxt.clearRect(0, 0, COLTILECOUNT*TILESIZE, ROWTILECOUNT*TILESIZE);
-            load();
-        }
-    });
+    addEvent(uCanvas, 'click', homeScreen);
 }
 
 //Demarre une nouvelle partie
 function start() {
     var validation = document.getElementById('submitHero');
     var createForm = document.getElementById('createHero');
-    
-    var hero = new Hero(0,0);
+
+    var hero = new Hero(0,0);       
     var level = 1;
+    
+    var validateForm = {
+        handleEvent: function(e){
+            var nom = document.getElementById('nom').value;
+            var st = document.getElementById('force').value;
+            var dx = document.getElementById('dexterite').value;
+            var iq = document.getElementById('intellect').value;
+            var ht = document.getElementById('sante').value;
+            var total = 50-st-dx-iq-ht;
+
+            if(!nom) {
+                alert('Vous devez donner un nom à votre héros');
+            }
+            else if(total > 0) {
+                alert('Vous avez encore des points à distribuer !');
+            }
+            else if (total < 0 || isNaN(total)) {
+                alert('Il y a un petit problème :\n- Trop de points distribués\n- Vous avez entré autre chose que des chiffres\n- ?!?');
+            }
+            else {
+                hero.name = nom;
+                hero.st = st;
+                hero.dx = dx;
+                hero.iq = iq;
+                hero.ht = ht;
+
+                createForm.className = 'hidden';
+                cleanIt(uCanvas, ucxt);
+                removeEvent(validation, 'click', this);
+
+                launch(hero, level);
+            }    
+        }
+    };
     
     //affiche le formulaire
     ucxt.drawImage(formImage,0,0);
     createForm.className = '';
     
     //Valide les donnees du formulaire -> creation du heros
-    addEvent(validation, 'click', function(e){
-        var nom = document.getElementById('nom').value;
-        var st = document.getElementById('force').value;
-        var dx = document.getElementById('dexterite').value;
-        var iq = document.getElementById('intellect').value;
-        var ht = document.getElementById('sante').value;
-        var total = 50-st-dx-iq-ht;
-
-        if(!nom) {
-            alert('Vous devez donner un nom à votre héros');
-        }
-        else if(total > 0) {
-            alert('Vous avez encore des points à distribuer !');
-        }
-        else if (total < 0 || isNaN(total)) {
-            alert('Il y a un petit problème :\n- Trop de points distribués\n- Vous avez entré autre chose que des chiffres\n- ?!?');
-        }
-        else {
-            hero.name = nom;
-            hero.st = st;
-            hero.dx = dx;
-            hero.iq = iq;
-            hero.ht = ht;
-
-            createForm.className = 'hidden';
-            cleanIt(uCanvas, ucxt);
-            removeEvent(validation, 'click');
-            
-            launch(hero, level);
-        }    
-    });
+    addEvent(validation, 'click', validateForm);
 }
 
 //Charge une ancienne partie
