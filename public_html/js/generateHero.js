@@ -59,27 +59,7 @@ function Hero(x, y) {
             this.endHt -= this.equip[place].ht;     
         }
     };
-    
-    this.resetValues = function() {
-        this.name = 'ERREUR';
-        this.level = 1;
-        this.st = 15;
-        this.dx = 15;
-        this.iq = 10;
-        this.ht = 10;
-        this.x = 0;
-        this.y = 0;
-        this.vis = 2;
         
-        for(var i = this.inv.lenght-1; i >= 0; i--){
-            this.inv[i] = 0;
-        }
-        
-        for(var value in this.equip){
-            this.equip[value] = 0;
-        }
-    }
-    
     this.createCookie = function() {
         var cookieString = 'heroStat = ';
         var value = [this.name, this.level, this.st, this.dx, this.iq, this.ht, this.x, this.y, this.vis];

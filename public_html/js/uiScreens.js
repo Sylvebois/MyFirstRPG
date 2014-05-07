@@ -308,7 +308,6 @@ function showOpt(hero) {
 
                     removeEvent(uCanvas, 'click', this);
                     removeEvent(window, 'keydown', controlKeys);
-                    hero.resetValues();
                     init();   
                 }
             }
