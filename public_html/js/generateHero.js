@@ -60,9 +60,9 @@ function Hero(x, y) {
         }
     };
         
-    this.createCookie = function() {
-        var cookieString = 'heroStat = ';
-        var value = [this.name, this.level, this.st, this.dx, this.iq, this.ht, this.x, this.y, this.vis];
+    this.createCookie = function(lvl) {
+        var cookieString = this.name + '.heroStat.' + lvl + ' = ';
+        var value = [this.level, this.st, this.dx, this.iq, this.ht, this.x, this.y, this.vis];
         
         for(var i = 0; i < value.length; i++){
             cookieString += (i === 0)? '' : ' -- ';
@@ -93,25 +93,41 @@ function Hero(x, y) {
         var heroInv = heroTab[2].split(' -- inv.');
         
         var partOfString = '';
-        var cmp = 0;
+        var cmp = 1;
         
-        this.name = heroStat[0];
-        this.level = parseInt(heroStat[1]);
-        this.st = parseInt(heroStat[2]);
-        this.dx = parseInt(heroStat[3]);
-        this.iq = parseInt(heroStat[4]);
-        this.ht = parseInt(heroStat[5]);
-        this.x = parseInt(heroStat[6]);
-        this.y = parseInt(heroStat[7]);
-        this.vis = parseInt(heroStat[8]);
-        
+        //Statistiques
+        this.level = parseInt(heroStat[0]);
+        this.st = parseInt(heroStat[1]);
+        this.dx = parseInt(heroStat[2]);
+        this.iq = parseInt(heroStat[3]);
+        this.ht = parseInt(heroStat[4]);
+        this.x = parseInt(heroStat[5]);
+        this.y = parseInt(heroStat[6]);
+        this.vis = parseInt(heroStat[7]);
+ 
+        //Equipement
         for(var i in this.equip) {
             partOfString = getPartOfString(heroEquip[cmp], i+':');
-            if(partOfString && partOfString !== '0') {
+            if(partOfString && partOfString !== '0' && partOfString !== '') {
                 this.equip[i] = new Artefact(0, 0);
                 this.equip[i].restore(partOfString);      
             }
+            else {
+                this.equip[i] = 0; 
+            }
             cmp++;
+        }
+        
+        //Inventaire
+        for(var j = 0; j < this.inv.length; j++){
+            partOfString = getPartOfString(heroInv[j+1], j+':');
+            if(partOfString && partOfString !== '0') {
+                this.inv[j] = new Artefact(0, 0);
+                this.inv[j].restore(partOfString);      
+            }
+            else {
+                this.inv[j] = 0; 
+            }
         }
     };
 }
@@ -140,7 +156,7 @@ var controlKeys = {
                        this.hero.x -= 1;
                    }
                    else if(this.hero.x > 0 && enemies[this.hero.y][this.hero.x-1] !== 0) {
-                       fight(this.hero.x-1, this.hero.y, hero);
+                       fight(this.hero.x-1, this.hero.y, this.hero);
                    }
                    drawIt(jcxt, heroesImage, this.hero, this.hero.direction.GAUCHE, heroesNumTiles);
                    delFog(this.hero.x, this.hero.y, this.hero.vis);
@@ -151,7 +167,7 @@ var controlKeys = {
                        this.hero.y -= 1;
                    }
                    else if(this.hero.y > 0 && enemies[this.hero.y-1][this.hero.x] !== 0) {
-                       fight(this.hero.x, this.hero.y-1, hero);
+                       fight(this.hero.x, this.hero.y-1, this.hero);
                    }
                    drawIt(jcxt, heroesImage, this.hero, this.hero.direction.HAUT, heroesNumTiles);
                    delFog(this.hero.x, this.hero.y, this.hero.vis);
@@ -162,7 +178,7 @@ var controlKeys = {
                        this.hero.x += 1;
                    }
                    else if(this.hero.x < COLTILECOUNT-1 && enemies[this.hero.y][this.hero.x+1] !== 0) {
-                       fight(this.hero.x+1, this.hero.y, hero);
+                       fight(this.hero.x+1, this.hero.y, this.hero);
                    }
                    drawIt(jcxt, heroesImage, this.hero, this.hero.direction.DROITE, heroesNumTiles);
                    delFog(this.hero.x, this.hero.y, this.hero.vis);
@@ -173,7 +189,7 @@ var controlKeys = {
                         this.hero.y += 1;
                     }
                     else if(this.hero.y < ROWTILECOUNT-1 && enemies[this.hero.y+1][this.hero.x] !== 0) {
-                        fight(this.hero.x, this.hero.y+1, hero);
+                        fight(this.hero.x, this.hero.y+1, this.hero);
                     }
                     drawIt(jcxt, heroesImage, this.hero, this.hero.direction.BAS, heroesNumTiles);
                     delFog(this.hero.x, this.hero.y, this.hero.vis);
@@ -186,8 +202,9 @@ var controlKeys = {
                     break;
                 case 27:
                 case 79:            //options
-                    showOpt(this.hero);
+                    showOpt(this.level, this.hero);
                     drawIt(jcxt, heroesImage, this.hero, this.hero.direction.BAS, heroesNumTiles);
+                    break;
                 default:
                     drawIt(jcxt, heroesImage, this.hero, this.hero.direction.BAS, heroesNumTiles);
                     break;     

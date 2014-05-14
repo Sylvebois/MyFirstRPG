@@ -2,7 +2,7 @@
  * Création et chargement des cookies du jeu
  */
 
-//Va chercher les infos dans un cookie donné
+//Va chercher les infos dans un cookie donne
 function getCookie(cookieName) {
     var name = cookieName + '=';
     var ca = document.cookie.split(';');
@@ -16,7 +16,7 @@ function getCookie(cookieName) {
     return "";
 }
 
-//Récupère ce qu'il y après partTofind dans un string
+//Recupere ce qu'il y apres partTofind dans un string
 function getPartOfString(theString, partToFind) {
     var c = theString.trim();
     if (c.indexOf(partToFind) === 0) {
@@ -25,9 +25,9 @@ function getPartOfString(theString, partToFind) {
     return '';    
 }
 
-//Récupère le niveau
-function getLvl() {
-    var tmp = getCookie('lvl');
+//Récupere le niveau
+function getLvl(heroName) {
+    var tmp = getCookie(heroName + '.lvl');
     
     if(tmp) {
         return parseInt(tmp);
@@ -38,9 +38,33 @@ function getLvl() {
     }
 }
 
+//Recupere la liste des heros sauvegardes
+function getSavedHeroesName() {
+    var present = false;
+    var tabJoueurs = [];
+    var regex = /^(.+?)\./;
+    var allCookies = document.cookie.split(';');
+    
+    for(var i = 0; i < allCookies.length; i++) {        //Cherche le nom du joueur dans les cookies
+        regex.exec(allCookies[i]);
+        
+        for(var j = 0; j < tabJoueurs.length; j++) {    //Vérifie si le nom est déjà présent dans le tableau
+            if(tabJoueurs[j] === RegExp.$1.trim()) {
+                present = true;
+            }
+        }
+        if(!present) {
+            tabJoueurs.push(RegExp.$1.trim());
+        }
+        present = false;
+    }
+    
+    return tabJoueurs;
+}
+
 //Crée le cookie pour les items
-function setItemsCookie(lvl) {
-    var cookieString = 'items.' + lvl + ' = ';
+function setItemsCookie(lvl, heroName) {
+    var cookieString = heroName + '.items.' + lvl + ' = ';
     var k = 0;
     
     for(var i = 0; i < ROWTILECOUNT; i++) {
@@ -70,19 +94,19 @@ function setItemsCookie(lvl) {
 }
 
 //Récupère et redessine les items au sol
-function restoreItems(lvl) {
-    var getItems = getCookie('items.' + lvl);
+function restoreItems(lvl, heroName) {
+    var getItems = getCookie(heroName + '.items.' + lvl);
     var tabItems = getItems.split(',');
     var partOfString = '';
     var cmp = 0;
     var k = 0;
     
     if(getItems) {   
-        icxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
+//        icxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
  
         for(var i = 0; i < ROWTILECOUNT; i++) {
             for(var j = 0; j < COLTILECOUNT; j++) {
-                if(tabItems[k] === "0") {
+                if(tabItems[k] === '0') {
                     item[i][j] = parseInt(tabItems[k]);
                 }
                 else {
@@ -104,8 +128,8 @@ function restoreItems(lvl) {
 }
 
 //Crée le cookie pour les monstres
-function setMonstersCookie(lvl) {
-    var cookieString = 'monsters.' + lvl + ' = ';
+function setMonstersCookie(lvl, heroName) {
+    var cookieString = heroName + '.monsters.' + lvl + ' = ';
     var k = 0;
     
     for(var i = 0; i < ROWTILECOUNT; i++) {
@@ -135,15 +159,15 @@ function setMonstersCookie(lvl) {
 }
 
 //Récupère et redessine les ennemis
-function restoreEnemies(lvl) {
-    var getMonsters = getCookie('monsters.' + lvl);
+function restoreEnemies(lvl, heroName) {
+    var getMonsters = getCookie(heroName + '.monsters.' + lvl);
     var tabMonsters = getMonsters.split(',');
     var partOfString = '';
     var cmp = 0;
     var k = 0;
     
     if(getMonsters) {   
-        ecxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
+//        ecxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
  
         for(var i = 0; i < ROWTILECOUNT; i++) {
             for(var j = 0; j < COLTILECOUNT; j++) {
@@ -168,19 +192,35 @@ function restoreEnemies(lvl) {
     }    
 }
 
-//Récupère et redessine le niveau et le brouillard
-function restoreGround(lvl) {
-    var getGround = getCookie('ground.' + lvl);
+//Recupere et redessine le hero
+function restoreHero(lvl, heroName) {
+    var hero = new Hero(0,0);
+    var getHero = getCookie(heroName + '.heroStat.' + lvl);    
+    
+    if(getHero) {
+        hero.restore(getHero);   
+    }
+    else {
+        alert('Erreur lors du chargement du héros !');
+    }
+    
+    drawIt(jcxt, heroesImage, hero, hero.direction.BAS, heroesNumTiles);
+    return hero;
+}
+
+//Recupere et redessine le niveau et le brouillard
+function restoreGround(lvl, heroName) {
+    var getGround = getCookie(heroName + '.ground.' + lvl);
     var tabGround = getGround.split(',');
     
-    var getFog = getCookie('fog.' + lvl);
+    var getFog = getCookie(heroName + '.fog.' + lvl);
     var tabFog = getFog.split(',');
     
     var k = 0;
     
     if(getGround && getFog) {
-        tcxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
-        fcxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
+//        tcxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
+//        fcxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
         
         for(var i = 0; i < ROWTILECOUNT; i++) {
             for(var j = 0; j < COLTILECOUNT; j++) {

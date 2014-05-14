@@ -326,9 +326,11 @@ function getItem(joueur, level) {
             cleanIt(fCanvas, fcxt, 'fog');
             cleanIt(uCanvas, ucxt);
             
+            save(level, joueur);
+            
             level++;
             
-            launch(joueur,level);
+            launch(joueur, level, false);
         }
     }
     else if(tmp.quelType === 9 && document.getElementById('createHero').className === 'hidden') {
@@ -340,9 +342,11 @@ function getItem(joueur, level) {
             cleanIt(fCanvas, fcxt, 'fog');
             cleanIt(uCanvas, ucxt);
             
+            save(level, joueur);
+            
             level--;
             
-            load(joueur,level);
+            load(level, joueur.name);
         }
     }
 }

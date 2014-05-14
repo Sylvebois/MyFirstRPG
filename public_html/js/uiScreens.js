@@ -219,7 +219,6 @@ function manageInv (joueur, imgItems, numItems) {
             storage.dragging = false;
         }
         
-        document.getElementById('test').innerHTML = 'endSt = ' + joueur.endSt + ' - endDx = ' + joueur.endDx + '<br />';
         ucxt.clearRect(0, 0, TILESIZE*COLTILECOUNT, TILESIZE*ROWTILECOUNT);
         showInv(joueur, imgItems, numItems);
     });
@@ -274,7 +273,7 @@ function dropIt(joueur, storage) {
 }
 
 //Affiche les options
-function showOpt(hero) {
+function showOpt(level, hero) {
     uCanvas.className = '';
     uCanvas.className = 'options';
     
@@ -285,9 +284,9 @@ function showOpt(hero) {
     ucxt.fillRect((COLTILECOUNT*TILESIZE)/2 - 5*TILESIZE, 5*TILESIZE + 10 , 10*TILESIZE, 5);
 
     ucxt.font = TILESIZE + 'px Verdana';
-    ucxt.fillText('Abandonner partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 - 3*TILESIZE, 6*TILESIZE);
-    ucxt.fillText('Sauvegarder partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 - TILESIZE, 6*TILESIZE);
-    ucxt.fillText('Charger partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 + TILESIZE, 6*TILESIZE);
+    ucxt.fillText('Abandonner partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 - 2*TILESIZE, 6*TILESIZE);
+    ucxt.fillText('Sauvegarder partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2, 6*TILESIZE);
+    ucxt.fillText('Charger partie', (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 + 2*TILESIZE, 6*TILESIZE);
     
     var optScreen = {
         handleEvent: function(e) {
@@ -296,7 +295,7 @@ function showOpt(hero) {
             var posY = (e.clientY - dim[3]) * dim[1]; 
 
             if( posX >= (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 3*TILESIZE &&
-                posY >= (ROWTILECOUNT*TILESIZE)/2 - 4*TILESIZE && posY <= (ROWTILECOUNT*TILESIZE)/2 - 3*TILESIZE) {
+                posY >= (ROWTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posY <= (ROWTILECOUNT*TILESIZE)/2 - 2*TILESIZE) {
 
                 if(confirm('Voulez-vous revenir à l\'écran d\'accueil ?\n(les données non sauvegardées seront perdues)')){
                     cleanIt(tCanvas, tcxt, 'ground');
@@ -312,15 +311,17 @@ function showOpt(hero) {
                 }
             }
             else if(posX >= (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 3*TILESIZE &&
-                    posY >= (ROWTILECOUNT*TILESIZE)/2 - 2*TILESIZE && posY <= (ROWTILECOUNT*TILESIZE)/2 - TILESIZE) {
+                    posY >= (ROWTILECOUNT*TILESIZE)/2 - TILESIZE && posY <= (ROWTILECOUNT*TILESIZE)/2) {
 
-                save();
+                save(level, hero);
+                alert('Sauvegarde effectuée');
             }
             else if(posX >= (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 3*TILESIZE &&
-                    posY >= (ROWTILECOUNT*TILESIZE)/2 && posY <= (ROWTILECOUNT*TILESIZE)/2 + TILESIZE) {
+                    posY >= (ROWTILECOUNT*TILESIZE)/2 + TILESIZE && posY <= (ROWTILECOUNT*TILESIZE)/2 + 2*TILESIZE) {
 
                 removeEvent(uCanvas, 'click', this);
-                load();
+                removeEvent(window, 'keydown', controlKeys);
+                loadPage();
             }
         }
     };

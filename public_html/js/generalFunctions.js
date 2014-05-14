@@ -1,8 +1,8 @@
 /* 
- * Une serie de fonctions utilisables dans differents fichiers (non spécifique au heros, au sol, aux monstres ...)
+ * Une serie de fonctions utilisables dans differents fichiers (non specifique au heros, au sol, aux monstres ...)
  */
 
-//Récupere les infos de dimensions pour localiser la souris et les items
+//Recupere les infos de dimensions pour localiser la souris et les items
 function getDim() {
     var wrapper = document.getElementsByClassName('wrapper')[0];
     var container = document.getElementsByClassName('container')[0];
@@ -148,34 +148,37 @@ function setDifficulty() {
 }
 
 //Demarre le jeu : positionne et dessine les differents composants
-function launch(hero, level) {
+function launch(hero, level, loaded) {
     tCanvas.className = '';
     iCanvas.className = '';
     eCanvas.className = '';
     jCanvas.className = '';
     fCanvas.className = '';
     
-    var difficulty = setDifficulty();
-    
-    //1. Le sol
-    placeRoom();
-    drawDungeon();   
-    
-    //2. Le heros
-    var posHero = placeIt();
-    hero.x = posHero[0];
-    hero.y = posHero[1];
-    drawIt(jcxt, heroesImage, hero, hero.direction.BAS, heroesNumTiles);
-    
-    //3. Le brouillard
-    //On met tout en noir puis on supprime ce qu'il faut ...
-    fcxt.fillRect(0, 0, fCanvas.width, fCanvas.height);
-    delFog(hero.x, hero.y, hero.vis);
-    //4. Les items
-    placeItem(hero.x, hero.y, ground, difficulty, level);
-    
-    //5. Les ennemis
-    placeMonster(hero.x, hero.y, item, ground, difficulty);
+    if(!loaded) {
+        var difficulty = setDifficulty();
+
+        //1. Le sol
+        placeRoom();   
+        drawDungeon();   
+
+        //2. Le heros
+        var posHero = placeIt();
+        hero.x = posHero[0];
+        hero.y = posHero[1];
+        drawIt(jcxt, heroesImage, hero, hero.direction.BAS, heroesNumTiles);
+
+        //3. Le brouillard
+        //On met tout en noir puis on supprime ce qu'il faut ...
+        fcxt.fillRect(0, 0, fCanvas.width, fCanvas.height);
+        delFog(hero.x, hero.y, hero.vis);
+
+        //4. Les items
+        placeItem(hero.x, hero.y, ground, difficulty, level);
+
+        //5. Les ennemis
+        placeMonster(hero.x, hero.y, item, ground, difficulty);   
+    }
     
     controlKeys.hero = hero;
     controlKeys.level = level;

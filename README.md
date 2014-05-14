@@ -8,17 +8,17 @@ What is working :
 - Creating the Hero (name, strengh, dexterity ...)
 - Generating levels
 - Generating items
-- Generating Monsters
+- Generating monsters
 - Combats and their results
 - Controlling the Hero
 - Managing a little inventory (equip and drop items)
 - The fog
+- Saving the game to play later
 
 What will come :
 --------------
 - Give the monsters an AI (move, attitude toward the Hero, equip with items ...)
 - Moving back to previous levels
-- Saving the game to play later
 - Taking into account the monsters with equipped items for combat
 - Advanced combat system (close combat, ranged combat, magic ...)
 - Inventory (restrictions for placing equipements ...)

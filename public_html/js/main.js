@@ -191,7 +191,7 @@ function init() {
 
                 ucxt.clearRect(0, 0, COLTILECOUNT*TILESIZE, ROWTILECOUNT*TILESIZE);
                 removeEvent(uCanvas, 'click', this);
-                load();
+                loadPage();
             }    
         }
     };
@@ -208,7 +208,7 @@ function start() {
     var level = 1;
     
     var validateForm = {
-        handleEvent: function(e){
+        handleEvent: function(){
             var nom = document.getElementById('nom').value;
             var st = document.getElementById('force').value;
             var dx = document.getElementById('dexterite').value;
@@ -236,7 +236,7 @@ function start() {
                 cleanIt(uCanvas, ucxt);
                 removeEvent(validation, 'click', this);
 
-                launch(hero, level);
+                launch(hero, level, false);
             }    
         }
     };
@@ -249,9 +249,87 @@ function start() {
     addEvent(validation, 'click', validateForm);
 }
 
-//Charge une ancienne partie
-function load() {
+//Choisir une ancienne partie à charger
+function loadPage() {
+    var i = 0;
+    var string = ''; 
+    var tabJoueurs = [];
     
+    //Partie 1 : Recuperer la liste de heros sauvegardes
+    tabJoueurs = getSavedHeroesName();
+    
+    //Partie 2 : Afficher la liste des heros sauvegardes
+    ucxt.drawImage(formImage,0,0);
+    
+    ucxt.font = (2*TILESIZE) + 'px Verdana';
+    ucxt.fillText('MyFirstRpg !', (COLTILECOUNT*TILESIZE)/2 - 5*TILESIZE, 5*TILESIZE, 10*TILESIZE);
+    ucxt.fillRect((COLTILECOUNT*TILESIZE)/2 - 5*TILESIZE, 5*TILESIZE + 10 , 10*TILESIZE, 5);
+    
+    ucxt.font = TILESIZE + 'px Verdana';
+    ucxt.textAlign = 'start';
+    
+    for(i = 0; i < tabJoueurs.length; i++) {
+        ucxt.drawImage(heroesImage,64,32,32,32, (COLTILECOUNT*TILESIZE)/2 - 5*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 - 4*TILESIZE + i*TILESIZE, TILESIZE, TILESIZE);
+        
+        string = ' ' + tabJoueurs[i];
+        ucxt.fillText(string, (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 - 3*TILESIZE + i*TILESIZE, 4*TILESIZE);
+        
+        string =  '- Etage : ' + getLvl(tabJoueurs[i]);
+        ucxt.fillText(string, (COLTILECOUNT*TILESIZE)/2 + 2*TILESIZE, (ROWTILECOUNT*TILESIZE)/2 - 3*TILESIZE + i*TILESIZE, 4*TILESIZE);
+        
+        if(((ROWTILECOUNT*TILESIZE)/2 - 4*TILESIZE + i*TILESIZE) >= (ROWTILECOUNT*TILESIZE)) {
+            alert('Nombre maximum de sauvegarde affichable atteint !');
+            break;
+        }
+    }
+    
+    //Partie 3 : quand on clique sur la ligne, charger la sauvegarde ad hoc
+    var loadLine = {
+        handleEvent : function(e){
+            var dim = getDim();
+            var posX = (e.clientX - dim[2]) * dim[0];
+            var posY = (e.clientY - dim[3]) * dim[1];
+            
+            for(i = 0; i < tabJoueurs.length; i++) {
+                if( posX >= (COLTILECOUNT*TILESIZE)/2 - 5*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 6*TILESIZE &&
+                    posY >= (ROWTILECOUNT*TILESIZE)/2 - 4*TILESIZE + i*TILESIZE && posY <= (ROWTILECOUNT*TILESIZE)/2 - 3*TILESIZE + i*TILESIZE) {
+                    if(confirm('Souhaitez-vous charger le héros ' + tabJoueurs[i] + ' ?')) {
+                        removeEvent(window, 'click', this);
+                        load(getLvl(tabJoueurs[i]), tabJoueurs[i]);
+                    }
+                }
+            }
+        }
+    };
+    
+    addEvent(window, 'click', loadLine);
+}
+
+//Charge une partie sauvegardee
+function load(lvl, heroName) {     
+    cleanIt(tCanvas, tcxt, 'ground');
+    cleanIt(iCanvas, icxt, 'item');
+    cleanIt(eCanvas, ecxt, 'enemies');
+    cleanIt(jCanvas, jcxt);
+    cleanIt(fCanvas, fcxt, 'fog');
+    cleanIt(uCanvas, ucxt);
+                        
+    restoreItems(lvl, heroName);
+    restoreEnemies(lvl, heroName);
+    restoreGround(lvl, heroName);
+    var hero = restoreHero(lvl, heroName);
+    
+    launch(hero, lvl, true);
+}
+
+//Sauvegarde une partie en cours
+function save(lvl, hero) {
+    document.cookie = hero.name + '.lvl=' + lvl;
+    document.cookie = hero.name + '.ground.' + lvl + '=' + ground.toString();
+    document.cookie = hero.name + '.fog.' + lvl + '=' + fog.toString();
+    setItemsCookie(lvl,hero.name);
+    setMonstersCookie(lvl,hero.name);
+    hero.createCookie(lvl);
 }
 
 //Affiche la valeur à côté des sliders sur le formulaire de création du personnage
@@ -285,7 +363,6 @@ function showSpecsOnForm() {
         nbPoints.className = '';
     }
 }
-
 
 
 init();
