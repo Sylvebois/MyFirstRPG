@@ -319,6 +319,8 @@ function getItem(joueur, level) {
     }
     else if(tmp.quelType === 8) {
         if(confirm('Voulez-vous descendre au niveau suivant ?')) {
+            save(level, joueur);
+                        
             cleanIt(tCanvas, tcxt, 'ground');
             cleanIt(iCanvas, icxt, 'item');
             cleanIt(eCanvas, ecxt, 'enemies');
@@ -326,23 +328,25 @@ function getItem(joueur, level) {
             cleanIt(fCanvas, fcxt, 'fog');
             cleanIt(uCanvas, ucxt);
             
-            save(level, joueur);
-            
             level++;
-            
-            launch(joueur, level, false);
+            if(lvlExist(level, joueur.name)){
+                load(level, joueur.name);
+            }
+            else {
+                launch(joueur, level, false);    
+            }
         }
     }
     else if(tmp.quelType === 9 && document.getElementById('createHero').className === 'hidden') {
-        if(confirm('Voulez-vous monter au niveau précédent ?')) {
+        if(confirm('Voulez-vous monter au niveau précédent ?')) {            
+            save(level, joueur);
+            
             cleanIt(tCanvas, tcxt, 'ground');
             cleanIt(iCanvas, icxt, 'item');
             cleanIt(eCanvas, ecxt, 'enemies');
             cleanIt(jCanvas, jcxt);
             cleanIt(fCanvas, fcxt, 'fog');
             cleanIt(uCanvas, ucxt);
-            
-            save(level, joueur);
             
             level--;
             

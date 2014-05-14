@@ -25,7 +25,16 @@ function getPartOfString(theString, partToFind) {
     return '';    
 }
 
-//Récupere le niveau
+//Verifie si le niveau a deja ete visite
+function lvlExist(lvl, heroName) {
+    var obj = getCookie(heroName + '.items.' + lvl);
+    var mon = getCookie(heroName + '.monsters.' + lvl);
+    var sol = getCookie(heroName + '.ground.' + lvl);
+    
+    return (obj && mon && sol)? true : false;
+}
+
+//Recupere le niveau
 function getLvl(heroName) {
     var tmp = getCookie(heroName + '.lvl');
     
@@ -195,6 +204,7 @@ function restoreEnemies(lvl, heroName) {
 //Recupere et redessine le hero
 function restoreHero(lvl, heroName) {
     var hero = new Hero(0,0);
+    hero.name = heroName;
     var getHero = getCookie(heroName + '.heroStat.' + lvl);    
     
     if(getHero) {
