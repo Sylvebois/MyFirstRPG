@@ -315,13 +315,16 @@ function showOpt(level, hero) {
 
                 save(level, hero);
                 alert('Sauvegarde effectuée');
+                
+                cleanIt(uCanvas, ucxt);
+                removeEvent(uCanvas, 'click', this);
             }
             else if(posX >= (COLTILECOUNT*TILESIZE)/2 - 3*TILESIZE && posX <= (COLTILECOUNT*TILESIZE)/2 + 3*TILESIZE &&
                     posY >= (ROWTILECOUNT*TILESIZE)/2 + TILESIZE && posY <= (ROWTILECOUNT*TILESIZE)/2 + 2*TILESIZE) {
 
                 removeEvent(uCanvas, 'click', this);
                 removeEvent(window, 'keydown', controlKeys);
-                loadPage();
+                loadPage(level, hero);
             }
         }
     };

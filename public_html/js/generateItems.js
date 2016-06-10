@@ -204,7 +204,7 @@ function Artefact(abs, ord) {
                     break;
             }
             break;
-        case 8:                         //mythique --> 4 stas à +5
+        case 8:                         //mythique --> 4 stats à +5
             this.st = 5;
             this.dx = 5;
             this.iq = 5;

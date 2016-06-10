@@ -54,21 +54,23 @@ function getSavedHeroesName() {
     var regex = /^(.+?)\./;
     var allCookies = document.cookie.split(';');
     
-    for(var i = 0; i < allCookies.length; i++) {        //Cherche le nom du joueur dans les cookies
-        regex.exec(allCookies[i]);
-        
-        for(var j = 0; j < tabJoueurs.length; j++) {    //Vérifie si le nom est déjà présent dans le tableau
-            if(tabJoueurs[j] === RegExp.$1.trim()) {
-                present = true;
+    if (allCookies.length > 1) {
+        for(var i = 0; i < allCookies.length; i++) {        //Cherche le nom du joueur dans les cookies
+            regex.exec(allCookies[i]);
+
+            for(var j = 0; j < tabJoueurs.length; j++) {    //Vérifie si le nom est déjà présent dans le tableau
+                if(tabJoueurs[j] === RegExp.$1.trim()) {
+                    present = true;
+                }
             }
+            if(!present) {
+                tabJoueurs.push(RegExp.$1.trim());
+            }
+            present = false;
         }
-        if(!present) {
-            tabJoueurs.push(RegExp.$1.trim());
-        }
-        present = false;
     }
-    
-    return tabJoueurs;
+
+    return tabJoueurs;        
 }
 
 //Crée le cookie pour les items

@@ -138,13 +138,14 @@ var controlKeys = {
     'level' : 0,
     handleEvent: function(e){        
         if(uCanvas.className === 'inventaire') {
-            if(e.keyCode === 73 || e.keyCode === 27) {
+            if(e.keyCode === 73) {
                 cleanIt(uCanvas, ucxt);   
             }
         }
         else if(uCanvas.className === 'options') {
             if(e.keyCode === 79 || e.keyCode === 27) {
-                cleanIt(uCanvas, ucxt);   
+                cleanIt(uCanvas, ucxt);
+                removeEvent(uCanvas, 'click', optScreen);
             }
         }
         else {
