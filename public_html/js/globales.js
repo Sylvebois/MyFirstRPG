@@ -15,9 +15,9 @@ var groundImg = new Image();
 var invImg = new Image();
 var mainImg = new Image();
 
-herosImg.src = 'images/hero.png';
-itemsImg.src = 'images/items.png';
-monstersImg.src = 'images/monsters.png';
-groundImg.src = 'images/tileset.png';
-invImg.src = 'images/inv.png';
-mainImg.src = 'images/scroll.png';
+herosImg.src = 'img/hero.png';
+itemsImg.src = 'img/items.png';
+monstersImg.src = 'img/monsters.png';
+groundImg.src = 'img/tileset.png';
+invImg.src = 'img/inv.png';
+mainImg.src = 'img/scroll.png';

@@ -34,17 +34,13 @@ function startGame() {
 //    background.src = 'img/scroll.png';
 //    startContext.drawImage(background, 0, 0, background.width, background.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
     
-    var tileset = new Image();
-    
-    tileset.onload = function() {
+    groundImg.onload = function() {
         for(var i = 0; i < sizeOfCanvas/tileSizeOnScreen; i++) {
             for(var j = 0; j < sizeOfCanvas/tileSizeOnScreen; j++) {
                 var test = new MapTile(i, j);
                 test.setType();
-                test.draw(startContext, tileset);
+                test.draw(startContext, groundImg);
             }
         }
     }
-    
-    tileset.src = 'img/tileset.png';
 }
