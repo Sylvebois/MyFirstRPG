@@ -1,0 +1,24 @@
+body {
+    background-color: #f0f0f0;
+    margin: 0;
+    overflow: hidden;
+}
+
+#container {
+    position: relative;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: solid 1px black;
+}
+
+#game {
+    z-index: 1;
+}
+
+#ui {
+    z-index: 10;
+}
