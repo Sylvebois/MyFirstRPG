@@ -4,6 +4,7 @@ $(document).ready(function(){
     //ajuste la scène si l'écran change de taille
     window.addEventListener('resize', function() {
         setCanvasSize();
+        drawWholeMap();
     });
 
     $('#ui').hide();
