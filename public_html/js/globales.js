@@ -4,6 +4,7 @@
 
 //Taille des tuiles (sur les tilesets et à l'écran
 var TILESIZE = 32;
+var percentOfScreen = 5/100;
 var tileSizeOnScreen = 0;
 var sizeOfCanvas = 0;
 
@@ -21,3 +22,22 @@ monstersImg.src = 'img/monsters.png';
 groundImg.src = 'img/tileset.png';
 invImg.src = 'img/inv.png';
 mainImg.src = 'img/scroll.png';
+
+//canvas
+var canvasMap = document.getElementById('map');
+var mapContext = canvasMap.getContext('2d');
+
+var canvasUi = document.getElementById('ui');
+var UiContext = canvasUi.getContext('2d');
+
+//Le contenu de la carte
+/*
+    map[y][x] = {
+        'sol': 0;
+        'fog': 0;
+        'item': 0;
+        'monstre': 0;
+        'hero': 0;
+    }
+*/
+var mapTab = [];
