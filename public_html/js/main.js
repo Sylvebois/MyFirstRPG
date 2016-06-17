@@ -1,17 +1,12 @@
 $(document).ready(function(){
-    setCanvasSize();
-   
     //ajuste la scène si l'écran change de taille
     window.addEventListener('resize', function() {
         setCanvasSize();
-        drawWholeMap();
+        (mapTab.length > 0)? drawWholeMap() : accueil();
     });
-
-    $('#ui').hide();
-
-    startGame();
-    drawWholeMap();
-    move(0,0);
+    
+    setCanvasSize();
+    accueil();
 });
 
 /*
@@ -27,7 +22,26 @@ function setCanvasSize() {
 }
 
 /*
+ * @function accueil
  * Ecran d'accueil du jeu
+ * @returns {undefined}
+ */
+function accueil() {
+    UiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
+    //move(0,0);
+    
+    $('#ui').click(function(e){
+        $('#ui').hide(1000); 
+        startGame();
+    });
+    
+    
+}
+
+/*
+ * @function startGame
+ * Génère la carte et place tous les éléments dans le tableau
+ * @returns {undefined}
  */
 function startGame() {
     for(var i = 0; i < (sizeOfCanvas/tileSizeOnScreen)-1; i++) {
@@ -46,10 +60,14 @@ function startGame() {
             });
         }
     }
+    drawWholeMap();
+    game();
 }
 
 /*
- * Dessine la carte et ses éléments (sol, murs, items, monstres, héros ...)
+ * @function drawWholeMap
+ * Dessine la carte et ses éléments (sol, murs, items, monstres, héros ...) dans le canvas
+ * @returns {undefined}
  */
 function drawWholeMap() {
     for(var i in mapTab) {
@@ -65,6 +83,43 @@ function drawWholeMap() {
     }
 }
 
+function game() {
+$(window).keydown(function(e){
+        console.log(e.which);
+        switch(e.which){
+            case 73:
+                alert('Fenêtre d\'inventaire');
+                UiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
+                $('#ui').show(1000);
+                break;
+            case 79:
+                alert('Fenêtre d\'options');
+                UiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
+                $('#ui').show(1000);
+                break;
+            case 37:
+                alert('A gauche');
+                break;
+            case 38:
+                alert('En haut');
+                break;
+            case 39:
+                alert('A droite');
+                break;
+            case 40:
+                alert('En bas');
+                break;
+            case 27:
+                $('#ui').hide(1000, function(){
+                    UiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);    
+                });
+                break;
+            default:
+                break;
+        }
+        //move(0,0);
+    });   
+}
 
 //Test de déplacement et de rafraichissement du canvas
 function move(x, y) {
@@ -90,5 +145,5 @@ function move(x, y) {
     
     y++;
  
-    var loopTimer = setTimeout('move('+x+','+y+')',90);
+    //var loopTimer = setTimeout('move('+x+','+y+')',90);
 }
