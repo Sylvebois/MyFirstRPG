@@ -2,10 +2,18 @@ $(document).ready(function(){
     //ajuste la scène si l'écran change de taille
     window.addEventListener('resize', function() {
         setCanvasSize();
-        (mapTab.length > 0)? drawWholeMap() : accueil();
+        
+        if(mapTab.length > 0){
+            $('#ui').hide();
+            drawWholeMap();
+        }
+        else {
+            accueil();
+        }
     });
     
     setCanvasSize();
+    loading(100, 100, 50, 50, 0, true);
     accueil();
 });
 
@@ -27,15 +35,15 @@ function setCanvasSize() {
  * @returns {undefined}
  */
 function accueil() {
-    UiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
-    //move(0,0);
-    
-    $('#ui').click(function(e){
-        $('#ui').hide(1000); 
-        startGame();
-    });
-    
-    
+    uiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
+
+    if(!$._data($('#ui').get(0),'events')) { //Vérifie qu'il n'y a pas déjà un event associé --> à améliorer !!!
+        $('#ui').one('click', function(e){
+            console.log('test');
+            $('#ui').hide(1000); 
+            startGame();
+        });  
+    }
 }
 
 /*
@@ -84,41 +92,104 @@ function drawWholeMap() {
 }
 
 function game() {
-$(window).keydown(function(e){
-        console.log(e.which);
-        switch(e.which){
-            case 73:
-                alert('Fenêtre d\'inventaire');
-                UiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
-                $('#ui').show(1000);
-                break;
-            case 79:
-                alert('Fenêtre d\'options');
-                UiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
-                $('#ui').show(1000);
-                break;
-            case 37:
-                alert('A gauche');
-                break;
-            case 38:
-                alert('En haut');
-                break;
-            case 39:
-                alert('A droite');
-                break;
-            case 40:
-                alert('En bas');
-                break;
-            case 27:
-                $('#ui').hide(1000, function(){
-                    UiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);    
-                });
-                break;
-            default:
-                break;
+    if(!$._data($(window).get(0),'events')) { //Vérifie qu'il n'y a pas déjà un event associé --> à améliorer !!!
+        $(window).keydown(function(e){
+            console.log(e.which);
+            switch(e.which){
+                case 73:
+                    alert('Fenêtre d\'inventaire');
+                    uiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
+                    $('#ui').show(1000);
+                    break;
+                case 79:
+                    alert('Fenêtre d\'options');
+                    uiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
+                    $('#ui').show(1000);
+                    break;
+                case 37:
+                    alert('A gauche');
+                    break;
+                case 38:
+                    alert('En haut');
+                    break;
+                case 39:
+                    alert('A droite');
+                    break;
+                case 40:
+                    alert('En bas');
+                    break;
+                case 27:
+                    $('#ui').hide(1000, function(){
+                        uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);    
+                    });
+                    break;
+                default:
+                    break;
+            }
+            //move(0,0);
+        });   
+    }
+}
+
+/*
+ * message d'attente pour le chargement --> à améliorer !!!
+ */
+function loading(x, y, width, height, degrees, direction) {
+    uiContext.clearRect(0,0,sizeOfCanvas,sizeOfCanvas);
+    
+    if(!mainImg.complete) {
+        drawRotatedRect(x, y, width, height, degrees, 'red', true);
+        drawRotatedRect(x, y, width, height, degrees, 'blue', false);
+        
+        uiContext.font = tileSizeOnScreen+'px Arial';
+        uiContext.fillStyle = 'black';
+        uiContext.fillText('Loading ...', sizeOfCanvas/2-2*tileSizeOnScreen, sizeOfCanvas/2);
+
+        degrees++;
+
+        if(x > sizeOfCanvas-width && direction === true) {
+            x -= 1;
+            direction = false;
         }
-        //move(0,0);
-    });   
+        else if (x < width && direction === false) {
+            x += 1;
+            direction = true;
+        }
+        else {
+            x = (direction)? x + 1 :x - 1;
+        }
+
+        var loopTimer = setTimeout('loading(' + x + ',' + y + ',' + width + ',' + height + ',' + degrees + ',' + direction + ')',1000/60);
+    }
+    else {
+        return 0;
+    }
+}
+
+function drawRotatedRect(x, y, width, height, degrees, color, first) {
+    uiContext.save();
+
+    uiContext.beginPath();
+    
+    // move the rotation point to the center of the rect and rotate
+    // then draw the rect on the transformed context
+    // Note: after transforming [0,0] is visually [x,y]
+    //       so the rect needs to be offset accordingly when drawn
+    if(first) {
+        uiContext.translate(x + width / 2, y + height / 2);
+        uiContext.rotate(degrees * Math.PI / 180);
+        uiContext.rect(-width / 2, -height / 2, width, height);
+    }
+    else {
+        uiContext.translate(sizeOfCanvas - x - width / 2, y + height / 2);
+        uiContext.rotate(degrees * Math.PI / 180);
+        uiContext.rect(-width / 2, -height / 2, width, height);
+    }
+
+    uiContext.fillStyle = color;
+    uiContext.fill();
+
+    uiContext.restore();
 }
 
 //Test de déplacement et de rafraichissement du canvas

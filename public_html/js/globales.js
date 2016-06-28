@@ -28,7 +28,7 @@ var canvasMap = document.getElementById('map');
 var mapContext = canvasMap.getContext('2d');
 
 var canvasUi = document.getElementById('ui');
-var UiContext = canvasUi.getContext('2d');
+var uiContext = canvasUi.getContext('2d');
 
 //Le contenu de la carte
 /*
