@@ -30,8 +30,8 @@ Tuile.prototype.getPos = function() {
 /*
  * @function Tuile.setPos
  * Définit les coordonées de la tuile sur le canvas
- * @param {int} x abscisse
- * @param {int} y ordonnée
+ * @param {int} x - abscisse
+ * @param {int} y - ordonnée
  * @returns {undefined}
  */
 Tuile.prototype.setPos = function(x,y) {
@@ -61,10 +61,10 @@ Tuile.prototype.getAccess = function() {
 /*
  * @function Tuile.draw
  * Dessine l'image issue du tileset sur le canvas
- * @param {Object} canvas contexte du canvas dans lequel on va dessiner
- * @param {Object} image le tileset d'où on tire l'image
- * @param {int} imgX position en abscisse de l'image
- * @param {int} imgY position en ordonnée de l'image
+ * @param {Object} canvas - contexte du canvas dans lequel on va dessiner
+ * @param {Object} image - le tileset d'où on tire l'image
+ * @param {int} imgX - position en abscisse de l'image
+ * @param {int} imgY - position en ordonnée de l'image
  * @returns {undefined}
  */
 Tuile.prototype.draw = function(canvas, image, imgX, imgY) {
