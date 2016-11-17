@@ -34,7 +34,7 @@ function setCanvasSize() {
  * @returns {undefined}
  */
 function accueil() {
-    uiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
+    canvas.uiContext.drawImage(images.main, 0, 0, images.main.width, images.main.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
 
     if(!$._data($('#ui').get(0),'events')) { //Vérifie qu'il n'y a pas déjà un event associé --> à améliorer !!!
         $('#ui').one('click', function(e){
@@ -78,11 +78,11 @@ function startGame() {
 function drawWholeMap() {
     for(var i in mapTab) {
         for(var j in mapTab[i]) {
-            mapTab[i][j].sol.draw(mapContext, groundImg);
+            mapTab[i][j].sol.draw(canvas.mapContext, groundImg);
             
-            (mapTab[i][j].item !== 0)? mapTab[i][j].item.draw(mapContext, itemsImg) : null;
-            (mapTab[i][j].monstre !== 0)? mapTab[i][j].monstre.draw(mapContext, monstersImg) : null;
-            (mapTab[i][j].hero !== 0)? mapTab[i][j].hero.draw(mapContext, herosImg) : null;
+            (mapTab[i][j].item !== 0)? mapTab[i][j].item.draw(canvas.mapContext, itemsImg) : null;
+            (mapTab[i][j].monstre !== 0)? mapTab[i][j].monstre.draw(canvas.mapContext, monstersImg) : null;
+            (mapTab[i][j].hero !== 0)? mapTab[i][j].hero.draw(canvas.mapContext, herosImg) : null;
            
             //mapTab[i][j].fog;
         }
@@ -96,12 +96,12 @@ function game() {
             switch(e.which){
                 case 73:
                     alert('Fenêtre d\'inventaire');
-                    uiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
+                    canvas.uiContext.drawImage(images.main, 0, 0, images.main.width, images.main.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
                     $('#ui').show(1000);
                     break;
                 case 79:
                     alert('Fenêtre d\'options');
-                    uiContext.drawImage(mainImg, 0, 0, mainImg.width, mainImg.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
+                    canvas.uiContext.drawImage(images.main, 0, 0, images.main.width, images.main.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
                     $('#ui').show(1000);
                     break;
                 case 37:
@@ -118,7 +118,7 @@ function game() {
                     break;
                 case 27:
                     $('#ui').hide(1000, function(){
-                        uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);    
+                        canvas.uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);    
                     });
                     break;
                 default:
@@ -140,18 +140,18 @@ function game() {
  * @param {bool} direction - sens de déplacement
  */
 function loading(x, y, width, height, degrees, direction) {
-    var finisedToLoad = checkLoaded();
+    var finisedToLoad = images.checkLoaded();
     
-    uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);
+    canvas.uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);
 
     if(!finisedToLoad[0]) {
         drawRotatedRect(x, y, width, height, degrees, 'red', true);
         drawRotatedRect(x, y, width, height, degrees, 'blue', false);
         
-        uiContext.font = tileSizeOnScreen+'px enchanted_landregular';
-        uiContext.fillStyle = 'black';
-        uiContext.textAlign = 'center';
-        uiContext.fillText('Loading ' + finisedToLoad[1] + '...', sizeOfCanvas/2, sizeOfCanvas/2);
+        canvas.uiContext.font = tileSizeOnScreen+'px enchanted_landregular';
+        canvas.uiContext.fillStyle = 'black';
+        canvas.uiContext.textAlign = 'center';
+        canvas.uiContext.fillText('Loading ' + finisedToLoad[1] + '...', sizeOfCanvas/2, sizeOfCanvas/2);
 
         degrees++;
 
@@ -172,15 +172,15 @@ function loading(x, y, width, height, degrees, direction) {
     else {
         //lightTransition(1);
         
-        uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);
+        canvas.uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);
 
-        uiContext.drawImage(pioche, (sizeOfCanvas-3*width)/2, y*2, width*3, height*3);
-        uiContext.drawImage(plume, (sizeOfCanvas-3*width)/2-10, y*2, width*3, height*3);
+        canvas.uiContext.drawImage(images.pioche, (sizeOfCanvas-3*width)/2, y*2, width*3, height*3);
+        canvas.uiContext.drawImage(images.plume, (sizeOfCanvas-3*width)/2-10, y*2, width*3, height*3);
 
-        uiContext.font = 2*tileSizeOnScreen + 'px enchanted_landregular';
-        uiContext.fillStyle = 'black';
-        uiContext.textAlign = 'center';
-        uiContext.fillText('Feather and Pick Studio', sizeOfCanvas/2, sizeOfCanvas/2);
+        canvas.uiContext.font = 2*tileSizeOnScreen + 'px enchanted_landregular';
+        canvas.uiContext.fillStyle = 'black';
+        canvas.uiContext.textAlign = 'center';
+        canvas.uiContext.fillText('Feather and Pick Studio', sizeOfCanvas/2, sizeOfCanvas/2);
 
         $('#ui').one('click', function(e){
             accueil();
@@ -200,29 +200,29 @@ function loading(x, y, width, height, degrees, direction) {
  * @param {bool} first - détermine le sens de rotation et point départ
  */
 function drawRotatedRect(x, y, width, height, degrees, color, first) {
-    uiContext.save();
+    canvas.uiContext.save();
 
-    uiContext.beginPath();
+    canvas.uiContext.beginPath();
     
     // move the rotation point to the center of the rect and rotate
     // then draw the rect on the transformed context
     // Note: after transforming [0,0] is visually [x,y]
     //       so the rect needs to be offset accordingly when drawn
     if(first) {
-        uiContext.translate(x + width / 2, y + height / 2);
-        uiContext.rotate(degrees * Math.PI / 180);
-        uiContext.drawImage(pioche, -width / 2, -height / 2, width, height);
+        canvas.uiContext.translate(x + width / 2, y + height / 2);
+        canvas.uiContext.rotate(degrees * Math.PI / 180);
+        canvas.uiContext.drawImage(images.pioche, -width / 2, -height / 2, width, height);
     }
     else {
-        uiContext.translate(sizeOfCanvas - x - width / 2, y + height / 2);
-        uiContext.rotate(degrees * Math.PI / 180);
-        uiContext.drawImage(plume, -width / 2, -height / 2, width, height);
+        canvas.uiContext.translate(sizeOfCanvas - x - width / 2, y + height / 2);
+        canvas.uiContext.rotate(degrees * Math.PI / 180);
+        canvas.uiContext.drawImage(images.plume, -width / 2, -height / 2, width, height);
     }
 
-    uiContext.fillStyle = color;
-    uiContext.fill();
+    canvas.uiContext.fillStyle = color;
+    canvas.uiContext.fill();
 
-    uiContext.restore();
+    canvas.uiContext.restore();
 }
 
 /*
@@ -230,22 +230,22 @@ function drawRotatedRect(x, y, width, height, degrees, color, first) {
  * Animation / transition entre le chargement et la page du studio
  */
 function lightTransition(r) {
-    var grd=uiContext.createRadialGradient(sizeOfCanvas/2, sizeOfCanvas/2, r/3, sizeOfCanvas/2, sizeOfCanvas/2, r);
+    var grd=canvas.uiContext.createRadialGradient(sizeOfCanvas/2, sizeOfCanvas/2, r/3, sizeOfCanvas/2, sizeOfCanvas/2, r);
     grd.addColorStop(0, "rgba(255, 255, 255, 0.5)");
     grd.addColorStop(1, "rgba(255, 255, 255, 0)");
     
-    uiContext.fillStyle = grd;
+    canvas.uiContext.fillStyle = grd;
     
-    uiContext.beginPath();
-    uiContext.arc(sizeOfCanvas/2, sizeOfCanvas/2, r, 0, 2 * Math.PI);
-    uiContext.fill();
+    canvas.uiContext.beginPath();
+    canvas.uiContext.arc(sizeOfCanvas/2, sizeOfCanvas/2, r, 0, 2 * Math.PI);
+    canvas.uiContext.fill();
     
     if(r < sizeOfCanvas/2) {
         r++;
         var loop = setTimeout('lightTransition(' + r + ')', 0.5);
     }
     else {
-        uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);
+        canvas.uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);
         return 0;
     }
 }
@@ -255,8 +255,8 @@ function lightTransition(r) {
  * Vérifie que les images et les polices sont chargées
  */
 function checkLoaded() {
-    if(!plume.complete || !pioche.complete || !mainImg.complete || !groundImg.complete || 
-        !herosImg.complete || !itemsImg.complete || !monstersImg.complete || !invImg.complete) {
+    if(!images.plume.complete || !images.pioche.complete || !images.main.complete || !images.ground.complete || 
+        !images.hero.complete || !images.items.complete || !images.monstres.complete || !images.inv.complete) {
         
         return [false, 'images'];
     }
@@ -285,10 +285,10 @@ function move(x, y) {
     tmp.setPos(x,y+1);
 
     mapTab[x][y].monstre = 0;
-    mapTab[x][y].sol.draw(startContext, groundImg);
+    mapTab[x][y].sol.draw(startContext, images.ground);
 
     mapTab[x][y+1].monstre = tmp;
-    mapTab[x][y+1].monstre.draw(startContext, monstersImg);
+    mapTab[x][y+1].monstre.draw(startContext, images.monstres);
     
     y++;
  
