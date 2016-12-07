@@ -47,7 +47,7 @@ var images = {
 images.init();
 
 //canvas
-var canvas = {
+var can = {
     init() {
         this.map = document.getElementById('map');
         this.mapContext = this.map.getContext('2d');
@@ -56,7 +56,7 @@ var canvas = {
         this.uiContext = this.ui.getContext('2d');
     }
 };
-canvas.init();
+can.init();
 
 //Le contenu de la carte
 /*

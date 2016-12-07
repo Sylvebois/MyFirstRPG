@@ -1,43 +1,56 @@
-/* 
- * Classe définissant les caractéristiques de base d'un personnage (monstre ou héros)
- * Hérite de Tuile
+/*
+ * Classe définissant un personnage(monstre ou héros)
+ * Hérite de Base
  */
-class Perso extends Tuiles {
-    constructor(x = 0, y = 0, name = '', st = 0, dx = 0, iq = 0, ht = 0, level = 1) {
-        super(x,y);
-        this._name = name;
-        this._st = st;
-        this._dx = dx;
-        this._iq = iq;
-        this._ht = ht;
-        this._level = level;
+class Perso extends Base {
+    constructor(x, y, name, st, dx, iq, ht, level = 1) {
+        super(x, y, name, st, dx, iq, ht);
+        
+        this._level = level;     
+        this._finalSt = this._st;
+        this._finalDx = this._dx;
+        this._finalIq = this._iq;
+        this._finalHt = this._ht;
 
-        this._imgX = 0;
-        this._imgY = 0;   
-    };
-    setImgPos(x = 0,y = 0) {
-        this._imgX = x;
-        this._imgY = y;       
-    };
-    modCharacter(type, value = 0) {
-        switch(type) {
-            case 'name':
-                this._name = value;
-                break;
-            case 'st':
-                this._st = value;
-                break;
-            case 'dx':
-                this._dx = value;
-                break;
-            case 'iq':
-                this._iq = value;
-                break;
-            case 'ht':
-                this._ht = value;
-                break;
+        this._body = {
+            'TETE'  : 0,
+            'COU'   : 0,
+            'TORSE' : 0,
+            'JAMBES': 0,
+            'PIEDS' : 0,
+            'MAING' : 0,
+            'MAIND' : 0
         };
-    }
+    };
+    calcStat(zone = 'MAING', equipe) {
+        if(equipe === 'undefined') {
+            return;
+        }
+        else if(equipe) {
+            this._finalSt += this._body[zone].st;
+            this._finalDx += this._body[zone].dx;
+            this._finalIq += this._body[zone].iq;
+            this._finalHt += this._body[zone].ht;        
+        }
+        else {
+            this._finalSt -= this._body[zone].st;
+            this._finalDx -= this._body[zone].dx;
+            this._finalIq -= this._body[zone].iq;
+            this._finalHt -= this._body[zone].ht;     
+        }
+    };
+    attaque(cible) {
+        
+    };
+    equiperObjet() {
+        
+    };
+    jeterObjet() {
+        
+    };
+    bouger() {
+        
+    };
 };
 
 /* 
@@ -45,8 +58,37 @@ class Perso extends Tuiles {
  * Hérite de Perso
  */
 
-class Hero extends Perso {
-    constructor(x = 0, y = 0, name = '', st = 0, dx = 0, iq = 0, ht = 0, level = 1) {
+class Heros extends Perso {
+    constructor(x, y, name, st, dx, iq, ht, level) {
         super(x, y, name, st, dx, iq, ht, level);
-    }
+      
+        this._vision = 2;
+        this._inventaire = [0,0,0,0,0,0,0,0,0,0];
+
+        //Image à utiliser en fonction de la direction
+        this._direction = {
+            'BAS'    : [5,1],
+            'GAUCHE' : [3,1],
+            'DROITE' : [1,1],
+            'HAUT'   : [2,1]
+        };
+    };
+    rangerObjet() {
+        
+    };
+};
+
+/* 
+ * Classe définissant un monstre
+ * Hérite de Perso
+ */
+class Monstre extends Perso {
+    constructor(x, y, name, st, dx, iq, ht, level, attitude = 'neutre') {
+        super(x, y, name, st, dx, iq, ht, level);
+        this._attitude = attitude;
+        this._image = 0;
+    };
+    compareEquipement() {
+        
+    };
 };
