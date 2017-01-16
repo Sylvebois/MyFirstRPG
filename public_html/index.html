@@ -8,14 +8,15 @@
     <link rel="stylesheet" href="css/style.css" />
   </head>
   
-  <body>
+  <body onload="main()">
     <div id="container">
       <canvas id="map"></canvas>
+      <canvas id="items"></canvas>
+      <canvas id="perso"></canvas>
       <canvas id="ui">Votre navigateur ne supporte pas CANVAS</canvas>
     </div>
     
     <script src="js/ext/jquery-3.0.0.min.js"></script>
-    <script src="js/globales.js"></script>
     <script src="js/classes/Tuile.js"></script>
     <script src="js/classes/Perso.js"></script>
     <script src="js/classes/Dungeon.js"></script>

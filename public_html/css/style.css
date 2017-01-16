@@ -25,8 +25,16 @@ canvas {
     border: solid 1px black;
 }
 
-#game {
+#map {
     z-index: 1;
+}
+
+#items {
+    z-index: 2;
+}
+
+#perso {
+    z-index: 3;
 }
 
 #ui {

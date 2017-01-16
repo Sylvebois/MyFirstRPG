@@ -42,7 +42,7 @@ class MapTile extends Tuile {
         this._groundType = 'ground'; 
         
         // Position par défaut de l'image sur le tileset
-        this.imgPos([1,9]);
+        this.imgPos = [1,9];
     };
     get access() {
         return this._accessible;
@@ -55,12 +55,12 @@ class MapTile extends Tuile {
 
         switch(this._groundType) {
             case 'wall' :
-                this.imgPos([12,4]);
+                this.imgPos = [12,4];
                 this.access(false);
                 break;
             case 'ground' :
             default:
-                this.imgPos([1,9]);
+                this.imgPos = [1,9];
                 this.access(true);
                 break;
         }

@@ -67,10 +67,12 @@ class Heros extends Perso {
 
         //Image à utiliser en fonction de la direction
         this._direction = {
-            'BAS'    : [5,1],
-            'GAUCHE' : [3,1],
-            'DROITE' : [1,1],
-            'HAUT'   : [2,1]
+            'DROITE' : [0,0],
+            'DROITE_ANIM' : [1,0],
+            'GAUCHE' : [0,1],
+            'GAUCHE_ANIM' : [1,1],
+            'HAUT'   : [2,0],
+            'BAS'    : [2,1]
         };
     };
     rangerObjet() {

@@ -1,296 +1,207 @@
-$(document).ready(function(){
-    //ajuste la scène si l'écran change de taille
-    window.addEventListener('resize', function() {
-        setCanvasSize();
+//Taille des tuiles (sur les tilesets et à l'écran)
+const TILESIZE = 32;
+const percentOfScreen = 5/100;
+var tileSizeOnScreen = 0;
+
+//Tilesets et images
+var images = {
+    init() {
+        this.plume = new Image();
+        this.pioche = new Image();
+        this.main = new Image();
+        this.ground = new Image();
+        this.heros = new Image();
+        this.items = new Image();
+        this.monstres = new Image();
+        this.inv = new Image(); 
         
-        if(mapTab.length > 0){
-            $('#ui').hide();
-            drawWholeMap();
+        this.plume.src = 'img/plume.png';
+        this.pioche.src = 'img/pioche.png';
+        this.main.src = 'img/scroll.png';
+        this.ground.src = 'img/tileset.png';
+        this.heros.src = 'img/hero.png';
+        this.items.src = 'img/items.png';
+        this.monstres.src = 'img/monsters.png';
+        this.inv.src = 'img/inv.png';
+    },
+    checkLoaded() {
+        for(let key in this) {
+            if(this.hasOwnProperty(key) && typeof(this[key]) !== 'function') {
+                if(this[key].complete){
+                    console.log(key + ' chargé');
+                    continue;
+                }
+                else {
+                    console.log(key + ' en cours de chargement !');
+                    return false;
+                }
+            }
         }
-        else {
-            accueil();
+        
+        return true;
+    }
+};
+images.init();
+
+//canvas
+var can = {
+    init() {
+        this.map = document.getElementById('map');
+        this.mapContext = this.map.getContext('2d');
+        
+        this.items = document.getElementById('items');
+        this.itemsContext = this.items.getContext('2d');
+        
+        this.perso = document.getElementById('map');
+        this.persopContext = this.perso.getContext('2d');
+        
+        this.ui = document.getElementById('ui');
+        this.uiContext = this.ui.getContext('2d');
+        
+        this.setSize();
+    },
+    setSize() {
+        this.size = Math.min(window.innerWidth, window.innerHeight);
+        let canvases = document.getElementsByTagName('canvas');
+    
+        for (let valeur of canvases) {
+            valeur.setAttribute("width",this.size);
+            valeur.setAttribute("height",this.size);
         }
+    },
+    showUi(mode = 'opt') {
+        this.ui.style.display = "block";
+        this.uiControl(mode, true);
+    },
+    hideUi(mode = 'opt') {
+        this.ui.style.display = "none";
+        this.uiControl(mode, false);
+    },
+    uiControl(mode = 'opt', activate = false) {
+        if(mode === 'opt') {
+            if(activate) {
+                window.addEventListener('keypress', this.uiOptManageKey);
+                this.ui.addEventListener('click', this.uiOptManageMouse);
+                console.log('Ajout des events pour options');
+            }
+            else {
+                window.removeEventListener('keypress', this.uiOptManageKey);
+                this.ui.removeEventListener('click', this.uiOptManageMouse);
+                console.log('Suppresion des events pour options');
+            }
+        }
+        else if(mode === 'inv') {
+            if(activate) {
+                window.addEventListener('keypress', this.uiInvManageKey);
+                this.ui.addEventListener('mousedown', this.uiInvManageMouse);
+                console.log('Ajout des events pour inventaire');
+            }
+            else {
+                window.removeEventListener('keypress', this.uiInvManageKey);
+                this.ui.removeEventListener('mousedown', this.uiInvManageMouse);
+                console.log('Suppression des events pour inventaire');
+            }
+            
+        }
+    },
+    uiOptManageKey() {
+        console.log('keypress Opt');        
+    },
+    uiOptManageMouse() {
+        console.log('clic');
+    },
+    uiInvManageKey() {
+        console.log('keypress Inv');        
+    },
+    uiInvManageMouse() {
+        console.log('mousedown');
+    },
+    showGame() {
+        
+    },
+    hideGame() {
+        
+    },
+    gameManageKey() {
+        
+    }
+    
+};
+can.init();
+
+//Le contenu de la carte
+/*
+    map[y][x] = {
+        'sol': 0;
+        'fog': 0;
+        'item': 0;
+        'monstre': 0;
+        'hero': 0;
+    }
+*/
+var mapTab = [];
+
+function main() { 
+    var test = false;
+    images.checkLoaded();
+    
+    //Mise en place des canvas
+    can.setSize();
+    tileSizeOnScreen = Math.floor(can.size*percentOfScreen);  
+    can.uiContext.drawImage(images.main, 0, 0, can.ui.width, can.ui.height);
+    
+    //ajuste la scène si l'écran change de taille
+    window.addEventListener('resize', function() { 
+        can.setSize();
+        tileSizeOnScreen = Math.floor(can.size*percentOfScreen);
+        can.uiContext.drawImage(images.main, 0, 0, can.ui.width, can.ui.height);
     });
     
-    setCanvasSize();
-    loading(tileSizeOnScreen*2, tileSizeOnScreen*2, tileSizeOnScreen, tileSizeOnScreen, 0, true);
-});
-
-/*
- * Détermine la largeur et hauteur du canvas en fonction de la taille de l'écran
- */
-function setCanvasSize() {
-    var canvasSize = Math.min(window.innerWidth, window.innerHeight);
-    
-    $('canvas').prop({ width: canvasSize, height: canvasSize });
-    
-    tileSizeOnScreen = Math.floor(canvasSize*percentOfScreen);
-    sizeOfCanvas = canvasSize;
-}
-
-/*
- * @function accueil
- * Ecran d'accueil du jeu
- * @returns {undefined}
- */
-function accueil() {
-    canvas.uiContext.drawImage(images.main, 0, 0, images.main.width, images.main.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
-
-    if(!$._data($('#ui').get(0),'events')) { //Vérifie qu'il n'y a pas déjà un event associé --> à améliorer !!!
-        $('#ui').one('click', function(e){
-            $('#ui').hide(1000); 
-            startGame();
-        });  
-    }
-}
-
-/*
- * @function startGame
- * Génère la carte et place tous les éléments dans le tableau
- * @returns {undefined}
- */
-function startGame() {
-    for(var i = 0; i < (sizeOfCanvas/tileSizeOnScreen)-1; i++) {
-        var testPerso = new Perso(i,0);
-        mapTab.push([]);
-        
-        for(var j = 0; j < (sizeOfCanvas/tileSizeOnScreen)-1; j++) {
-            var test = new MapTile(i, j);
-            
-            mapTab[i].push({
-                'sol': test,
-                'fog': 0,
-                'item': 0,
-                'monstre': testPerso,
-                'hero': 0,
-            });
-        }
-    }
-    drawWholeMap();
-    game();
-}
-
-/*
- * @function drawWholeMap
- * Dessine la carte et ses éléments (sol, murs, items, monstres, héros ...) dans le canvas
- * @returns {undefined}
- */
-function drawWholeMap() {
-    for(var i in mapTab) {
-        for(var j in mapTab[i]) {
-            mapTab[i][j].sol.draw(canvas.mapContext, groundImg);
-            
-            (mapTab[i][j].item !== 0)? mapTab[i][j].item.draw(canvas.mapContext, itemsImg) : null;
-            (mapTab[i][j].monstre !== 0)? mapTab[i][j].monstre.draw(canvas.mapContext, monstersImg) : null;
-            (mapTab[i][j].hero !== 0)? mapTab[i][j].hero.draw(canvas.mapContext, herosImg) : null;
-           
-            //mapTab[i][j].fog;
-        }
-    }
-}
-
-function game() {
-    if(!$._data($(window).get(0),'events')) { //Vérifie qu'il n'y a pas déjà un event associé --> à améliorer !!!
-        $(window).keydown(function(e){
-            console.log(e.which);
-            switch(e.which){
-                case 73:
-                    alert('Fenêtre d\'inventaire');
-                    canvas.uiContext.drawImage(images.main, 0, 0, images.main.width, images.main.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
-                    $('#ui').show(1000);
-                    break;
-                case 79:
-                    alert('Fenêtre d\'options');
-                    canvas.uiContext.drawImage(images.main, 0, 0, images.main.width, images.main.height, 0, 0, sizeOfCanvas, sizeOfCanvas);
-                    $('#ui').show(1000);
-                    break;
-                case 37:
-                    alert('A gauche');
-                    break;
-                case 38:
-                    alert('En haut');
-                    break;
-                case 39:
-                    alert('A droite');
-                    break;
-                case 40:
-                    alert('En bas');
-                    break;
-                case 27:
-                    $('#ui').hide(1000, function(){
-                        canvas.uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);    
-                    });
-                    break;
-                default:
-                    break;
-            }
-            //move(0,0);
-        });   
-    }
-}
-
-/*
- * @function loading
- * Animation pour le chargement et affichage du nom du "studio"
- * @param {int} x - position en abscisse de l'image
- * @param {int} y - position en ordonnée de l'image
- * @param {int} width - largeur de l'image
- * @param {int} height - hauteur de l'image
- * @param {int} degrees - nombre de degré pour la rotation
- * @param {bool} direction - sens de déplacement
- */
-function loading(x, y, width, height, degrees, direction) {
-    var finisedToLoad = images.checkLoaded();
-    
-    canvas.uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);
-
-    if(!finisedToLoad[0]) {
-        drawRotatedRect(x, y, width, height, degrees, 'red', true);
-        drawRotatedRect(x, y, width, height, degrees, 'blue', false);
-        
-        canvas.uiContext.font = tileSizeOnScreen+'px enchanted_landregular';
-        canvas.uiContext.fillStyle = 'black';
-        canvas.uiContext.textAlign = 'center';
-        canvas.uiContext.fillText('Loading ' + finisedToLoad[1] + '...', sizeOfCanvas/2, sizeOfCanvas/2);
-
-        degrees++;
-
-        if(x > sizeOfCanvas-width && direction === true) {
-            x--;
-            direction = false;
-        }
-        else if (x < width && direction === false) {
-            x++;
-            direction = true;
+    window.addEventListener('click', function() {
+        if(test) {
+            console.log('clic');
+            can.showUi();
+            test = false;
         }
         else {
-            x = (direction)? x + 1 :x - 1;
+            console.log('clic');
+            can.hideUi();
+            test = true;
         }
-
-        var loopTimer = setTimeout('loading(' + x + ',' + y + ',' + width + ',' + height + ',' + degrees + ',' + direction + ')',1000/60);
-    }
-    else {
-        //lightTransition(1);
-        
-        canvas.uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);
-
-        canvas.uiContext.drawImage(images.pioche, (sizeOfCanvas-3*width)/2, y*2, width*3, height*3);
-        canvas.uiContext.drawImage(images.plume, (sizeOfCanvas-3*width)/2-10, y*2, width*3, height*3);
-
-        canvas.uiContext.font = 2*tileSizeOnScreen + 'px enchanted_landregular';
-        canvas.uiContext.fillStyle = 'black';
-        canvas.uiContext.textAlign = 'center';
-        canvas.uiContext.fillText('Feather and Pick Studio', sizeOfCanvas/2, sizeOfCanvas/2);
-
-        $('#ui').one('click', function(e){
-            accueil();
-        });
-    }
+    });
 }
 
-/*
- * @function drawRotatedRect
- * Affichage et rotation des rectangles / images
- * @param {int} x - position en abscisse de l'image
- * @param {int} y - position en ordonnée de l'image
- * @param {int} width - largeur de l'image
- * @param {int} height - hauteur de l'image
- * @param {int} degrees - nombre de degré pour la rotation
- * @param {string} color - couleur du rectangle
- * @param {bool} first - détermine le sens de rotation et point départ
- */
-function drawRotatedRect(x, y, width, height, degrees, color, first) {
-    canvas.uiContext.save();
-
-    canvas.uiContext.beginPath();
-    
-    // move the rotation point to the center of the rect and rotate
-    // then draw the rect on the transformed context
-    // Note: after transforming [0,0] is visually [x,y]
-    //       so the rect needs to be offset accordingly when drawn
-    if(first) {
-        canvas.uiContext.translate(x + width / 2, y + height / 2);
-        canvas.uiContext.rotate(degrees * Math.PI / 180);
-        canvas.uiContext.drawImage(images.pioche, -width / 2, -height / 2, width, height);
-    }
-    else {
-        canvas.uiContext.translate(sizeOfCanvas - x - width / 2, y + height / 2);
-        canvas.uiContext.rotate(degrees * Math.PI / 180);
-        canvas.uiContext.drawImage(images.plume, -width / 2, -height / 2, width, height);
-    }
-
-    canvas.uiContext.fillStyle = color;
-    canvas.uiContext.fill();
-
-    canvas.uiContext.restore();
-}
-
-/*
- * @function lightTransition
- * Animation / transition entre le chargement et la page du studio
- */
-function lightTransition(r) {
-    var grd=canvas.uiContext.createRadialGradient(sizeOfCanvas/2, sizeOfCanvas/2, r/3, sizeOfCanvas/2, sizeOfCanvas/2, r);
-    grd.addColorStop(0, "rgba(255, 255, 255, 0.5)");
-    grd.addColorStop(1, "rgba(255, 255, 255, 0)");
-    
-    canvas.uiContext.fillStyle = grd;
-    
-    canvas.uiContext.beginPath();
-    canvas.uiContext.arc(sizeOfCanvas/2, sizeOfCanvas/2, r, 0, 2 * Math.PI);
-    canvas.uiContext.fill();
-    
-    if(r < sizeOfCanvas/2) {
-        r++;
-        var loop = setTimeout('lightTransition(' + r + ')', 0.5);
-    }
-    else {
-        canvas.uiContext.clearRect(0, 0, sizeOfCanvas, sizeOfCanvas);
-        return 0;
-    }
-}
-
-/*
- * @function checkLoaded
- * Vérifie que les images et les polices sont chargées
- */
-function checkLoaded() {
-    if(!images.plume.complete || !images.pioche.complete || !images.main.complete || !images.ground.complete || 
-        !images.hero.complete || !images.items.complete || !images.monstres.complete || !images.inv.complete) {
-        
-        return [false, 'images'];
-    }
-    else if(!document.fonts.check(tileSizeOnScreen+'px enchanted_landregular')){
-        return [false, 'fonts'];
-    }
-    else {
-        return [true,''];
-    }
-}
-
-//Test de déplacement et de rafraichissement du canvas
-function move(x, y) {
-    if(y > mapTab[0].length-2) {
-        y = 0;
-        x++;
-    }
-    if(x > mapTab.length-1) {
-        return 0;
-    }
-    
-    var start = document.getElementById('map');
-    var startContext = start.getContext('2d');
-    
-    var tmp = mapTab[x][y].monstre;
-    tmp.setPos(x,y+1);
-
-    mapTab[x][y].monstre = 0;
-    mapTab[x][y].sol.draw(startContext, images.ground);
-
-    mapTab[x][y+1].monstre = tmp;
-    mapTab[x][y+1].monstre.draw(startContext, images.monstres);
-    
-    y++;
+//
+//function getImage(url){
+//    return new Promise(function(resolve, reject){
+//        var img = new Image()
+//        img.onload = function(){
+//            resolve(url)
+//        }
+//        img.onerror = function(){
+//            reject(url)
+//        }
+//        img.src = url
+//    })
+//}
+//
+//getImage('doggy.jpg').then(function(successurl){
+//    document.getElementById('doggyplayground').innerHTML = '<img src="' + successurl + '" />'
+//}).catch(function(errorurl){
+//    console.log('Error loading ' + errorurl)
+//})
+//
+//getImage('dog1.png').then(function(url){
+//    console.log(url + ' fetched!')
+//    return getImage('dog2.png')
+//})
+//                    .then(function(url){
+//    console.log(url + ' fetched!')
+//})
+//
+//var doggies = ['dog1.png', 'dog2.png', 'dog3.png', 'dog4.png', 'dog5.png']
+//var doggypromises = doggies.map(getImage) // call getImage on each array element and return array of promises
+////Chargement des images
+//Promise.all(imgLoad).then(function(urls){console.log('Tout est chargé !')})
+//                          .catch(function(urls){console.log('Erreur de chargement ...')});
  
-    //var loopTimer = setTimeout('move('+x+','+y+')',90);
-}
