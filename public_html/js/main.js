@@ -53,7 +53,7 @@ var can = {
         this.itemsContext = this.items.getContext('2d');
         
         this.perso = document.getElementById('map');
-        this.persopContext = this.perso.getContext('2d');
+        this.persoContext = this.perso.getContext('2d');
         
         this.ui = document.getElementById('ui');
         this.uiContext = this.ui.getContext('2d');
@@ -80,52 +80,88 @@ var can = {
     uiControl(mode = 'opt', activate = false) {
         if(mode === 'opt') {
             if(activate) {
-                window.addEventListener('keypress', this.uiOptManageKey);
+                window.addEventListener('keydown', this.uiOptManageKey, false);
                 this.ui.addEventListener('click', this.uiOptManageMouse);
                 console.log('Ajout des events pour options');
             }
             else {
-                window.removeEventListener('keypress', this.uiOptManageKey);
+                window.removeEventListener('keydown', this.uiOptManageKey);
                 this.ui.removeEventListener('click', this.uiOptManageMouse);
                 console.log('Suppresion des events pour options');
             }
         }
         else if(mode === 'inv') {
             if(activate) {
-                window.addEventListener('keypress', this.uiInvManageKey);
+                window.addEventListener('keydown', this.uiInvManageKey, false);
                 this.ui.addEventListener('mousedown', this.uiInvManageMouse);
                 console.log('Ajout des events pour inventaire');
             }
             else {
-                window.removeEventListener('keypress', this.uiInvManageKey);
+                window.removeEventListener('keydown', this.uiInvManageKey);
                 this.ui.removeEventListener('mousedown', this.uiInvManageMouse);
                 console.log('Suppression des events pour inventaire');
             }
             
         }
     },
-    uiOptManageKey() {
-        console.log('keypress Opt');        
+    uiOptManageKey(e) {
+        //let touche = e.keyCode || e.which;
+        if(e.which === 79 || e.which === 27) {
+            can.hideUi('opt');
+            can.showGame();
+        } 
     },
-    uiOptManageMouse() {
+    uiOptManageMouse(e) {
         console.log('clic');
     },
-    uiInvManageKey() {
-        console.log('keypress Inv');        
+    uiInvManageKey(e) {
+        if(e.which === 73 || e.which === 27) {
+            can.hideUi('inv');
+            can.showGame();
+        }       
     },
-    uiInvManageMouse() {
+    uiInvManageMouse(e) {
         console.log('mousedown');
     },
     showGame() {
-        
+        this.map.style.display = "block";
+        this.items.style.display = "block";
+        this.perso.style.display = "block";
+        window.addEventListener('keydown', this.gameManageKey, false);
     },
     hideGame() {
-        
+        this.map.style.display = "none";
+        this.items.style.display = "none";
+        this.perso.style.display = "none";
+        window.removeEventListener('keydown', this.gameManageKey);
     },
-    gameManageKey() {
+    gameManageKey(e) {
+        switch(e.which) {
+            case 37:
+                console.log("Touche left");
+                break;
+            case 38:
+                console.log("Touche up");
+                break;
+            case 39:
+                console.log("Touche right");
+                break;
+            case 40:
+                console.log("Touche down");
+                break;
+            case 73:
+                console.log("Touche I");
+                can.hideGame();
+                can.showUi('inv');
+                break;
+            case 79:
+                console.log("Touche O");
+                can.hideGame();
+                can.showUi('opt');
+                break;
+        }
         
-    }
-    
+    }  
 };
 can.init();
 
@@ -149,25 +185,13 @@ function main() {
     can.setSize();
     tileSizeOnScreen = Math.floor(can.size*percentOfScreen);  
     can.uiContext.drawImage(images.main, 0, 0, can.ui.width, can.ui.height);
+    can.showUi();
     
     //ajuste la scène si l'écran change de taille
     window.addEventListener('resize', function() { 
         can.setSize();
         tileSizeOnScreen = Math.floor(can.size*percentOfScreen);
         can.uiContext.drawImage(images.main, 0, 0, can.ui.width, can.ui.height);
-    });
-    
-    window.addEventListener('click', function() {
-        if(test) {
-            console.log('clic');
-            can.showUi();
-            test = false;
-        }
-        else {
-            console.log('clic');
-            can.hideUi();
-            test = true;
-        }
     });
 }
 
