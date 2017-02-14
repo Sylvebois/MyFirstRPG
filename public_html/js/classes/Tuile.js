@@ -35,33 +35,23 @@ class Tuile {
  * Hérite de Tuile
  */
 class MapTile extends Tuile {
-    constructor(x, y) {
+    constructor(x, y, type = 'ground') {
         super(x, y); 
-        // Par défaut, on peut se déplacer sur la case (pas de monstre, de mur, ...)
-        this._accessible = true;
-        this._groundType = 'ground'; 
-        
-        // Position par défaut de l'image sur le tileset
-        this.imgPos = [1,9];
-    };
-    get access() {
-        return this._accessible;
-    };
-    set access(newState) {
-        this._accessible = newState;    
+        this.setType(type);
     };
     setType(type = 'ground') {
         this._groundType = type.toString();
-
+        
+        // Donne la position sur l'image et si on peut se déplacer sur la tuile
         switch(this._groundType) {
             case 'wall' :
                 this.imgPos = [12,4];
-                this.access(false);
+                this._accessible = false;
                 break;
             case 'ground' :
             default:
                 this.imgPos = [1,9];
-                this.access(true);
+                this._accessible = true;
                 break;
         }
     };
