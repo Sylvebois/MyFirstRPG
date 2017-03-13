@@ -3,47 +3,23 @@ const TILESIZE = 32;
 const percentOfScreen = 5/100;
 var tileSizeOnScreen = 0;
 
-//Tilesets et images
+//Chargement des images
 var images = {
-    init() {
-        this.plume = new Image();
-        this.pioche = new Image();
-        this.main = new Image();
-        this.ground = new Image();
-        this.heros = new Image();
-        this.items = new Image();
-        this.monstres = new Image();
-        this.inv = new Image(); 
-        
-        this.plume.src = 'img/plume.png';
-        this.pioche.src = 'img/pioche.png';
-        this.main.src = 'img/scroll.png';
-        this.ground.src = 'img/tileset.png';
-        this.heros.src = 'img/hero.png';
-        this.items.src = 'img/items.png';
-        this.monstres.src = 'img/monsters.png';
-        this.inv.src = 'img/inv.png';
-    },
-    checkLoaded() {
-        for(let key in this) {
-            if(this.hasOwnProperty(key) && typeof(this[key]) !== 'function') {
-                if(this[key].complete){
-                    console.log(key + ' chargé');
-                    continue;
-                }
-                else {
-                    console.log(key + ' en cours de chargement !');
-                    return false;
-                }
-            }
-        }
-        
-        return true;
+    imgList: ['plume.png', 'pioche.png', 'scroll.png', 'tileset.png', 'hero.png', 'items.png', 'monsters.png', 'inv.png'],
+    loadImage(name) {
+        return new Promise( (resolve, reject) => {
+            let paramName = name.split('.')[0];
+            let url = 'img/' + name;
+
+            images[paramName] = new Image();
+            images[paramName].onload = () => resolve();
+            images[paramName].onerror = () => reject();
+            images[paramName].src = url;
+        });
     }
 };
-images.init();
 
-//canvas
+//Chargement et gestion des canvas
 var can = {
     init() {
         this.map = document.getElementById('map');
@@ -52,7 +28,7 @@ var can = {
         this.items = document.getElementById('items');
         this.itemsContext = this.items.getContext('2d');
         
-        this.perso = document.getElementById('map');
+        this.perso = document.getElementById('perso');
         this.persoContext = this.perso.getContext('2d');
         
         this.ui = document.getElementById('ui');
@@ -161,7 +137,23 @@ var can = {
                 break;
         }
         
-    }  
+    },
+    drawLevel(map = null) {
+        if (map) {                       
+            for(let i = 0 ; i < map.length; i++) {
+                for (let j = 0; j < map[i].length; j++)
+                {
+                    map[i][j].sol.draw(this.mapContext, images.tileset);     
+                }
+            }
+        }
+        else {
+            console.log('Pas de map fournie ...');
+        }
+    },
+    refreshLevel(map = null) {
+        
+    }
 };
 can.init();
 
@@ -176,56 +168,45 @@ can.init();
     }
 */
 var mapTab = [];
-
-function main() { 
-    var test = false;
-    images.checkLoaded();
-    
-    //Mise en place des canvas
-    can.setSize();
-    tileSizeOnScreen = Math.floor(can.size*percentOfScreen);  
-    can.uiContext.drawImage(images.main, 0, 0, can.ui.width, can.ui.height);
-    can.showUi();
-    
-    //ajuste la scène si l'écran change de taille
-    window.addEventListener('resize', function() { 
-        can.setSize();
-        tileSizeOnScreen = Math.floor(can.size*percentOfScreen);
-        can.uiContext.drawImage(images.main, 0, 0, can.ui.width, can.ui.height);
-    });
+for(let i = 0 ; i < 10; i++) {
+    mapTab[i] = [];
+    for(let j = 0; j < 10; j++) {
+        mapTab[i][j] = {
+            'sol': new MapTile(i, j),
+            'fog': 0,
+            'item': false,
+            'monstre': false,
+            'hero': false
+        };
+    }
 }
 
-//
-//function getImage(url){
-//    return new Promise(function(resolve, reject){
-//        var img = new Image()
-//        img.onload = function(){
-//            resolve(url)
-//        }
-//        img.onerror = function(){
-//            reject(url)
-//        }
-//        img.src = url
-//    })
-//}
-//
-//getImage('doggy.jpg').then(function(successurl){
-//    document.getElementById('doggyplayground').innerHTML = '<img src="' + successurl + '" />'
-//}).catch(function(errorurl){
-//    console.log('Error loading ' + errorurl)
-//})
-//
-//getImage('dog1.png').then(function(url){
-//    console.log(url + ' fetched!')
-//    return getImage('dog2.png')
-//})
-//                    .then(function(url){
-//    console.log(url + ' fetched!')
-//})
-//
-//var doggies = ['dog1.png', 'dog2.png', 'dog3.png', 'dog4.png', 'dog5.png']
-//var doggypromises = doggies.map(getImage) // call getImage on each array element and return array of promises
-////Chargement des images
-//Promise.all(imgLoad).then(function(urls){console.log('Tout est chargé !')})
-//                          .catch(function(urls){console.log('Erreur de chargement ...')});
- 
+function main() { 
+    //Vérification du chargement des images
+    let promisesImgList = images.imgList.map(images.loadImage);
+    Promise.all(promisesImgList)
+        .then(() => {
+            console.log('Images chargées');
+    
+            //Mise en place des canvas
+            can.setSize();
+            tileSizeOnScreen = Math.floor(can.size*percentOfScreen);  
+            can.uiContext.drawImage(images.scroll, 0, 0, can.ui.width, can.ui.height);
+            can.showUi();
+
+            //ajuste la scène si l'écran change de taille
+            window.addEventListener('resize', function() { 
+                can.setSize();
+                tileSizeOnScreen = Math.floor(can.size*percentOfScreen);
+                if(can.ui.style.display === 'block') {
+                    can.uiContext.drawImage(images.scroll, 0, 0, can.ui.width, can.ui.height);
+                }
+                else {
+                    can.drawLevel(mapTab);
+                }
+            });
+        })
+        .catch(() => {
+            console.log('Erreur lors du chargement des images');
+        });
+}
