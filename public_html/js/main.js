@@ -45,6 +45,21 @@ var can = {
             valeur.setAttribute("height",this.size);
         }
     },
+    uiFontStyle(fontSize = 40, font = 'Arial', fontColor = 'black', align = 'center') {
+        this.uiContext.fillStyle = fontColor;
+        this.uiContext.textAlign = align;  
+        this.uiContext.font = fontSize + 'px ' + font;
+    },
+    accueil() {     
+        this.uiContext.drawImage(images.scroll, 0, 0, this.ui.width, this.ui.height);
+        
+        this.uiFontStyle(80,'enchantedLandRegular');
+        this.uiContext.fillText('MyFirstRPG - V2', this.ui.width/2, 120);
+        
+        this.uiFontStyle(40);
+        this.uiContext.fillText('New Game', this.ui.width/2, this.ui.height/2-40);
+        this.uiContext.fillText('Load Game', this.ui.width/2, this.ui.height/2+40);
+    },
     showUi(mode = 'opt') {
         this.ui.style.display = "block";
         this.uiControl(mode, true);
@@ -182,24 +197,25 @@ for(let i = 0 ; i < 10; i++) {
 }
 
 function main() { 
-    //Vérification du chargement des images
+    //Vérification du chargement des images et des polices
     let promisesImgList = images.imgList.map(images.loadImage);
-    Promise.all(promisesImgList)
-        .then(() => {
-            console.log('Images chargées');
-    
+    let promisesFonts = document.fonts.ready;
+
+    Promise.all([promisesImgList, promisesFonts])
+        .then(() => {   
             //Mise en place des canvas
             can.setSize();
-            tileSizeOnScreen = Math.floor(can.size*percentOfScreen);  
-            can.uiContext.drawImage(images.scroll, 0, 0, can.ui.width, can.ui.height);
-            can.showUi();
+            tileSizeOnScreen = Math.floor(can.size*percentOfScreen);
+            can.accueil();         
+            can.showUi();  
 
             //ajuste la scène si l'écran change de taille
             window.addEventListener('resize', function() { 
                 can.setSize();
                 tileSizeOnScreen = Math.floor(can.size*percentOfScreen);
+                
                 if(can.ui.style.display === 'block') {
-                    can.uiContext.drawImage(images.scroll, 0, 0, can.ui.width, can.ui.height);
+                    can.accueil();
                 }
                 else {
                     can.drawLevel(mapTab);
