@@ -22,6 +22,8 @@ var images = {
 //Chargement et gestion des canvas
 var can = {
     init() {
+        this.state = 'acc';
+        
         this.map = document.getElementById('map');
         this.mapContext = this.map.getContext('2d');
         
@@ -60,16 +62,26 @@ var can = {
         this.uiContext.fillText('New Game', this.ui.width/2, this.ui.height/2-40);
         this.uiContext.fillText('Load Game', this.ui.width/2, this.ui.height/2+40);
     },
-    showUi(mode = 'opt') {
+    showUi() {
         this.ui.style.display = "block";
-        this.uiControl(mode, true);
+        this.uiControl(true);
     },
-    hideUi(mode = 'opt') {
+    hideUi() {
         this.ui.style.display = "none";
-        this.uiControl(mode, false);
+        this.uiControl(false);
     },
-    uiControl(mode = 'opt', activate = false) {
-        if(mode === 'opt') {
+    uiControl(activate = false) {
+        if(this.state === 'acc') {
+            if(activate) {
+                this.ui.addEventListener('click', this.uiAccManageMouse);
+                console.log('Ajout des events pour l\'accueil');
+            }
+            else {
+                this.ui.removeEventListener('click', this.uiAccManageMouse);
+                console.log('Suppresion des events pour l\'accueil');
+            }    
+        }
+        else if(this.state === 'opt') {
             if(activate) {
                 window.addEventListener('keydown', this.uiOptManageKey, false);
                 this.ui.addEventListener('click', this.uiOptManageMouse);
@@ -94,6 +106,9 @@ var can = {
             }
             
         }
+    },
+    uiAccManageMouse(e) {
+        console.log('clic');       
     },
     uiOptManageKey(e) {
         //let touche = e.keyCode || e.which;
@@ -207,18 +222,26 @@ function main() {
             can.setSize();
             tileSizeOnScreen = Math.floor(can.size*percentOfScreen);
             can.accueil();         
-            can.showUi();  
+            can.showUi();
 
             //ajuste la scène si l'écran change de taille
             window.addEventListener('resize', function() { 
                 can.setSize();
                 tileSizeOnScreen = Math.floor(can.size*percentOfScreen);
                 
-                if(can.ui.style.display === 'block') {
-                    can.accueil();
-                }
-                else {
-                    can.drawLevel(mapTab);
+                switch(can.state) {
+                    case 'acc':
+                        can.accueil();
+                        break;
+                    case 'opt':
+                        can.accueil();
+                        break;
+                    case 'inv':
+                        can.accueil();
+                        break;
+                    default:
+                        can.drawLevel(mapTab);
+                        break;
                 }
             });
         })
