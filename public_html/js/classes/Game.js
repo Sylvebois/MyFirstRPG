@@ -29,7 +29,7 @@ class Game {
             let posY = Math.floor(can.ui.height/2+2*(i-1)*fontSize-fontSize);
             
             can.textPos[i] = {
-                name : textes[i].substr(0, textes[i].length-7),
+                name : (can.state === 'load')? textes[i] : textes[i].substr(0, textes[i].length-7),
                 x : posX, 
                 y : posY, 
                 w : can.uiContext.measureText(textes[i]).width, 
@@ -88,7 +88,7 @@ class Game {
     };
     uiNextPage(goTo) {
         can.uiContext.clearRect(0,0, can.ui.width, can.ui.height);
-
+        
         switch(goTo) {
             case 'Abandonner':
                 can.state = 'acc';
@@ -106,6 +106,15 @@ class Game {
                 can.uiFrom = can.state;
                 can.state = 'load';
                 this.uiScreen();
+                break;
+            case 'Retour':
+                (can.uiFrom === 'opt')? this.uiNextPage('opt') : this.uiNextPage('Abandonner');
+                this.uiScreen();
+                break;
+            default:
+                can.state = 'jeu';
+                this.hideUi();
+                this.showGame();
                 break;
         }
     }
