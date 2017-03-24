@@ -29,11 +29,11 @@ class Game {
             let posY = Math.floor(can.ui.height/2+2*(i-1)*fontSize-fontSize);
             
             can.textPos[i] = {
-                name : (can.state === 'load')? textes[i] : textes[i].substr(0, textes[i].length-7),
-                x : posX, 
-                y : posY, 
-                w : can.uiContext.measureText(textes[i]).width, 
-                h : fontSize
+                name: (can.state === 'load')? textes[i] : textes[i].substr(0, textes[i].length-7),
+                x: posX, 
+                y: posY, 
+                w: can.uiContext.measureText(textes[i]).width, 
+                h: fontSize
             };
 
             can.uiContext.fillText(textes[i], can.ui.width/2, can.ui.height/2+2*(i-1)*fontSize); 
@@ -60,6 +60,9 @@ class Game {
     };
     uiNewGame() {
         this.uiBasics();
+                
+        let startForm = document.getElementsByTagName('form')[0];
+        startForm.style.display = 'block';
     };
     uiInventaire() {
         
