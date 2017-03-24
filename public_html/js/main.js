@@ -23,6 +23,7 @@ var images = {
 var can = {
     init() {
         this.state = 'acc';
+        this.uiFrom = '';
         
         this.map = document.getElementById('map');
         this.mapContext = this.map.getContext('2d');
@@ -36,6 +37,8 @@ var can = {
         this.ui = document.getElementById('ui');
         this.uiContext = this.ui.getContext('2d');
         
+        this.textPos = [null,null,null,null];
+
         this.setSize();
     },
     setSize() {
@@ -47,112 +50,32 @@ var can = {
             valeur.setAttribute("height",this.size);
         }
     },
-    uiFontStyle(fontSize = 40, font = 'Arial', fontColor = 'black', align = 'center') {
-        this.uiContext.fillStyle = fontColor;
-        this.uiContext.textAlign = align;  
-        this.uiContext.font = fontSize + 'px ' + font;
-    },
-    uiControl(activate = false) {
-        if(this.state === 'acc') {
-            if(activate) {
-                this.ui.addEventListener('click', this.uiAccManageMouse);
-                console.log('Ajout des events pour l\'accueil');
+    checkClickText(e) {
+        return new Promise((resolve, reject) => {            
+            let len = 0;
+
+            switch(can.state) {
+                case 'acc':
+                    len = 2;
+                    break;
+                case 'opt':
+                    len = 3;
+                    break;
+                case 'load':
+                    len = 4;
+                    break;
+                default:
+                    break;    
             }
-            else {
-                this.ui.removeEventListener('click', this.uiAccManageMouse);
-                console.log('Suppresion des events pour l\'accueil');
-            }    
-        }
-        else if(this.state === 'opt') {
-            if(activate) {
-                window.addEventListener('keydown', this.uiOptManageKey, false);
-                this.ui.addEventListener('click', this.uiOptManageMouse);
-                console.log('Ajout des events pour options');
-            }
-            else {
-                window.removeEventListener('keydown', this.uiOptManageKey);
-                this.ui.removeEventListener('click', this.uiOptManageMouse);
-                console.log('Suppresion des events pour options');
-            }
-        }
-        else if(mode === 'inv') {
-            if(activate) {
-                window.addEventListener('keydown', this.uiInvManageKey, false);
-                this.ui.addEventListener('mousedown', this.uiInvManageMouse);
-                console.log('Ajout des events pour inventaire');
-            }
-            else {
-                window.removeEventListener('keydown', this.uiInvManageKey);
-                this.ui.removeEventListener('mousedown', this.uiInvManageMouse);
-                console.log('Suppression des events pour inventaire');
-            }
-            
-        }
-    },
-    uiAccManageMouse(e) {
-        console.log('clic');       
-    },
-    uiOptManageKey(e) {
-        //let touche = e.keyCode || e.which;
-        if(e.which === 79 || e.which === 27) {
-            can.hideUi('opt');
-            can.showGame();
-        } 
-    },
-    uiOptManageMouse(e) {
-        console.log('clic');
-    },
-    uiInvManageKey(e) {
-        if(e.which === 73 || e.which === 27) {
-            can.hideUi('inv');
-            can.showGame();
-        }       
-    },
-    uiInvManageMouse(e) {
-        console.log('mousedown');
-    },
-    gameManageKey(e) {
-        switch(e.which) {
-            case 37:
-                console.log("Touche left");
-                break;
-            case 38:
-                console.log("Touche up");
-                break;
-            case 39:
-                console.log("Touche right");
-                break;
-            case 40:
-                console.log("Touche down");
-                break;
-            case 73:
-                console.log("Touche I");
-                can.hideGame();
-                can.showUi('inv');
-                break;
-            case 79:
-                console.log("Touche O");
-                can.hideGame();
-                can.showUi('opt');
-                break;
-        }
-        
-    },
-    drawLevel(map = null) {
-        if (map) {                       
-            for(let i = 0 ; i < map.length; i++) {
-                for (let j = 0; j < map[i].length; j++)
-                {
-                    map[i][j].sol.draw(this.mapContext, images.tileset);     
+
+            for(let i = 0; i < len ; i++) {
+                if( e.clientX >= can.textPos[i].x && e.clientX <= can.textPos[i].x + can.textPos[i].w &&
+                    e.clientY >= can.textPos[i].y && e.clientY <= can.textPos[i].y + can.textPos[i].h) {
+                        resolve(can.textPos[i].name);
                 }
             }
-        }
-        else {
-            console.log('Pas de map fournie ...');
-        }
-    },
-    refreshLevel(map = null) {
-        
+            reject();
+        });
     }
 };
 can.init();
@@ -188,23 +111,25 @@ function main() {
 
     Promise.all([promisesImgList, promisesFonts])
         .then(() => {
-            var view = new Game();
+            let view = new Game();
     
             //Mise en place des canvas
-            view.setBasics();
-            view.uiMain(false);         
+            view.setBaseSizes();
+            view.uiScreen();         
             view.showUi();
 
-            //ajuste la scène si l'écran change de taille
+            //Ajuste la scène si l'écran change de taille
             window.addEventListener('resize', function() { 
-                view.setBasics();
+                view.setBaseSizes();
                 
                 switch(can.state) {
                     case 'acc':
-                        view.uiMain(true);
-                        break;
                     case 'opt':
-                        view.uiMain(false);
+                    case 'load':
+                        view.uiScreen();
+                        break;
+                    case 'new':
+                        view.uiNewGame();
                         break;
                     case 'inv':
                         view.uiInventaire();
@@ -214,6 +139,64 @@ function main() {
                         break;
                 }
             });
+            
+            //Ajout des évenements sur les canvas
+            can.ui.onclick = (e) => {
+                if(can.state === 'acc' || can.state === 'opt' || can.state === 'load') {
+                    can.checkClickText(e)
+                        .then(action => view.uiNextPage(action))
+                        .catch(() => console.log('pas un clic utile'));
+                }
+            };
+            can.ui.onmousemove = (e) => {
+                if(can.state === 'inv'){
+                    
+                };
+            };
+            can.ui.onmousedown = (e) => {
+                if(can.state === 'inv'){
+                    
+                };
+            };
+            window.onkeydown = (e) => {
+                //let touche = e.keyCode || e.which;
+                if( (can.state === 'opt' && (e.which === 79 || e.which === 27)) ||
+                    (can.state === 'inv' && (e.which === 73 || e.which === 27))) {
+                    can.state = 'jeu';
+                    view.hideUi();
+                    view.showGame();
+                }
+                else if (can.state === 'jeu') {
+                    switch(e.which) {
+                        case 37:
+                            console.log("Touche left");
+                            break;
+                        case 38:
+                            console.log("Touche up");
+                            break;
+                        case 39:
+                            console.log("Touche right");
+                            break;
+                        case 40:
+                            console.log("Touche down");
+                            break;
+                        case 73:
+                            console.log("Touche I");
+                            can.state = 'inv';
+                            view.hideGame();
+                            view.uiInventaire();
+                            view.showUi();
+                            break;
+                        case 79:
+                            console.log("Touche O");
+                            can.state = 'opt';
+                            view.hideGame();
+                            view.uiScreen;
+                            view.showUi();
+                            break;
+                    }    
+                }
+            };
         })
         .catch(() => {
             console.log('Erreur lors du chargement des images ou des polices');

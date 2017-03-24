@@ -3,40 +3,63 @@
  */
 class Game {
     constructor() { };
-    setBasics() {
+    setBaseSizes() {
         can.setSize();
         tileSizeOnScreen = Math.floor(can.size*percentOfScreen);        
     }
     /*
-     * Dessins pour les différents écrans d'interface
+     * Dessine les différents écrans d'interface
      */
+    uiFontStyle(fontSize = 40, font = 'Arial', fontColor = 'black', align = 'center') {
+        can.uiContext.fillStyle = fontColor;
+        can.uiContext.textAlign = align;  
+        can.uiContext.font = fontSize + 'px ' + font;
+    };
     uiBasics() {
         can.uiContext.drawImage(images.scroll, 0, 0, can.ui.width, can.ui.height);
         
-        can.uiFontStyle(80,'enchantedLandRegular');
+        this.uiFontStyle(80,'enchantedLandRegular');
         can.uiContext.fillText('MyFirstRPG - V2', can.ui.width/2, 120);       
     };
-    uiMain(main = true) {
-        let textes = (main)? ['Nouvelle partie', 'Charger partie'] : ['Sauvegarder partie', 'Charger partie', 'Abandonner partie'];
-        let len = textes.length;
-        let textSize = 40;
+    uiDrawText(textes, nbTextes, fontSize) {
+        this.uiFontStyle(fontSize);
         
-        this.uiBasics();
-        
-        can.uiFontStyle(textSize);
-        
-        for(let i = 0; i < len; i++) {
-            //Donne la longueur du texte AVANT de l'écrire
-            // can.uiContext.measureText(text).width
+        for(let i = 0; i < nbTextes; i++) {
+            let posX = Math.floor(can.ui.width/2 - can.uiContext.measureText(textes[i]).width/2);
+            let posY = Math.floor(can.ui.height/2+2*(i-1)*fontSize-fontSize);
             
-            can.uiContext.fillText(textes[i], can.ui.width/2, can.ui.height/2+2*(i-1)*textSize);  
+            can.textPos[i] = {
+                name : textes[i].substr(0, textes[i].length-7),
+                x : posX, 
+                y : posY, 
+                w : can.uiContext.measureText(textes[i]).width, 
+                h : fontSize
+            };
+
+            can.uiContext.fillText(textes[i], can.ui.width/2, can.ui.height/2+2*(i-1)*fontSize); 
+        }
+    };
+    uiScreen() {
+        let textes = [];
+        switch(can.state) {
+            case 'acc':
+                textes = ['Nouvelle partie', 'Charger partie'];
+                break;
+            case 'opt':
+                textes = ['Sauvegarder partie', 'Charger partie', 'Abandonner partie'];
+                break;
+            case 'load':
+                textes = ['Sauvegarde 1', 'Sauvegarde 2', 'Sauvegarde 3', 'Retour'];
+                break;
+            default:
+                break;   
         }   
+
+        this.uiBasics();
+        this.uiDrawText(textes, textes.length, 40);
     };
     uiNewGame() {
         this.uiBasics();    
-    };
-    uiLoadGame() {
-        this.uiBasics();
     };
     uiInventaire() {
         
@@ -49,23 +72,42 @@ class Game {
      */
     showUi() {
         can.ui.style.display = "block";
-        can.uiControl(true);
     };
     hideUi() {
         can.ui.style.display = "none";
-        can.uiControl(false);
     };
     showGame() {
         can.map.style.display = "block";
         can.items.style.display = "block";
         can.perso.style.display = "block";
-        window.addEventListener('keydown', can.gameManageKey, false);
     };
     hideGame() {
         can.map.style.display = "none";
         can.items.style.display = "none";
         can.perso.style.display = "none";
-        window.removeEventListener('keydown', can.gameManageKey);
     };
+    uiNextPage(goTo) {
+        can.uiContext.clearRect(0,0, can.ui.width, can.ui.height);
+
+        switch(goTo) {
+            case 'Abandonner':
+                can.state = 'acc';
+                this.uiScreen();
+                break;
+            case 'opt':
+                can.state = 'opt';
+                this.uiScreen();
+                break;
+            case 'Nouvelle':
+                can.state = 'new';
+                this.uiNewGame();
+                break;
+            case 'Charger':
+                can.uiFrom = can.state;
+                can.state = 'load';
+                this.uiScreen();
+                break;
+        }
+    }
 }
 
