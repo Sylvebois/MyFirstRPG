@@ -12,8 +12,8 @@ var images = {
             let url = 'img/' + name;
 
             images[paramName] = new Image();
-            images[paramName].onload = () => resolve();
-            images[paramName].onerror = () => reject();
+            images[paramName].onload = () => resolve(console.log('ok - ' + name));
+            images[paramName].onerror = () => reject(console.log('fail - ' + name));
             images[paramName].src = url;
         });
     }
@@ -51,24 +51,6 @@ var can = {
         this.uiContext.fillStyle = fontColor;
         this.uiContext.textAlign = align;  
         this.uiContext.font = fontSize + 'px ' + font;
-    },
-    accueil() {     
-        this.uiContext.drawImage(images.scroll, 0, 0, this.ui.width, this.ui.height);
-        
-        this.uiFontStyle(80,'enchantedLandRegular');
-        this.uiContext.fillText('MyFirstRPG - V2', this.ui.width/2, 120);
-        
-        this.uiFontStyle(40);
-        this.uiContext.fillText('New Game', this.ui.width/2, this.ui.height/2-40);
-        this.uiContext.fillText('Load Game', this.ui.width/2, this.ui.height/2+40);
-    },
-    showUi() {
-        this.ui.style.display = "block";
-        this.uiControl(true);
-    },
-    hideUi() {
-        this.ui.style.display = "none";
-        this.uiControl(false);
     },
     uiControl(activate = false) {
         if(this.state === 'acc') {
@@ -128,18 +110,6 @@ var can = {
     },
     uiInvManageMouse(e) {
         console.log('mousedown');
-    },
-    showGame() {
-        this.map.style.display = "block";
-        this.items.style.display = "block";
-        this.perso.style.display = "block";
-        window.addEventListener('keydown', this.gameManageKey, false);
-    },
-    hideGame() {
-        this.map.style.display = "none";
-        this.items.style.display = "none";
-        this.perso.style.display = "none";
-        window.removeEventListener('keydown', this.gameManageKey);
     },
     gameManageKey(e) {
         switch(e.which) {
@@ -217,35 +187,35 @@ function main() {
     let promisesFonts = document.fonts.ready;
 
     Promise.all([promisesImgList, promisesFonts])
-        .then(() => {   
+        .then(() => {
+            var view = new Game();
+    
             //Mise en place des canvas
-            can.setSize();
-            tileSizeOnScreen = Math.floor(can.size*percentOfScreen);
-            can.accueil();         
-            can.showUi();
+            view.setBasics();
+            view.uiMain(false);         
+            view.showUi();
 
             //ajuste la scène si l'écran change de taille
             window.addEventListener('resize', function() { 
-                can.setSize();
-                tileSizeOnScreen = Math.floor(can.size*percentOfScreen);
+                view.setBasics();
                 
                 switch(can.state) {
                     case 'acc':
-                        can.accueil();
+                        view.uiMain(true);
                         break;
                     case 'opt':
-                        can.accueil();
+                        view.uiMain(false);
                         break;
                     case 'inv':
-                        can.accueil();
+                        view.uiInventaire();
                         break;
                     default:
-                        can.drawLevel(mapTab);
+                        view.gameScreen();
                         break;
                 }
             });
         })
         .catch(() => {
-            console.log('Erreur lors du chargement des images');
+            console.log('Erreur lors du chargement des images ou des polices');
         });
 }
