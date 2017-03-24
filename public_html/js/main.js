@@ -80,30 +80,6 @@ var can = {
 };
 can.init();
 
-//Le contenu de la carte
-/*
-    map[y][x] = {
-        'sol': 0;
-        'fog': 0;
-        'item': 0;
-        'monstre': 0;
-        'hero': 0;
-    }
-*/
-var mapTab = [];
-for(let i = 0 ; i < 10; i++) {
-    mapTab[i] = [];
-    for(let j = 0; j < 10; j++) {
-        mapTab[i][j] = {
-            'sol': new MapTile(i, j),
-            'fog': 0,
-            'item': false,
-            'monstre': false,
-            'hero': false
-        };
-    }
-}
-
 function main() { 
     //Vérification du chargement des images et des polices
     let promisesImgList = images.imgList.map(images.loadImage);
@@ -119,7 +95,7 @@ function main() {
             view.showUi();
 
             //Ajuste la scène si l'écran change de taille
-            window.addEventListener('resize', function() { 
+            window.onresize = () => { 
                 view.setBaseSizes();
                 
                 switch(can.state) {
@@ -138,7 +114,7 @@ function main() {
                         view.gameScreen();
                         break;
                 }
-            });
+            };
             
             //Ajout des évenements sur les canvas
             can.ui.onclick = (e) => {

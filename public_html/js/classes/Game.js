@@ -6,7 +6,7 @@ class Game {
     setBaseSizes() {
         can.setSize();
         tileSizeOnScreen = Math.floor(can.size*percentOfScreen);        
-    }
+    };
     /*
      * Dessine les différents écrans d'interface
      */
@@ -59,7 +59,7 @@ class Game {
         this.uiDrawText(textes, textes.length, 40);
     };
     uiNewGame() {
-        this.uiBasics();    
+        this.uiBasics();
     };
     uiInventaire() {
         
@@ -71,20 +71,20 @@ class Game {
      * Masque / Affiche l'interface ou le jeu
      */
     showUi() {
-        can.ui.style.display = "block";
+        can.ui.style.display = 'block';
     };
     hideUi() {
-        can.ui.style.display = "none";
+        can.ui.style.display = 'none';
     };
     showGame() {
-        can.map.style.display = "block";
-        can.items.style.display = "block";
-        can.perso.style.display = "block";
+        can.map.style.display = 'block';
+        can.items.style.display = 'block';
+        can.perso.style.display = 'block';
     };
     hideGame() {
-        can.map.style.display = "none";
-        can.items.style.display = "none";
-        can.perso.style.display = "none";
+        can.map.style.display = 'none';
+        can.items.style.display = 'none';
+        can.perso.style.display = 'none';
     };
     uiNextPage(goTo) {
         can.uiContext.clearRect(0,0, can.ui.width, can.ui.height);
