@@ -16,17 +16,19 @@ class Game {
         can.uiContext.font = fontSize + 'px ' + font;
     };
     uiBasics() {
+        let fontSize = (can.size < 768)? 40 : 80;
+
         can.uiContext.drawImage(images.scroll, 0, 0, can.ui.width, can.ui.height);
         
-        this.uiFontStyle(80,'enchantedLandRegular');
-        can.uiContext.fillText('MyFirstRPG - V2', can.ui.width/2, 120);       
+        this.uiFontStyle(fontSize,'enchantedLandRegular');
+        can.uiContext.fillText('MyFirstRPG - V2', can.ui.width/2, can.ui.height*15/100);       
     };
     uiDrawText(textes, nbTextes, fontSize) {
         this.uiFontStyle(fontSize);
         
         for(let i = 0; i < nbTextes; i++) {
             let posX = Math.floor(can.ui.width/2 - can.uiContext.measureText(textes[i]).width/2);
-            let posY = Math.floor(can.ui.height/2+2*(i-1)*fontSize-fontSize);
+            let posY = Math.floor(can.ui.height*45/100+2*(i-1)*fontSize-fontSize);
             
             can.textPos[i] = {
                 name: (can.state === 'load')? textes[i] : textes[i].substr(0, textes[i].length-7),
@@ -36,10 +38,12 @@ class Game {
                 h: fontSize
             };
 
-            can.uiContext.fillText(textes[i], can.ui.width/2, can.ui.height/2+2*(i-1)*fontSize); 
+            can.uiContext.fillText(textes[i], can.ui.width/2, can.ui.height*45/100+2*(i-1)*fontSize); 
         }
     };
     uiScreen() {
+        let fontSize = (can.size < 768)? 20 : 40;
+        
         let textes = [];
         switch(can.state) {
             case 'acc':
@@ -56,7 +60,7 @@ class Game {
         }   
 
         this.uiBasics();
-        this.uiDrawText(textes, textes.length, 40);
+        this.uiDrawText(textes, textes.length, fontSize);
     };
     uiNewGame() {
         this.uiBasics();

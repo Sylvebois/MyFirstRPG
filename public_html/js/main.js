@@ -44,6 +44,9 @@ var can = {
     setSize() {
         this.size = Math.min(window.innerWidth, window.innerHeight);
         let canvases = document.getElementsByTagName('canvas');
+        let container = document.getElementById('container');
+        
+        container.setAttribute("style",'width: ' + this.size + 'px;height: ' + this.size +'px;');
     
         for (let valeur of canvases) {
             valeur.setAttribute("width",this.size);

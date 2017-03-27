@@ -22,7 +22,6 @@ canvas {
     position: absolute;
     top: 0;
     left: 0;
-    border: solid 1px black;
 }
 
 #map {
@@ -39,4 +38,29 @@ canvas {
 
 #ui {
     z-index: 10;
+}
+
+/*
+ * Formulaire de création du perssonnage 
+ */
+#createHero {
+    position: absolute;
+    top: 23%;
+    left: 15%;
+    z-index: 50;  
+    font-size: 20px;
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+    #createHero {
+        font-size: 30px;
+    }
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+    #createHero {
+        font-size: 40px;
+    }
 }
