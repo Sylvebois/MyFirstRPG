@@ -45,12 +45,17 @@ var can = {
         this.size = Math.min(window.innerWidth, window.innerHeight);
         let canvases = document.getElementsByTagName('canvas');
         let container = document.getElementById('container');
+        let form = document.getElementById('createHero');
         
-        container.setAttribute("style",'width: ' + this.size + 'px;height: ' + this.size +'px;');
+        container.setAttribute('style', `width: ${this.size}px; height: ${this.size}px;`);
+        
+        if(form.style.display !== 'none'){
+            form.setAttribute('style', `font-size: ${(this.size < 700)? 20 : 30}px;`);
+        }
     
         for (let valeur of canvases) {
-            valeur.setAttribute("width",this.size);
-            valeur.setAttribute("height",this.size);
+            valeur.setAttribute('width',this.size);
+            valeur.setAttribute('height',this.size);
         }
     },
     checkClickText(e) {
