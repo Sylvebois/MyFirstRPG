@@ -69,7 +69,8 @@ class Game {
         startForm.style.display = 'block';
     };
     uiInventaire() {
-        
+        this.uiBasics();      
+        can.uiContext.drawImage(images.inv, can.ui.width*20/100, can.ui.height*20/100, can.ui.width*60/100, can.ui.height*60/100);
     };
     gameScreen() {
         
@@ -118,7 +119,7 @@ class Game {
                 (can.uiFrom === 'opt')? this.uiNextPage('opt') : this.uiNextPage('Abandonner');
                 this.uiScreen();
                 break;
-            default:
+            default: 
                 can.state = 'jeu';
                 this.hideUi();
                 this.showGame();
