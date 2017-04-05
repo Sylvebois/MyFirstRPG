@@ -89,6 +89,9 @@ var can = {
 can.init();
 
 function main() { 
+    //Chargement duformulaire de création
+    let form = document.getElementById('createHero');
+            
     //Vérification du chargement des images et des polices
     let promisesImgList = images.imgList.map(images.loadImage);
     let promisesFonts = document.fonts.ready;
@@ -175,10 +178,60 @@ function main() {
                             console.log("Touche O");
                             can.state = 'opt';
                             view.hideGame();
-                            view.uiScreen;
+                            view.uiScreen();
                             view.showUi();
                             break;
                     }    
+                }
+            };
+            
+            //Ajout des événements sur le formulaire
+            form.onchange = (e) => {
+                let inputs = form.getElementsByTagName('input');
+                let nbPoints = document.getElementById('nbPoints');
+                let points = 50;
+                
+                for(let input of inputs) {
+                    if(input.type === 'range') {
+                        points -= parseInt(input.value);
+                        document.getElementById(`show${input.id}`).innerHTML = input.value;
+                    }
+                }
+                
+                for(let input of inputs) {
+                    if(input.type === 'range') {
+                        let reste = points+parseInt(input.value);
+                        let max = (reste <= 0)? 1 : reste;
+                        document.getElementById(input.id).max = max;
+                    }
+                }
+
+                document.getElementById('nbPoints').innerHTML = points;
+
+                if(points >= 0) {
+                   nbPoints.style = 'color: #00ee00';
+                }
+                else {
+                   nbPoints.style = 'color: #ff0000';
+                }
+            };
+            form.getElementsByTagName('button')[0].onclick = (e) => {
+                e.preventDefault();
+                
+                form.style.display = 'none';    
+                view.uiNextPage('Abandonner');
+            };
+            form.getElementsByTagName('button')[1].onclick = (e) => {
+                e.preventDefault();
+                
+                let nbPointsLeft = document.getElementById('nbPoints').firstChild.nodeValue;
+                
+                if(nbPointsLeft === '0' && form.getElementsByTagName('nom').value !== '') {
+                    form.style.display = 'none';    
+                    view.uiNextPage();
+                }
+                else {
+                    alert('Fiche incomplète');
                 }
             };
         })
