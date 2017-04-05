@@ -72,8 +72,13 @@ class Game {
         this.uiBasics();      
         can.uiContext.drawImage(images.inv, can.ui.width*20/100, can.ui.height*20/100, can.ui.width*60/100, can.ui.height*60/100);
     };
-    gameScreen() {
-        
+    gameScreen(carte, length) {     
+        for(let i = length; i >= 0; i--) {
+            for(let j = length; j >= 0; j--) {
+                carte[i][j].sol.draw(can.mapContext, images.tileset);
+                (carte[i][j].item)? carte[i][j].item.draw(can.itemsContext, images.items) : null;
+            }
+        }
     };
     /*
      * Masque / Affiche l'interface ou le jeu

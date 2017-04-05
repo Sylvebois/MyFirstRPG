@@ -107,6 +107,7 @@ function main() {
         .then(
             () => {
                 let view = new Game();
+                let world = new Dungeon();
 
                 //Mise en place des canvas
                 view.setBaseSizes();
@@ -130,7 +131,7 @@ function main() {
                             view.uiInventaire();
                             break;
                         default:
-                            view.gameScreen();
+                            view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1);
                             break;
                     }
                 };
@@ -235,8 +236,10 @@ function main() {
                     let nbPointsLeft = document.getElementById('nbPoints').firstChild.nodeValue;
 
                     if(nbPointsLeft === '0' && form.getElementsByTagName('nom').value !== '') {
-                        form.style.display = 'none';    
+                        form.style.display = 'none';
+                        world.start();
                         view.uiNextPage();
+                        view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1);
                     }
                     else {
                         alert('Fiche incomplète');
