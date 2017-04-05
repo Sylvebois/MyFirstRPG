@@ -89,153 +89,162 @@ var can = {
 can.init();
 
 function main() { 
-    //Chargement duformulaire de création
+    //Chargement du formulaire de création et des images
     let form = document.getElementById('createHero');
-            
-    //Vérification du chargement des images et des polices
-    let promisesImgList = images.imgList.map(images.loadImage);
-    let promisesFonts = document.fonts.ready;
-
-    Promise.all([promisesImgList, promisesFonts])
-        .then(() => {
-            let view = new Game();
+    let promisesImgList = images.imgList.map(images.loadImage);  
     
-            //Mise en place des canvas
-            view.setBaseSizes();
-            view.uiScreen();         
-            view.showUi();
+    //Vérification du chargement des images et des polices
+    Promise.all(promisesImgList)
+        .then(
+            () => { 
+                //IE et Edge ne supportent pas document.fonts
+                return (document.fonts)? document.fonts.load('12px enchantedLandRegular'): new Promise.resolve(); 
+            },
+            () => { 
+                console.log('Erreur lors du chargement des images'); 
+            }
+        )
+        .then(
+            () => {
+                let view = new Game();
 
-            //Ajuste la scène si l'écran change de taille
-            window.onresize = () => { 
+                //Mise en place des canvas
                 view.setBaseSizes();
-                
-                switch(can.state) {
-                    case 'acc':
-                    case 'opt':
-                    case 'load':
-                        view.uiScreen();
-                        break;
-                    case 'new':
-                        view.uiNewGame();
-                        break;
-                    case 'inv':
-                        view.uiInventaire();
-                        break;
-                    default:
-                        view.gameScreen();
-                        break;
-                }
-            };
-            
-            //Ajout des évenements sur les canvas
-            can.ui.onclick = (e) => {
-                if(can.state === 'acc' || can.state === 'opt' || can.state === 'load') {
-                    can.checkClickText(e)
-                        .then(action => view.uiNextPage(action))
-                        .catch(() => console.log('pas un clic utile'));
-                }
-            };
-            can.ui.onmousemove = (e) => {
-                if(can.state === 'inv'){
-                    
-                };
-            };
-            can.ui.onmousedown = (e) => {
-                if(can.state === 'inv'){
-                    
-                };
-            };
-            window.onkeydown = (e) => {
-                //let touche = e.keyCode || e.which;
-                if( (can.state === 'opt' && (e.which === 79 || e.which === 27)) ||
-                    (can.state === 'inv' && (e.which === 73 || e.which === 27))) {
-                    can.state = 'jeu';
-                    view.hideUi();
-                    view.showGame();
-                }
-                else if (can.state === 'jeu') {
-                    switch(e.which) {
-                        case 37:
-                            console.log("Touche left");
-                            break;
-                        case 38:
-                            console.log("Touche up");
-                            break;
-                        case 39:
-                            console.log("Touche right");
-                            break;
-                        case 40:
-                            console.log("Touche down");
-                            break;
-                        case 73:
-                            console.log("Touche I");
-                            can.state = 'inv';
-                            view.hideGame();
-                            view.uiInventaire();
-                            view.showUi();
-                            break;
-                        case 79:
-                            console.log("Touche O");
-                            can.state = 'opt';
-                            view.hideGame();
+                view.uiScreen();         
+                view.showUi();
+
+                //Ajuste la scène si l'écran change de taille
+                window.onresize = () => { 
+                    view.setBaseSizes();
+
+                    switch(can.state) {
+                        case 'acc':
+                        case 'opt':
+                        case 'load':
                             view.uiScreen();
-                            view.showUi();
                             break;
-                    }    
-                }
-            };
-            
-            //Ajout des événements sur le formulaire
-            form.onchange = (e) => {
-                let inputs = form.getElementsByTagName('input');
-                let nbPoints = document.getElementById('nbPoints');
-                let points = 50;
-                
-                for(let input of inputs) {
-                    if(input.type === 'range') {
-                        points -= parseInt(input.value);
-                        document.getElementById(`show${input.id}`).innerHTML = input.value;
+                        case 'new':
+                            view.uiNewGame();
+                            break;
+                        case 'inv':
+                            view.uiInventaire();
+                            break;
+                        default:
+                            view.gameScreen();
+                            break;
                     }
-                }
-                
-                for(let input of inputs) {
-                    if(input.type === 'range') {
-                        let reste = points+parseInt(input.value);
-                        let max = (reste <= 0)? 1 : reste;
-                        document.getElementById(input.id).max = max;
+                };
+
+                //Ajout des évenements sur les canvas
+                can.ui.onclick = (e) => {
+                    if(can.state === 'acc' || can.state === 'opt' || can.state === 'load') {
+                        can.checkClickText(e)
+                            .then(action => view.uiNextPage(action))
+                            .catch(() => console.log('pas un clic utile'));
                     }
-                }
+                };
+                can.ui.onmousemove = (e) => {
+                    if(can.state === 'inv'){
 
-                document.getElementById('nbPoints').innerHTML = points;
+                    };
+                };
+                can.ui.onmousedown = (e) => {
+                    if(can.state === 'inv'){
 
-                if(points >= 0) {
-                   nbPoints.style = 'color: #00ee00';
-                }
-                else {
-                   nbPoints.style = 'color: #ff0000';
-                }
-            };
-            form.getElementsByTagName('button')[0].onclick = (e) => {
-                e.preventDefault();
-                
-                form.style.display = 'none';    
-                view.uiNextPage('Abandonner');
-            };
-            form.getElementsByTagName('button')[1].onclick = (e) => {
-                e.preventDefault();
-                
-                let nbPointsLeft = document.getElementById('nbPoints').firstChild.nodeValue;
-                
-                if(nbPointsLeft === '0' && form.getElementsByTagName('nom').value !== '') {
+                    };
+                };
+                window.onkeydown = (e) => {
+                    //let touche = e.keyCode || e.which;
+                    if( (can.state === 'opt' && (e.which === 79 || e.which === 27)) ||
+                        (can.state === 'inv' && (e.which === 73 || e.which === 27))) {
+                        can.state = 'jeu';
+                        view.hideUi();
+                        view.showGame();
+                    }
+                    else if (can.state === 'jeu') {
+                        switch(e.which) {
+                            case 37:
+                                console.log("Touche left");
+                                break;
+                            case 38:
+                                console.log("Touche up");
+                                break;
+                            case 39:
+                                console.log("Touche right");
+                                break;
+                            case 40:
+                                console.log("Touche down");
+                                break;
+                            case 73:
+                                console.log("Touche I");
+                                can.state = 'inv';
+                                view.hideGame();
+                                view.uiInventaire();
+                                view.showUi();
+                                break;
+                            case 79:
+                                console.log("Touche O");
+                                can.state = 'opt';
+                                view.hideGame();
+                                view.uiScreen();
+                                view.showUi();
+                                break;
+                        }    
+                    }
+                };
+
+                //Ajout des événements sur le formulaire
+                form.onchange = (e) => {
+                    let inputs = form.getElementsByTagName('input');
+                    let nbPoints = document.getElementById('nbPoints');
+                    let points = 50;
+
+                    for(let input of inputs) {
+                        if(input.type === 'range') {
+                            points -= parseInt(input.value);
+                            document.getElementById(`show${input.id}`).innerHTML = input.value;
+                        }
+                    }
+
+                    for(let input of inputs) {
+                        if(input.type === 'range') {
+                            let reste = points+parseInt(input.value);
+                            let max = (reste <= 0)? 1 : reste;
+                            document.getElementById(input.id).max = max;
+                        }
+                    }
+
+                    document.getElementById('nbPoints').innerHTML = points;
+
+                    if(points >= 0) {
+                       nbPoints.style = 'color: #00ee00';
+                    }
+                    else {
+                       nbPoints.style = 'color: #ff0000';
+                    }
+                };
+                form.getElementsByTagName('button')[0].onclick = (e) => {
+                    e.preventDefault();
+
                     form.style.display = 'none';    
-                    view.uiNextPage();
-                }
-                else {
-                    alert('Fiche incomplète');
-                }
-            };
-        })
-        .catch(() => {
-            console.log('Erreur lors du chargement des images ou des polices');
-        });
+                    view.uiNextPage('Abandonner');
+                };
+                form.getElementsByTagName('button')[1].onclick = (e) => {
+                    e.preventDefault();
+
+                    let nbPointsLeft = document.getElementById('nbPoints').firstChild.nodeValue;
+
+                    if(nbPointsLeft === '0' && form.getElementsByTagName('nom').value !== '') {
+                        form.style.display = 'none';    
+                        view.uiNextPage();
+                    }
+                    else {
+                        alert('Fiche incomplète');
+                    }
+                };
+            },
+            () => {
+                console.log('Erreur lors du chargement des polices');
+            }
+        );
 }
