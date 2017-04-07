@@ -17,14 +17,21 @@ class Dungeon {
             }
         */
     };
-    start() {
+    start(hero) {
         let mid = Math.floor(this.nbTilesPerLine/2)-1;
         
         this.generateMapBasics();
         
+        //Changements spécifiques au niveau de départ
         this.carte[this.lvl][mid][0].sol.setType('ground');
+        
         this.carte[this.lvl][mid][mid].item = new Item(mid, mid, 'StairDown', 0, 0, 0, 0, '');
         this.carte[this.lvl][mid][mid].item.imgPos = [3,1];
+        
+        this.carte[this.lvl][mid][1].hero = hero;
+        hero.pos = [mid,1];
+        hero.imgPos = hero._direction.BAS;
+        
     };
     generateMapBasics() {
         this.carte[this.lvl] = [];
@@ -48,6 +55,9 @@ class Dungeon {
                 };
             }
         } 
+    };
+    updateMap() {
+        
     };
 }
 

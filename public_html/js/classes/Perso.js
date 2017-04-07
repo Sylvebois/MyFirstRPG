@@ -58,7 +58,7 @@ class Perso extends Base {
  * Hérite de Perso
  */
 
-class Heros extends Perso {
+class Hero extends Perso {
     constructor(x, y, name, st, dx, iq, ht, level) {
         super(x, y, name, st, dx, iq, ht, level);
       

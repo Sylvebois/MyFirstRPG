@@ -72,7 +72,7 @@ class Base extends Tuile {
     };
     modSpecs(type, value = 0) {
         switch(type) {
-            case 'name':
+            case 'nom':
                 this._name = value;
                 break;
             case 'st':

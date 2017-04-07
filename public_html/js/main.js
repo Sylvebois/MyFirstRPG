@@ -108,6 +108,7 @@ function main() {
             () => {
                 let view = new Game();
                 let world = new Dungeon();
+                let hero = new Hero();
 
                 //Mise en place des canvas
                 view.setBaseSizes();
@@ -250,8 +251,18 @@ function main() {
                     let nbPointsLeft = document.getElementById('nbPoints').firstChild.nodeValue;
 
                     if(nbPointsLeft === '0' && form.getElementsByTagName('nom').value !== '') {
+                        let inputs = form.getElementsByTagName('input');
+                        
+                        for(let input of inputs) {
+                            if(input.type === 'range') {
+                                hero.modSpecs(input.id.toLowerCase(), parseInt(input.value));
+                            }
+                            else {
+                               hero.modSpecs(input.id, input.value);
+                            }
+                        }
+                        world.start(hero);
                         form.style.display = 'none';
-                        world.start();
                         view.uiNextPage();
                         view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1);
                     }

@@ -77,6 +77,7 @@ class Game {
             for(let j = length; j >= 0; j--) {
                 carte[i][j].sol.draw(can.mapContext, images.tileset);
                 (carte[i][j].item)? carte[i][j].item.draw(can.itemsContext, images.items) : null;
+                (carte[i][j].hero)? carte[i][j].hero.draw(can.persoContext, images.hero) : null;
             }
         }
     };
