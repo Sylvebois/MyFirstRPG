@@ -226,7 +226,21 @@ function main() {
                 };
                 form.getElementsByTagName('button')[0].onclick = (e) => {
                     e.preventDefault();
-
+                    
+                    document.getElementById('nbPoints').innerHTML = 50;
+                    
+                    let inputs = form.getElementsByTagName('input');
+                    for(let input of inputs) {
+                        if(input.type === 'range') {
+                            input.value = 1;
+                            document.getElementById(input.id).max = 47;
+                            document.getElementById(`show${input.id}`).innerHTML = '';
+                        }
+                        else {
+                           input.value = ''; 
+                        }
+                    }
+                    
                     form.style.display = 'none';    
                     view.uiNextPage('Abandonner');
                 };
