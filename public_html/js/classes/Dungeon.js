@@ -30,8 +30,7 @@ class Dungeon {
         
         this.carte[this.lvl][mid][1].hero = hero;
         hero.pos = [mid,1];
-        hero.imgPos = hero._direction.BAS;
-        
+        hero.imgPos = hero.direction.BAS; 
     };
     generateMapBasics() {
         this.carte[this.lvl] = [];
@@ -58,6 +57,19 @@ class Dungeon {
     };
     updateMap() {
         
+    };
+    checkAccess(x,y) {
+        return new Promise( (resolve, reject) => {
+            if(this.carte[this.lvl][x][y].sol._accessible) {
+                resolve();
+            }
+            else if(this.carte[this.lvl][x][y].sol._groundType === 'wall') {
+                reject('wall');
+            }
+            else {
+                reject('fight');
+            }
+        });
     };
 }
 

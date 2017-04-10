@@ -165,27 +165,81 @@ function main() {
                     }
                     else if (can.state === 'jeu') {
                         switch(e.which) {
-                            case 37:
-                                console.log("Touche left");
+                            case 37: //gauche
+                                world.checkAccess(hero._posX-1, hero._posY)
+                                    .then(
+                                        () => {
+                                            hero.imgPos = hero.direction.GAUCHE;
+                                            hero.pos = [hero._posX-1, hero._posY];
+                                        }, 
+                                        raison => {
+                                            if(raison === 'fight') {
+                                                console.log('BASTOOOOON !');
+                                            }
+                                        }
+                                    )
+                                    .then(
+                                        () => view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1)
+                                    );
                                 break;
-                            case 38:
-                                console.log("Touche up");
+                            case 38://haut
+                                world.checkAccess(hero._posX, hero._posY-1)
+                                    .then(
+                                        () => {
+                                            hero.imgPos = hero.direction.HAUT;
+                                            hero.pos = [hero._posX, hero._posY-1];
+                                        }, 
+                                        raison => {
+                                            if(raison === 'fight') {
+                                                console.log('BASTOOOOON !');
+                                            }
+                                        }
+                                    )
+                                    .then(
+                                        () => view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1)
+                                    );
                                 break;
-                            case 39:
-                                console.log("Touche right");
+                            case 39: //droite
+                                world.checkAccess(hero._posX+1, hero._posY)
+                                    .then(
+                                        () => {
+                                            hero.imgPos = hero.direction.DROITE;
+                                            hero.pos = [hero._posX+1, hero._posY];
+                                        }, 
+                                        raison => {
+                                            if(raison === 'fight') {
+                                                console.log('BASTOOOOON !');
+                                            }
+                                        }
+                                    )
+                                    .then(
+                                        () => view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1)
+                                    );
                                 break;
-                            case 40:
-                                console.log("Touche down");
+                            case 40: //bas
+                                world.checkAccess(hero._posX, hero._posY+1)
+                                    .then(
+                                        () => {
+                                            hero.imgPos = hero.direction.BAS;
+                                            hero.pos = [hero._posX, hero._posY+1];
+                                        }, 
+                                        raison => {
+                                            if(raison === 'fight') {
+                                                console.log('BASTOOOOON !');
+                                            }
+                                        }
+                                    )
+                                    .then(
+                                        () => view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1)
+                                    );
                                 break;
-                            case 73:
-                                console.log("Touche I");
+                            case 73: //I
                                 can.state = 'inv';
                                 view.hideGame();
                                 view.uiInventaire();
                                 view.showUi();
                                 break;
-                            case 79:
-                                console.log("Touche O");
+                            case 79: //O
                                 can.state = 'opt';
                                 view.hideGame();
                                 view.uiScreen();

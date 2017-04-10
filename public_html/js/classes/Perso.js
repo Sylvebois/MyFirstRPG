@@ -66,7 +66,7 @@ class Hero extends Perso {
         this._inventaire = [0,0,0,0,0,0,0,0,0,0];
 
         //Image à utiliser en fonction de la direction
-        this._direction = {
+        this.direction = {
             'DROITE' : [0,0],
             'DROITE_ANIM' : [1,0],
             'GAUCHE' : [0,1],
