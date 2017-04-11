@@ -1,5 +1,5 @@
 /* 
- * Interfaces du jeu
+ * Interfaces et écrans du jeu
  */
 class Game {
     constructor() { };

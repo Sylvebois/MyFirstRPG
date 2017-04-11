@@ -1,10 +1,11 @@
 /* 
- * Classe tournant autour de la génération des niveaux
+ * Classe gérant les données des niveaux
  */
 class Dungeon {
     constructor(){
         this.nbTilesPerLine = 20;
         this.carte = [];
+        this.nbWall = 0;
         this.lvl = 0;
         //Le contenu de la carte
         /*
@@ -20,7 +21,7 @@ class Dungeon {
     start(hero) {
         let mid = Math.floor(this.nbTilesPerLine/2)-1;
         
-        this.generateMapBasics();
+        this.generateMapBasics(false);
         
         //Changements spécifiques au niveau de départ
         this.carte[this.lvl][mid][0].sol.setType('ground');
@@ -28,11 +29,13 @@ class Dungeon {
         this.carte[this.lvl][mid][mid].item = new Item(mid, mid, 'StairDown', 0, 0, 0, 0, '');
         this.carte[this.lvl][mid][mid].item.imgPos = [3,1];
         
-        this.carte[this.lvl][mid][1].hero = hero;
         hero.pos = [mid,1];
         hero.imgPos = hero.direction.BAS; 
+        this.carte[this.lvl][mid][1].hero = hero;
     };
-    generateMapBasics() {
+    generateMapBasics(withFog = true) {
+        let fog = (withFog)? 2 : 0;
+        this.nbWall = 0;
         this.carte[this.lvl] = [];
         
         for(let i = 0 ; i < this.nbTilesPerLine; i++) {
@@ -43,17 +46,39 @@ class Dungeon {
                 
                 if(i === 0 || i === this.nbTilesPerLine-1 || j === 0 || j === this.nbTilesPerLine-1) {
                     type = 'wall';    
+                    this.nbWall++;
                 }
                 
                 this.carte[this.lvl][i][j] = {
                     'sol': new MapTile(i, j, type),
-                    'fog': 0,
+                    'fog': fog,
                     'item': false,
                     'monstre': false,
                     'hero': false
                 };
             }
         } 
+    };
+    generateStuff(type = 'item') {
+        let count = 0;
+        let nbMax = Math.floor((Math.pow(this.nbTilesPerLine,2) - this.nbWall)/4);
+        let nb = Math.floor(Math.random() * nbMax + 1);  
+        
+        while (count < nb) {
+            let x = Math.floor(Math.random() * this.nbTilesPerLine);
+            let y = Math.floor(Math.random() * this.nbTilesPerLine);
+            
+            if(this.carte[this.lvl][x][y].sol._accessible && !this.carte[this.lvl][x][y].item && !this.carte[this.lvl][x][y].hero) {
+                if(type === 'item') {
+                   this.carte[this.lvl][x][y].item = new Item(x,y); 
+                }
+                else {
+                    this.carte[this.lvl][x][y].monstre = new Monstre(x,y);
+                    this.carte[this.lvl][x][y].sol._accessible = false;
+                }
+                count++;
+            }
+        }
     };
     updateMap() {
         
@@ -72,4 +97,3 @@ class Dungeon {
         });
     };
 }
-

@@ -156,7 +156,6 @@ function main() {
                     };
                 };
                 window.onkeydown = (e) => {
-                    //let touche = e.keyCode || e.which;
                     if( (can.state === 'opt' && (e.which === 79 || e.which === 27)) ||
                         (can.state === 'inv' && (e.which === 73 || e.which === 27))) {
                         can.state = 'jeu';
