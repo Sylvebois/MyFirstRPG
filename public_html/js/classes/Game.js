@@ -5,6 +5,7 @@ class Game {
     constructor() { };
     setBaseSizes() {
         can.setSize();
+        info.setPos();
         tileSizeOnScreen = Math.floor(can.size*percentOfScreen);        
     };
     /*

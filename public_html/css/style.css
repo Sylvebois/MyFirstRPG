@@ -41,6 +41,19 @@ canvas {
 }
 
 /*
+ * Zone affichant les informations
+ */
+#info {
+    position: absolute;
+    background-color: black;
+    color: white;
+}
+
+#info p {
+    margin-left: 5px;
+}
+
+/*
  * Formulaire de création du personnage 
  */
 #createHero {

@@ -19,6 +19,29 @@ var images = {
     }
 };
 
+//Chargement de la zone d'info
+var info = {
+    div : document.getElementById('info'),
+    setPos() {
+        if(window.innerWidth > window.innerHeight) {
+            this.div.setAttribute('style', `width: ${window.innerWidth-can.items.width}px; height: ${window.innerHeight}px; top: 0; left: ${can.items.width}px`);
+        }
+        else {
+            this.div.setAttribute('style', `width: ${window.innerWidth}px; height: ${window.innerHeight-can.items.height}px;`);
+        }
+    },
+    addText(textToAdd, color = 'white') {
+        let node = document.createElement('p');
+        node.setAttribute('style', `color: ${color};`);
+        let text = document.createTextNode(textToAdd);
+        node.appendChild(text);
+        this.div.appendChild(node);
+    },
+    removeText() {
+        this.div.removeChild(this.div.childNodes[0]);
+    }
+};
+
 //Chargement et gestion des canvas
 var can = {
     init() {
@@ -318,6 +341,8 @@ function main() {
                         form.style.display = 'none';
                         view.uiNextPage();
                         view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1);
+                        info.addText('Bienvenue dans ce petit RPG !');
+                        info.addText('Utilisez les flèches pour vous déplacer, "O" pour les options et "I" pour l\'inventaire');
                     }
                     else {
                         alert('Fiche incomplète');
