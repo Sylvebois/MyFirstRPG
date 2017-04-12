@@ -165,11 +165,11 @@ function main() {
                     else if (can.state === 'jeu') {
                         switch(e.which) {
                             case 37: //gauche
-                                world.checkAccess(hero._posX-1, hero._posY)
+                                world.checkAccess(hero.pos[0]-1, hero.pos[1])
                                     .then(
                                         () => {
                                             hero.imgPos = hero.direction.GAUCHE;
-                                            hero.pos = [hero._posX-1, hero._posY];
+                                            hero.pos = [hero.pos[0]-1, hero.pos[1]];
                                         }, 
                                         raison => {
                                             if(raison === 'fight') {
@@ -182,11 +182,11 @@ function main() {
                                     );
                                 break;
                             case 38://haut
-                                world.checkAccess(hero._posX, hero._posY-1)
+                                world.checkAccess(hero.pos[0], hero.pos[1]-1)
                                     .then(
                                         () => {
                                             hero.imgPos = hero.direction.HAUT;
-                                            hero.pos = [hero._posX, hero._posY-1];
+                                            hero.pos = [hero.pos[0], hero.pos[1]-1];
                                         }, 
                                         raison => {
                                             if(raison === 'fight') {
@@ -199,11 +199,11 @@ function main() {
                                     );
                                 break;
                             case 39: //droite
-                                world.checkAccess(hero._posX+1, hero._posY)
+                                world.checkAccess(hero.pos[0]+1, hero.pos[1])
                                     .then(
                                         () => {
                                             hero.imgPos = hero.direction.DROITE;
-                                            hero.pos = [hero._posX+1, hero._posY];
+                                            hero.pos = [hero.pos[0]+1, hero.pos[1]];
                                         }, 
                                         raison => {
                                             if(raison === 'fight') {
@@ -216,11 +216,11 @@ function main() {
                                     );
                                 break;
                             case 40: //bas
-                                world.checkAccess(hero._posX, hero._posY+1)
+                                world.checkAccess(hero.pos[0], hero.pos[1]+1)
                                     .then(
                                         () => {
                                             hero.imgPos = hero.direction.BAS;
-                                            hero.pos = [hero._posX, hero._posY+1];
+                                            hero.pos = [hero.pos[0], hero.pos[1]+1];
                                         }, 
                                         raison => {
                                             if(raison === 'fight') {

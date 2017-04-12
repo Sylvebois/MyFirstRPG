@@ -68,13 +68,13 @@ class Dungeon {
             let x = Math.floor(Math.random() * this.nbTilesPerLine);
             let y = Math.floor(Math.random() * this.nbTilesPerLine);
             
-            if(this.carte[this.lvl][x][y].sol._accessible && !this.carte[this.lvl][x][y].item && !this.carte[this.lvl][x][y].hero) {
+            if(this.carte[this.lvl][x][y].sol.access && !this.carte[this.lvl][x][y].item && !this.carte[this.lvl][x][y].hero) {
                 if(type === 'item') {
                    this.carte[this.lvl][x][y].item = new Item(x,y); 
                 }
                 else {
                     this.carte[this.lvl][x][y].monstre = new Monstre(x,y);
-                    this.carte[this.lvl][x][y].sol._accessible = false;
+                    this.carte[this.lvl][x][y].sol.access = false;
                 }
                 count++;
             }
@@ -85,10 +85,10 @@ class Dungeon {
     };
     checkAccess(x,y) {
         return new Promise( (resolve, reject) => {
-            if(this.carte[this.lvl][x][y].sol._accessible) {
+            if(this.carte[this.lvl][x][y].sol.access) {
                 resolve();
             }
-            else if(this.carte[this.lvl][x][y].sol._groundType === 'wall') {
+            else if(this.carte[this.lvl][x][y].sol.typeSol === 'wall') {
                 reject('wall');
             }
             else {

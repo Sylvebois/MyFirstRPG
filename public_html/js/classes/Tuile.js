@@ -55,6 +55,18 @@ class MapTile extends Tuile {
                 break;
         }
     };
+    get access() {
+        return this._accessible;
+    };
+    set access(bool) {
+        this._accessible = bool;
+    };
+    get typeSol() {
+        return this._groundType;
+    };
+    set typeSol(type) {
+        this._groundType = type;
+    };
 };
 
 /* 
