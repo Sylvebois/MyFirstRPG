@@ -80,11 +80,8 @@ class Dungeon {
             }
         }
     };
-    updateMap() {
-        
-    };
     checkAccess(x,y) {
-        return new Promise( (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             if(this.carte[this.lvl][x][y].sol.access) {
                 resolve();
             }
@@ -96,4 +93,16 @@ class Dungeon {
             }
         });
     };
+    checkItem(x,y) {
+        if(this.carte[this.lvl][x][y].item){
+            this.carte[this.lvl][x][y].hero.rangerObjet(this.carte[this.lvl][x][y].item)
+                .then((itemName) => {
+                    info.addText('Vous prenez ' + itemName, 'green');
+                    this.carte[this.lvl][x][y].item = 0;
+                })
+                .catch(() => {
+                    info.addText('Inventaire plein !', 'red');
+                });
+        }
+    }
 }

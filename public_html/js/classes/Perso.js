@@ -75,8 +75,18 @@ class Hero extends Perso {
             'BAS'    : [2,1]
         };
     };
-    rangerObjet() {
-        
+    rangerObjet(item = null) {
+        return new Promise((resolve, reject) => {
+            let index = this._inventaire.indexOf(0);
+            
+            if(item && index >= 0) {
+                this._inventaire[index] = item;
+                resolve(item.nom);
+            }
+            else {
+                reject();
+            }
+        });    
     };
 };
 

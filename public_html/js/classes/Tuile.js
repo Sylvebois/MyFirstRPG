@@ -101,6 +101,12 @@ class Base extends Tuile {
                 break;
         };
     };
+    get nom() {
+        return this._name;
+    };
+    set nom(name) {
+        this._name = name;
+    };
 };
 
 /* 
