@@ -187,15 +187,14 @@ function main() {
                     }
                     else if (can.state === 'jeu') {
                         switch(e.which) {
-                            case 37: //gauche
+                            case 37:
                                 world.checkAccess(hero.pos[0]-1, hero.pos[1])
                                     .then(
                                         () => {
                                             world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
                                             world.carte[world.lvl][hero.pos[0]-1][hero.pos[1]].hero = hero;
                                             
-                                            hero.imgPos = hero.direction.GAUCHE;
-                                            hero.pos = [hero.pos[0]-1, hero.pos[1]];
+                                            hero.bouger('GAUCHE');
                                            
                                             world.checkItem(hero.pos[0], hero.pos[1]);
                                         }, 
@@ -209,15 +208,14 @@ function main() {
                                         () => view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1)
                                     );
                                 break;
-                            case 38://haut
+                            case 38:
                                 world.checkAccess(hero.pos[0], hero.pos[1]-1)
                                     .then(
                                         () => {
                                             world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
                                             world.carte[world.lvl][hero.pos[0]][hero.pos[1]-1].hero = hero;
                                             
-                                            hero.imgPos = hero.direction.HAUT;
-                                            hero.pos = [hero.pos[0], hero.pos[1]-1];
+                                            hero.bouger('HAUT');
                                             
                                             world.checkItem(hero.pos[0], hero.pos[1]);
                                         }, 
@@ -231,15 +229,14 @@ function main() {
                                         () => view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1)
                                     );
                                 break;
-                            case 39: //droite
+                            case 39:
                                 world.checkAccess(hero.pos[0]+1, hero.pos[1])
                                     .then(
                                         () => {
                                             world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
                                             world.carte[world.lvl][hero.pos[0]+1][hero.pos[1]].hero = hero;
                                             
-                                            hero.imgPos = hero.direction.DROITE;
-                                            hero.pos = [hero.pos[0]+1, hero.pos[1]];
+                                            hero.bouger('DROITE');
                                             
                                             world.checkItem(hero.pos[0], hero.pos[1]);
                                         }, 
@@ -253,15 +250,14 @@ function main() {
                                         () => view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1)
                                     );
                                 break;
-                            case 40: //bas
+                            case 40:
                                 world.checkAccess(hero.pos[0], hero.pos[1]+1)
                                     .then(
                                         () => {
                                             world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
                                             world.carte[world.lvl][hero.pos[0]][hero.pos[1]+1].hero = hero;
                                             
-                                            hero.imgPos = hero.direction.BAS;
-                                            hero.pos = [hero.pos[0], hero.pos[1]+1];
+                                            hero.bouger('BAS');
                                             
                                             world.checkItem(hero.pos[0], hero.pos[1]);
                                         }, 

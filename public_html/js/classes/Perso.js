@@ -48,9 +48,6 @@ class Perso extends Base {
     jeterObjet() {
         
     };
-    bouger() {
-        
-    };
 };
 
 /* 
@@ -87,6 +84,25 @@ class Hero extends Perso {
                 reject();
             }
         });    
+    };
+    bouger(goTo = 'BAS') {
+        switch(goTo) {
+            case 'GAUCHE':
+               this.pos = [this.pos[0]-1, this.pos[1]]; 
+               break;
+            case 'HAUT':
+               this.pos = [this.pos[0], this.pos[1]-1]; 
+               break;
+            case 'DROITE':
+               this.pos = [this.pos[0]+1, this.pos[1]]; 
+               break;
+            case 'BAS':
+            default:
+               this.pos = [this.pos[0], this.pos[1]+1]; 
+               break;
+        }
+        
+        this.imgPos = this.direction[goTo];
     };
 };
 
