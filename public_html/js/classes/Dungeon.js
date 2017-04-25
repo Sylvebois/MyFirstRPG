@@ -32,6 +32,8 @@ class Dungeon {
         hero.pos = [mid,1];
         hero.imgPos = hero.direction.BAS; 
         this.carte[this.lvl][mid][1].hero = hero;
+        
+        this.carte[this.lvl][mid][2].item = new Item(mid, 2, 'test');
     };
     generateMapBasics(withFog = true) {
         let fog = (withFog)? 2 : 0;
@@ -95,14 +97,29 @@ class Dungeon {
     };
     checkItem(x,y) {
         if(this.carte[this.lvl][x][y].item){
-            this.carte[this.lvl][x][y].hero.rangerObjet(this.carte[this.lvl][x][y].item)
-                .then((itemName) => {
-                    info.addText('Vous prenez ' + itemName, 'green');
-                    this.carte[this.lvl][x][y].item = 0;
-                })
-                .catch(() => {
-                    info.addText('Inventaire plein !', 'red');
-                });
+            if(this.carte[this.lvl][x][y].item.nom === 'StairDown') {
+                this.lvl += (confirm('On descend ?'))? 1 : 0;
+                this.goToLvl();
+            }
+            else if(this.carte[this.lvl][x][y].item.nom === 'StairUp') {
+                this.lvl -= (confirm('On monte ?'))? 1 : 0;
+                this.goToLvl();
+            }
+            else {
+                this.carte[this.lvl][x][y].hero.rangerObjet(this.carte[this.lvl][x][y].item)
+                    .then((itemName) => {
+                        info.addText('Vous prenez ' + itemName, 'green');
+                        this.carte[this.lvl][x][y].item = 0;
+                    })
+                    .catch(() => {
+                        info.addText('Inventaire plein !', 'red');
+                    });
+            }
+        }
+    };
+    goToLvl() {
+        if(!this.carte[this.lvl]) {
+            this.generateMapBasics(false);
         }
     }
 }

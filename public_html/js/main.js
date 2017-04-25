@@ -191,9 +191,12 @@ function main() {
                                 world.checkAccess(hero.pos[0]-1, hero.pos[1])
                                     .then(
                                         () => {
+                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
+                                            world.carte[world.lvl][hero.pos[0]-1][hero.pos[1]].hero = hero;
+                                            
                                             hero.imgPos = hero.direction.GAUCHE;
                                             hero.pos = [hero.pos[0]-1, hero.pos[1]];
-                                            
+                                           
                                             world.checkItem(hero.pos[0], hero.pos[1]);
                                         }, 
                                         raison => {
@@ -210,6 +213,9 @@ function main() {
                                 world.checkAccess(hero.pos[0], hero.pos[1]-1)
                                     .then(
                                         () => {
+                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
+                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]-1].hero = hero;
+                                            
                                             hero.imgPos = hero.direction.HAUT;
                                             hero.pos = [hero.pos[0], hero.pos[1]-1];
                                             
@@ -229,6 +235,9 @@ function main() {
                                 world.checkAccess(hero.pos[0]+1, hero.pos[1])
                                     .then(
                                         () => {
+                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
+                                            world.carte[world.lvl][hero.pos[0]+1][hero.pos[1]].hero = hero;
+                                            
                                             hero.imgPos = hero.direction.DROITE;
                                             hero.pos = [hero.pos[0]+1, hero.pos[1]];
                                             
@@ -248,6 +257,9 @@ function main() {
                                 world.checkAccess(hero.pos[0], hero.pos[1]+1)
                                     .then(
                                         () => {
+                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
+                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]+1].hero = hero;
+                                            
                                             hero.imgPos = hero.direction.BAS;
                                             hero.pos = [hero.pos[0], hero.pos[1]+1];
                                             
