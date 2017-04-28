@@ -5,7 +5,7 @@ var tileSizeOnScreen = 0;
 
 //Chargement des images
 var images = {
-    imgList: ['plume.png', 'pioche.png', 'scroll.png', 'tileset.png', 'hero.png', 'items.png', 'monsters.png', 'inv.png'],
+    imgList: ['plume.png', 'pioche.png', 'scroll.png', 'tileset.png', 'hero.png', 'items.png', 'monsters.png', 'invBody.png', 'invThrow.png'],
     loadImage(name) {
         return new Promise( (resolve, reject) => {
             let paramName = name.split('.')[0];

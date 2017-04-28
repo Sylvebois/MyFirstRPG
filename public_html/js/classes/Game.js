@@ -108,6 +108,10 @@ class Game {
                 hero.inventaire[i].draw(can.uiContext, images.items, true);
             }
         }
+        
+        //Dessins de détails
+        can.uiContext.drawImage(images.invThrow, 15*tileSizeOnScreen, 17*tileSizeOnScreen, 2*tileSizeOnScreen, 2*tileSizeOnScreen);
+        can.uiContext.drawImage(images.invBody, 6*tileSizeOnScreen, tileSizeOnScreen, 7*tileSizeOnScreen, 13*tileSizeOnScreen);
     };
     gameScreen(carte, length) {
         can.itemsContext.clearRect(0,0,can.size, can.size);
