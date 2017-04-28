@@ -118,16 +118,16 @@ class Game {
         can.persoContext.clearRect(0,0,can.size, can.size);
         
         for(let y = length; y >= 0; y--) {
-            for(let x = length; x >= 0; x--) {
-                if(carte[y][x].fog === 0) {
-                    carte[y][x].sol.draw(can.mapContext, images.tileset);
-                    (carte[y][x].item)? carte[y][x].item.draw(can.itemsContext, images.items) : null;
-                    (carte[y][x].monstre)? carte[y][x].monstre.draw(can.persoContext, images.monsters) : null;
-                    (carte[y][x].hero)? carte[y][x].hero.draw(can.persoContext, images.hero) : null;
+            for(let x = length; x >= 0; x--) {                
+                if(carte[x][y].fog === 0) {
+                    carte[x][y].sol.draw(can.mapContext, images.tileset);
+                    (carte[x][y].item)? carte[x][y].item.draw(can.itemsContext, images.items) : null;
+                    (carte[x][y].monstre)? carte[x][y].monstre.draw(can.persoContext, images.monsters) : null;
+                    (carte[x][y].hero)? carte[x][y].hero.draw(can.persoContext, images.hero) : null;
                 }
-                else if(carte[y][x].fog === 1) {
-                    carte[y][x].sol.draw(can.mapContext, images.tileset);
-                    (carte[y][x].item)? carte[y][x].item.draw(can.itemsContext, images.items) : null;
+                else if(carte[x][y].fog === 1) {
+                    carte[x][y].sol.draw(can.mapContext, images.tileset);
+                    (carte[x][y].item)? carte[x][y].item.draw(can.itemsContext, images.items) : null;
                     can.persoContext.fillStyle = 'rgba(0,0,0,0.5)';
                     can.persoContext.fillRect(x*tileSizeOnScreen, y*tileSizeOnScreen, tileSizeOnScreen, tileSizeOnScreen);
                 }

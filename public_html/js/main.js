@@ -156,7 +156,7 @@ function main() {
                             break;
                     }
                     
-                    view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1);
+                    view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1);
                 };
 
                 //Ajout des évenements sur les canvas
@@ -195,6 +195,7 @@ function main() {
                                             
                                             hero.bouger('GAUCHE');
                                            
+                                            world.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
                                             world.checkItem(hero.pos[0], hero.pos[1]);
                                         }, 
                                         raison => {
@@ -204,7 +205,7 @@ function main() {
                                         }
                                     )
                                     .then(
-                                        () => view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1)
+                                        () => view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1)
                                     );
                                 break;
                             case 38:
@@ -216,6 +217,7 @@ function main() {
                                             
                                             hero.bouger('HAUT');
                                             
+                                            world.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
                                             world.checkItem(hero.pos[0], hero.pos[1]);
                                         }, 
                                         raison => {
@@ -225,7 +227,7 @@ function main() {
                                         }
                                     )
                                     .then(
-                                        () => view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1)
+                                        () => view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1)
                                     );
                                 break;
                             case 39:
@@ -237,6 +239,7 @@ function main() {
                                             
                                             hero.bouger('DROITE');
                                             
+                                            world.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
                                             world.checkItem(hero.pos[0], hero.pos[1]);
                                         }, 
                                         raison => {
@@ -246,7 +249,7 @@ function main() {
                                         }
                                     )
                                     .then(
-                                        () => view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1)
+                                        () => view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1)
                                     );
                                 break;
                             case 40:
@@ -258,6 +261,7 @@ function main() {
                                             
                                             hero.bouger('BAS');
                                             
+                                            world.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
                                             world.checkItem(hero.pos[0], hero.pos[1]);
                                         }, 
                                         raison => {
@@ -267,7 +271,7 @@ function main() {
                                         }
                                     )
                                     .then(
-                                        () => view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1)
+                                        () => view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1)
                                     );
                                 break;
                             case 73: //I

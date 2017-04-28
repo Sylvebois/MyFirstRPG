@@ -21,7 +21,7 @@ class Dungeon {
     start(hero) {
         let mid = Math.floor(this.nbTilesPerLine/2)-1;
         
-        this.generateMapBasics(false);
+        this.generateMapBasics(true);
         
         //Changements spécifiques au niveau de départ
         this.carte[this.lvl][mid][0].sol.setType('ground');
@@ -34,6 +34,8 @@ class Dungeon {
         this.carte[this.lvl][mid][1].hero = hero;
         
         this.carte[this.lvl][mid][2].item = new Item(mid, 2, 'test');
+        
+        this.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
     };
     generateMapBasics(withFog = true) {
         let fog = (withFog)? 2 : 0;
@@ -80,6 +82,41 @@ class Dungeon {
                 }
                 count++;
             }
+        }
+    };
+    cleanFog(x, y, visibility) {                
+        for(let nbEtage = visibility; nbEtage >= 0; nbEtage--) {
+            let cmp = 0;
+            
+            for(let i = x-nbEtage; i <= x+nbEtage; i++) {
+                let y1 = y-cmp;
+                let y2 = y+cmp;
+
+                (i < x) ? cmp++ : cmp--;
+            
+                if(i >= 0 && i < nbTilesPerLine && y1 >= 0 && y1 < nbTilesPerLine) {
+                    this.carte[this.lvl][i][y1].fog = 0;
+                }
+                if(i >= 0 && i < nbTilesPerLine && y2 >= 0 && y2 < nbTilesPerLine) {
+                    this.carte[this.lvl][i][y2].fog = 0;
+                }
+            }
+        } 
+        
+        let cmp = 0;
+        for(let i = x-visibility-1; i <= x+visibility+1; i++){		
+            let y1 = y - cmp;
+            let y2 = y + cmp;
+        
+            (i < x) ? cmp++ : cmp--;
+        
+            if(i >= 0 && i < nbTilesPerLine && y1 >= 0 && y1 < nbTilesPerLine) {
+                this.carte[this.lvl][i][y1].fog = 1;
+            }
+
+            if(i >= 0 && i < nbTilesPerLine && y2 >= 0 && y2 < nbTilesPerLine) {
+                this.carte[this.lvl][i][y2].fog = 1;
+            }        
         }
     };
     checkAccess(x,y) {
