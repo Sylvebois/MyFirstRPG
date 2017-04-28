@@ -25,8 +25,9 @@ class Tuile {
         this._imgX = parseInt(newCoord[0]);
         this._imgY = parseInt(newCoord[1]); 
     };
-    draw(context, image) {
-        context.drawImage(image, this._imgX*TILESIZE, this._imgY*TILESIZE, TILESIZE, TILESIZE, this._posX*tileSizeOnScreen, this._posY*tileSizeOnScreen, tileSizeOnScreen, tileSizeOnScreen);    
+    draw(context, image, inventaire = false) {
+        let size = (inventaire)? 2*tileSizeOnScreen : tileSizeOnScreen;
+        context.drawImage(image, this._imgX*TILESIZE, this._imgY*TILESIZE, TILESIZE, TILESIZE, this._posX*tileSizeOnScreen, this._posY*tileSizeOnScreen, size, size);    
     }
 };
 

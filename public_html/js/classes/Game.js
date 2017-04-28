@@ -6,7 +6,7 @@ class Game {
     setBaseSizes() {
         can.setSize();
         info.setPos();
-        tileSizeOnScreen = Math.floor(can.size*percentOfScreen);        
+        tileSizeOnScreen = Math.floor(can.size/nbTilesPerLine);        
     };
     /*
      * Dessine les différents écrans d'interface
@@ -59,7 +59,9 @@ class Game {
             default:
                 break;   
         }   
-
+        
+        can.uiContext.clearRect(0, 0, can.size, can.size);
+        
         this.uiBasics();
         this.uiDrawText(textes, textes.length, fontSize);
     };
@@ -69,9 +71,43 @@ class Game {
         let startForm = document.getElementsByTagName('form')[0];
         startForm.style.display = 'block';
     };
-    uiInventaire() {
-        this.uiBasics();      
-        can.uiContext.drawImage(images.inv, can.ui.width*20/100, can.ui.height*20/100, can.ui.width*60/100, can.ui.height*60/100);
+    uiInventaire(hero) {  
+        can.uiContext.clearRect(0, 0, can.size, can.size);
+        
+        //Dessin du background
+        for(let i = 0; i < nbTilesPerLine; i++) {
+            for(let j = 0; j < nbTilesPerLine; j++) {
+                can.uiContext.drawImage(images.tileset, 12*TILESIZE, 4*TILESIZE, TILESIZE, TILESIZE, i*tileSizeOnScreen, j*tileSizeOnScreen, tileSizeOnScreen, tileSizeOnScreen);
+            }
+        }
+        
+        //Dessin des slots d'équipement
+        can.uiContext.fillStyle = '#65AED8';
+        for(let i = hero.bodySlot.length-1; i >= 0; i--) {
+            let x = (i%2 === 0)? 15 : 3;
+            let y = Math.floor(1.5 * i) + 1;
+            
+            can.uiContext.strokeRect(x * tileSizeOnScreen, y * tileSizeOnScreen, 2*tileSizeOnScreen, 2*tileSizeOnScreen);
+            can.uiContext.fillRect(x * tileSizeOnScreen, y * tileSizeOnScreen, 2*tileSizeOnScreen, 2*tileSizeOnScreen);  
+            
+            if(hero.bodySlot[i]) {
+                hero.bodySlot[i].draw(can.uiContext, images.items, true);
+            }
+        }
+        
+        //Dessin des slots d'inventaire
+        can.uiContext.fillStyle = '#E09A23';
+        for(let i = hero.inventaire.length-1; i >= 0; i--) {
+            let x = (i < 7)? 2 * i + 3 : 2 * (i-7) + 3;
+            let y = (i < 7)? 14 : 16;
+            
+            can.uiContext.strokeRect(x * tileSizeOnScreen, y * tileSizeOnScreen, 2*tileSizeOnScreen, 2*tileSizeOnScreen);
+            can.uiContext.fillRect(x * tileSizeOnScreen, y * tileSizeOnScreen, 2*tileSizeOnScreen, 2*tileSizeOnScreen);
+
+            if(hero.inventaire[i]) {
+                hero.inventaire[i].draw(can.uiContext, images.items, true);
+            }
+        }
     };
     gameScreen(carte, length) {
         can.itemsContext.clearRect(0,0,can.size, can.size);

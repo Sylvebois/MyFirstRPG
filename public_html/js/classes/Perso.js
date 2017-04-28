@@ -59,8 +59,9 @@ class Hero extends Perso {
     constructor(x, y, name, st, dx, iq, ht, level) {
         super(x, y, name, st, dx, iq, ht, level);
       
-        this._vision = 2;
-        this._inventaire = [0,0,0,0,0,0,0,0,0,0];
+        this.vision = 2;
+        this.inventaire = [0,0,0,0,0,0,0,0,0,0];
+        this.bodySlot = [0,0,0,0,0,0,0];
 
         //Image à utiliser en fonction de la direction
         this.direction = {
@@ -74,10 +75,14 @@ class Hero extends Perso {
     };
     rangerObjet(item = null) {
         return new Promise((resolve, reject) => {
-            let index = this._inventaire.indexOf(0);
+            let index = this.inventaire.indexOf(0);
             
             if(item && index >= 0) {
-                this._inventaire[index] = item;
+                let x = (index < 7)? 2 * index + 3 : 2 * (index-7) + 3;
+                let y = (index < 7)? 14 : 16;
+
+                this.inventaire[index] = item;
+                this.inventaire[index].pos = [x,y];
                 resolve(item.nom);
             }
             else {

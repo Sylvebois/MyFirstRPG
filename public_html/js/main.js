@@ -1,6 +1,6 @@
 //Taille des tuiles (sur les tilesets et à l'écran)
 const TILESIZE = 32;
-const percentOfScreen = 5/100;
+const nbTilesPerLine = 20;
 var tileSizeOnScreen = 0;
 
 //Chargement des images
@@ -152,12 +152,11 @@ function main() {
                             view.uiNewGame();
                             break;
                         case 'inv':
-                            view.uiInventaire();
-                            break;
-                        default:
-                            view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1);
+                            view.uiInventaire(hero);
                             break;
                     }
+                    
+                    view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1);
                 };
 
                 //Ajout des évenements sur les canvas
@@ -274,7 +273,7 @@ function main() {
                             case 73: //I
                                 can.state = 'inv';
                                 view.hideGame();
-                                view.uiInventaire();
+                                view.uiInventaire(hero);
                                 view.showUi();
                                 break;
                             case 79: //O
