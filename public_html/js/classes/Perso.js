@@ -90,24 +90,9 @@ class Hero extends Perso {
             }
         });    
     };
-    bouger(goTo = 'BAS') {
-        switch(goTo) {
-            case 'GAUCHE':
-               this.pos = [this.pos[0]-1, this.pos[1]]; 
-               break;
-            case 'HAUT':
-               this.pos = [this.pos[0], this.pos[1]-1]; 
-               break;
-            case 'DROITE':
-               this.pos = [this.pos[0]+1, this.pos[1]]; 
-               break;
-            case 'BAS':
-            default:
-               this.pos = [this.pos[0], this.pos[1]+1]; 
-               break;
-        }
-        
-        this.imgPos = this.direction[goTo];
+    bouger(goTo) {
+        this.pos = [goTo[1][0], goTo[1][1]]; 
+        this.imgPos = this.direction[goTo[0]];
     };
 };
 

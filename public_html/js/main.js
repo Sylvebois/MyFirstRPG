@@ -185,94 +185,24 @@ function main() {
                         view.showGame();
                     }
                     else if (can.state === 'jeu') {
+                        let newDirection = ['', 0];
+                        
                         switch(e.which) {
                             case 37:
-                                world.checkAccess(hero.pos[0]-1, hero.pos[1])
-                                    .then(
-                                        () => {
-                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
-                                            world.carte[world.lvl][hero.pos[0]-1][hero.pos[1]].hero = hero;
-                                            
-                                            hero.bouger('GAUCHE');
-                                           
-                                            world.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
-                                            world.checkItem(hero.pos[0], hero.pos[1]);
-                                        }, 
-                                        raison => {
-                                            if(raison === 'fight') {
-                                                console.log('BASTOOOOON !');
-                                            }
-                                        }
-                                    )
-                                    .then(
-                                        () => view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1)
-                                    );
+                                newDirection[0] = 'GAUCHE';
+                                newDirection[1] = [hero.pos[0]-1, hero.pos[1]];
                                 break;
                             case 38:
-                                world.checkAccess(hero.pos[0], hero.pos[1]-1)
-                                    .then(
-                                        () => {
-                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
-                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]-1].hero = hero;
-                                            
-                                            hero.bouger('HAUT');
-                                            
-                                            world.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
-                                            world.checkItem(hero.pos[0], hero.pos[1]);
-                                        }, 
-                                        raison => {
-                                            if(raison === 'fight') {
-                                                console.log('BASTOOOOON !');
-                                            }
-                                        }
-                                    )
-                                    .then(
-                                        () => view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1)
-                                    );
+                                newDirection[0] = 'HAUT';
+                                newDirection[1] = [hero.pos[0], hero.pos[1]-1];
                                 break;
                             case 39:
-                                world.checkAccess(hero.pos[0]+1, hero.pos[1])
-                                    .then(
-                                        () => {
-                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
-                                            world.carte[world.lvl][hero.pos[0]+1][hero.pos[1]].hero = hero;
-                                            
-                                            hero.bouger('DROITE');
-                                            
-                                            world.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
-                                            world.checkItem(hero.pos[0], hero.pos[1]);
-                                        }, 
-                                        raison => {
-                                            if(raison === 'fight') {
-                                                console.log('BASTOOOOON !');
-                                            }
-                                        }
-                                    )
-                                    .then(
-                                        () => view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1)
-                                    );
+                                newDirection[0] = 'DROITE';
+                                newDirection[1] = [hero.pos[0]+1, hero.pos[1]];
                                 break;
                             case 40:
-                                world.checkAccess(hero.pos[0], hero.pos[1]+1)
-                                    .then(
-                                        () => {
-                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
-                                            world.carte[world.lvl][hero.pos[0]][hero.pos[1]+1].hero = hero;
-                                            
-                                            hero.bouger('BAS');
-                                            
-                                            world.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
-                                            world.checkItem(hero.pos[0], hero.pos[1]);
-                                        }, 
-                                        raison => {
-                                            if(raison === 'fight') {
-                                                console.log('BASTOOOOON !');
-                                            }
-                                        }
-                                    )
-                                    .then(
-                                        () => view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1)
-                                    );
+                                newDirection[0] = 'BAS';
+                                newDirection[1] = [hero.pos[0], hero.pos[1]+1];
                                 break;
                             case 73: //I
                                 can.state = 'inv';
@@ -286,7 +216,30 @@ function main() {
                                 view.uiScreen();
                                 view.showUi();
                                 break;
-                        }    
+                        }
+                        
+                        if(newDirection[1] !== 0) {
+                            world.checkAccess(newDirection[1][0], newDirection[1][1])
+                                .then(
+                                    () => {
+                                        world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
+                                        world.carte[world.lvl][newDirection[1][0]][newDirection[1][1]].hero = hero;
+
+                                        hero.bouger(newDirection);
+
+                                        world.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
+                                        world.checkItem(hero.pos[0], hero.pos[1]);
+                                    }, 
+                                    raison => {
+                                        if(raison === 'fight') {
+                                            console.log('BASTOOOOON !');
+                                        }
+                                    }
+                                )
+                                .then(
+                                    () => view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1)
+                                );
+                        }
                     }
                 };
 
