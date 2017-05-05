@@ -47,6 +47,7 @@ canvas {
     position: absolute;
     background-color: black;
     color: white;
+    overflow-y: scroll;
 }
 
 #info p {

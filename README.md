@@ -1,6 +1,6 @@
 MyFirstRPG
 ==========
-!!! I will try to use the ECMAScript 6 version for coding !!!
+I will try to use the ECMAScript 6 version for coding
 This is an experimental RPG with procedurally generated dungeon
 
 What is working :
