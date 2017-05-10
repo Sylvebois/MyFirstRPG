@@ -1,22 +1,32 @@
 /* 
  * Classe gérant les données des niveaux
  */
+class Room {
+    constructor(x = 0, y = 0, width = 0, height = 0) {
+        //coordonnees de depart et d'arrivee de la piece
+        this.x1 = x;       
+        this.y1 = y;
+        this.x2 = x + width;
+        this.y2 = y + height;
+    
+        //largeur et hauteur de la piece
+        this.w = width;        
+        this.h = height; 
+    
+        //milieu de la piece
+        this.mid = [Math.floor((this.x1 + this.x2)/2), Math.floor((this.y1 + this.y2)/2)];
+    };
+    intersects (room) {
+        return (this.x1 <= room.x2 && this.x2 >= room.x1 && this.y1 <= room.y2 && this.y2 >= room.y1)? true : false;
+    }
+}  
+
 class Dungeon {
     constructor(){
         this.nbTilesPerLine = 20;
         this.carte = [];
         this.nbWall = 0;
         this.lvl = 0;
-        //Le contenu de la carte
-        /*
-            map[y][x] = {
-                'sol': 0;
-                'fog': 0;
-                'item': 0;
-                'monstre': 0;
-                'hero': 0;
-            }
-        */
     };
     start(hero) {
         let mid = Math.floor(this.nbTilesPerLine/2)-1;
@@ -25,6 +35,14 @@ class Dungeon {
         
         //Changements spécifiques au niveau de départ
         this.carte[this.lvl][mid][0].sol.setType('ground');
+        this.nbWall--;
+        
+        for(let i = 1 ; i < this.nbTilesPerLine-1; i++) {
+            for(let j = 1; j < this.nbTilesPerLine-1; j++) {   
+                this.carte[this.lvl][i][j].sol.setType('ground');
+                this.nbWall--;
+            }
+        }
         
         this.carte[this.lvl][mid][mid].item = new Item(mid, mid, 'StairDown', 0, 0, 0, 0, '');
         this.carte[this.lvl][mid][mid].item.imgPos = [3,1];
@@ -39,22 +57,16 @@ class Dungeon {
     };
     generateMapBasics(withFog = true) {
         let fog = (withFog)? 2 : 0;
-        this.nbWall = 0;
+        
+        this.nbWall = Math.pow(this.nbTilesPerLine,2);
         this.carte[this.lvl] = [];
         
         for(let i = 0 ; i < this.nbTilesPerLine; i++) {
             this.carte[this.lvl][i] = [];
             
-            for(let j = 0; j < this.nbTilesPerLine; j++) {
-                let type = 'ground';
-                
-                if(i === 0 || i === this.nbTilesPerLine-1 || j === 0 || j === this.nbTilesPerLine-1) {
-                    type = 'wall';    
-                    this.nbWall++;
-                }
-                
+            for(let j = 0; j < this.nbTilesPerLine; j++) {                
                 this.carte[this.lvl][i][j] = {
-                    'sol': new MapTile(i, j, type),
+                    'sol': new MapTile(i, j, 'wall'),
                     'fog': fog,
                     'item': false,
                     'monstre': false,
@@ -156,7 +168,84 @@ class Dungeon {
     };
     goToLvl() {
         if(!this.carte[this.lvl]) {
-            this.generateMapBasics(false);
+            this.generateMapBasics(true);
+            this.generateLevel();
         }
+    };
+    random(min = 0, max = 1, int = true) {
+        return (int)?  Math.floor(Math.random() * (max - min + 1)) + min : Math.random() * (max - min) + min;
+    };
+    generateLevel() {
+        let rooms = [];
+        let minRoomSize = 2;
+        let maxRoomSize = 5;
+        let nbRoom = this.random(2, Math.floor(this.nbTilesPerLine-1/maxRoomSize));
+        
+        for(let i = 0; i <= nbRoom; i++) {
+            let w = this.random(minRoomSize, maxRoomSize);
+            let h = this.random(minRoomSize, maxRoomSize);
+            let x = this.random(1, this.carte[this.lvl].length-w-2);
+            let y = this.random(1, this.carte[this.lvl].length-h-2);
+            
+            let newRoom = new Room(x, y, w, h);
+            
+            let overlappingRooms = false;
+            
+            for (let existingRoom of rooms) {
+                overlappingRooms = newRoom.intersects(existingRoom);
+                if(overlappingRooms){
+                    break;
+                }
+            }
+            
+            if (!overlappingRooms) {
+                this.createRoom(newRoom.x1, newRoom.y1, newRoom.x2, newRoom.y2);
+
+                if(rooms.length !== 0) {
+                    let prevCenter = rooms[rooms.length-1].mid;
+                    this.createCorridor(prevCenter, newRoom.mid);
+                }
+
+                rooms.push(newRoom);
+            }
+        }
+    };
+    createRoom(x1 = 0, y1 = 0, x2 = 0, y2 = 0) {
+        for(let i = x1; i <= x2; i++) {
+            for(let j = y1; j <= y2; j++) { 
+                this.carte[this.lvl][i][j].sol.setType('ground');
+            }
+        }    
+    };
+    createCorridor(centerPrev, centerNew) {
+
+        if(this.random(0,1)) {
+            let midPoint = [centerPrev[0], centerNew[1]];
+            
+            this.vMove(midPoint, centerPrev);
+            this.hMove(midPoint, centerNew);
+        }
+        else {
+            let midPoint = [centerNew[0], centerPrev[1]];
+            
+            this.vMove(midPoint, centerNew);
+            this.hMove(midPoint, centerPrev);     
+        }
+    };
+    vMove(aCoord, bCoord) {
+        let i = (aCoord[1] <= bCoord[1])? aCoord[1] : bCoord[1];
+        let j = (aCoord[1] <= bCoord[1])? bCoord[1] : aCoord[1];
+
+        for(i; i <= j; i++) {
+            this.carte[this.lvl][aCoord[0]][i].sol.setType('ground');
+        }    
+    };
+    hMove(aCoord, bCoord) {
+        let i = (aCoord[0] <= bCoord[0])? aCoord[0] : bCoord[0];
+        let j = (aCoord[0] <= bCoord[0])? bCoord[0] : aCoord[0];
+
+        for(i; i <= j; i++) {
+            this.carte[this.lvl][i][aCoord[1]].sol.setType('ground');
+        }   
     }
 }
