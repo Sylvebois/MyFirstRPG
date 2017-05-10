@@ -78,11 +78,11 @@ class Dungeon {
     generateStuff(type = 'item') {
         let count = 0;
         let nbMax = Math.floor((Math.pow(this.nbTilesPerLine,2) - this.nbWall)/4);
-        let nb = Math.floor(Math.random() * nbMax + 1);  
+        let nb = this.random(0, nbMax);  
         
         while (count < nb) {
-            let x = Math.floor(Math.random() * this.nbTilesPerLine);
-            let y = Math.floor(Math.random() * this.nbTilesPerLine);
+            let x = this.random(1, this.nbTilesPerLine-1);
+            let y = this.random(1, this.nbTilesPerLine-1);
             
             if(this.carte[this.lvl][x][y].sol.access && !this.carte[this.lvl][x][y].item && !this.carte[this.lvl][x][y].hero) {
                 if(type === 'item') {
@@ -148,11 +148,11 @@ class Dungeon {
         if(this.carte[this.lvl][x][y].item){
             if(this.carte[this.lvl][x][y].item.nom === 'StairDown') {
                 this.lvl += (confirm('On descend ?'))? 1 : 0;
-                this.goToLvl();
+                this.goToLvl(this.carte[this.lvl][x][y].hero);
             }
             else if(this.carte[this.lvl][x][y].item.nom === 'StairUp') {
                 this.lvl -= (confirm('On monte ?'))? 1 : 0;
-                this.goToLvl();
+                this.goToLvl(this.carte[this.lvl][x][y].hero);
             }
             else {
                 this.carte[this.lvl][x][y].hero.rangerObjet(this.carte[this.lvl][x][y].item)
@@ -166,17 +166,19 @@ class Dungeon {
             }
         }
     };
-    goToLvl() {
+    goToLvl(hero) {
         if(!this.carte[this.lvl]) {
             this.generateMapBasics(true);
-            this.generateLevel();
+            this.generateLevel(hero.pos);
         }
+        this.carte[this.lvl][hero.pos[0]][hero.pos[1]].hero = hero;
     };
     random(min = 0, max = 1, int = true) {
         return (int)?  Math.floor(Math.random() * (max - min + 1)) + min : Math.random() * (max - min) + min;
     };
-    generateLevel() {
-        let rooms = [];
+    generateLevel(stairPos) {
+        //Step 1 : generate rooms and corridors
+        let rooms = [new Room(stairPos[0], stairPos[1], 1, 1)];
         let minRoomSize = 2;
         let maxRoomSize = 5;
         let nbRoom = this.random(2, Math.floor(this.nbTilesPerLine-1/maxRoomSize));
@@ -209,6 +211,21 @@ class Dungeon {
                 rooms.push(newRoom);
             }
         }
+        
+        //Step 2 : generate stair up and down
+        this.carte[this.lvl][stairPos[0]][stairPos[1]].item = new Item(stairPos[0], stairPos[1], 'StairUp', 0, 0, 0, 0, '');
+        this.carte[this.lvl][stairPos[0]][stairPos[1]].item.imgPos = [3,1];
+        
+        let index = this.random(1, rooms.length);
+        let stairX = this.random(rooms[index].x1, rooms[index].x2);
+        let stairY = this.random(rooms[index].y1, rooms[index].y2);
+        
+        this.carte[this.lvl][stairX][stairY].item = new Item(stairX, stairY, 'StairDown', 0, 0, 0, 0, '');
+        this.carte[this.lvl][stairX][stairY].item.imgPos = [4,1];
+        
+        //Step 3 : generate items and monsters
+        this.generateStuff('item');
+        this.generateStuff('monstre');
     };
     createRoom(x1 = 0, y1 = 0, x2 = 0, y2 = 0) {
         for(let i = x1; i <= x2; i++) {
