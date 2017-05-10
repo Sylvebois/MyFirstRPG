@@ -8,17 +8,17 @@ What is working :
 - Responsive design
 - The fog
 - Moving the Hero
+- Generating levels
+- Moving back to previous levels
 
 What will come :
 --------------
 - Creating the Hero (name, strengh, dexterity ...)
-- Generating levels
 - Generating items
 - Generating monsters
 - Combats and their results
 - Managing a little inventory (equip and drop items)
 - Saving the game to play later
-- Moving back to previous levels
 - Give the monsters an AI (move, attitude toward the Hero, equip with items ...)
 - Taking into account the monsters with equipped items for combat
 - Advanced combat system (close combat, ranged combat, magic ...)
