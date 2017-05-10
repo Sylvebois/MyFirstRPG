@@ -148,11 +148,11 @@ class Dungeon {
         if(this.carte[this.lvl][x][y].item){
             if(this.carte[this.lvl][x][y].item.nom === 'StairDown') {
                 this.lvl += (confirm('On descend ?'))? 1 : 0;
-                this.goToLvl(this.carte[this.lvl][x][y].hero);
+                this.goToLvl(this.carte[this.lvl-1][x][y].hero);
             }
             else if(this.carte[this.lvl][x][y].item.nom === 'StairUp') {
                 this.lvl -= (confirm('On monte ?'))? 1 : 0;
-                this.goToLvl(this.carte[this.lvl][x][y].hero);
+                this.goToLvl(this.carte[this.lvl+1][x][y].hero);
             }
             else {
                 this.carte[this.lvl][x][y].hero.rangerObjet(this.carte[this.lvl][x][y].item)
@@ -214,14 +214,14 @@ class Dungeon {
         
         //Step 2 : generate stair up and down
         this.carte[this.lvl][stairPos[0]][stairPos[1]].item = new Item(stairPos[0], stairPos[1], 'StairUp', 0, 0, 0, 0, '');
-        this.carte[this.lvl][stairPos[0]][stairPos[1]].item.imgPos = [3,1];
+        this.carte[this.lvl][stairPos[0]][stairPos[1]].item.imgPos = [4,1];
         
         let index = this.random(1, rooms.length);
         let stairX = this.random(rooms[index].x1, rooms[index].x2);
         let stairY = this.random(rooms[index].y1, rooms[index].y2);
         
         this.carte[this.lvl][stairX][stairY].item = new Item(stairX, stairY, 'StairDown', 0, 0, 0, 0, '');
-        this.carte[this.lvl][stairX][stairY].item.imgPos = [4,1];
+        this.carte[this.lvl][stairX][stairY].item.imgPos = [3,1];
         
         //Step 3 : generate items and monsters
         this.generateStuff('item');
