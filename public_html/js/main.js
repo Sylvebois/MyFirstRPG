@@ -57,6 +57,9 @@ var can = {
         this.perso = document.getElementById('perso');
         this.persoContext = this.perso.getContext('2d');
         
+        this.hud = document.getElementById('hud');
+        this.hudContext = this.perso.getContext('2d');
+        
         this.ui = document.getElementById('ui');
         this.uiContext = this.ui.getContext('2d');
         
