@@ -7,13 +7,13 @@ What is working :
 ---------------
 - Responsive design
 - The fog
+- Creating the Hero (name, strengh, dexterity ...)
 - Moving the Hero
 - Generating levels
 - Moving back to previous levels
 
 What will come :
 --------------
-- Creating the Hero (name, strengh, dexterity ...)
 - Generating items
 - Generating monsters
 - Combats and their results
@@ -25,3 +25,6 @@ What will come :
 - Inventory (restrictions for placing equipements ...)
 - Add info about an item when hovering it with the mouse
 - Make the game compatible with IE
+- Story
+- Game Over screen
+- Credit Screen
