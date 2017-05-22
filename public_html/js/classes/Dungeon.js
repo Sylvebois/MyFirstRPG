@@ -224,6 +224,7 @@ class Dungeon {
         this.carte[this.lvl][stairX][stairY].item.imgPos = [3,1];
         
         //Step 3 : generate items and monsters
+        this.countFloorTiles();
         this.generateStuff('item');
         this.generateStuff('monstre');
     };
@@ -264,5 +265,16 @@ class Dungeon {
         for(i; i <= j; i++) {
             this.carte[this.lvl][i][aCoord[1]].sol.setType('ground');
         }   
+    }
+    countFloorTiles() {
+        let tmp = 0;
+        
+        for(let i = 0; i < this.nbTilesPerLine; i++) {
+            for(let j = 0; j < this.nbTilesPerLine; j++) { 
+                tmp += (this.carte[this.lvl][i][j].sol.typeSol === 'ground')? 1 : 0;
+            }
+        }
+        
+        this.nbWall -= tmp;
     }
 }
