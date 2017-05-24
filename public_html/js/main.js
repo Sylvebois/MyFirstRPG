@@ -229,8 +229,8 @@ function main() {
 
                                         world.hero.bouger(newDirection);
 
-                                        world.cleanFog(world.hero.pos[0], world.hero.pos[1], world.hero.vision);
                                         world.checkItem(world.hero.pos[0], world.hero.pos[1]);
+                                        world.cleanFog(world.hero.pos[0], world.hero.pos[1], world.hero.vision);
                                     }, 
                                     raison => {
                                         if(raison === 'fight') {
