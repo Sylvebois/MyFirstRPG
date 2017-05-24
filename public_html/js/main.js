@@ -134,7 +134,6 @@ function main() {
             () => {
                 let view = new Game();
                 let world = new Dungeon();
-                let hero = new Hero();
 
                 //Mise en place des canvas
                 view.setBaseSizes();
@@ -155,7 +154,7 @@ function main() {
                             view.uiNewGame();
                             break;
                         case 'inv':
-                            view.uiInventaire(hero);
+                            view.uiInventaire(world.hero);
                             break;
                     }
                     
@@ -193,24 +192,24 @@ function main() {
                         switch(e.which) {
                             case 37:
                                 newDirection[0] = 'GAUCHE';
-                                newDirection[1] = [hero.pos[0]-1, hero.pos[1]];
+                                newDirection[1] = [world.hero.pos[0]-1, world.hero.pos[1]];
                                 break;
                             case 38:
                                 newDirection[0] = 'HAUT';
-                                newDirection[1] = [hero.pos[0], hero.pos[1]-1];
+                                newDirection[1] = [world.hero.pos[0], world.hero.pos[1]-1];
                                 break;
                             case 39:
                                 newDirection[0] = 'DROITE';
-                                newDirection[1] = [hero.pos[0]+1, hero.pos[1]];
+                                newDirection[1] = [world.hero.pos[0]+1, world.hero.pos[1]];
                                 break;
                             case 40:
                                 newDirection[0] = 'BAS';
-                                newDirection[1] = [hero.pos[0], hero.pos[1]+1];
+                                newDirection[1] = [world.hero.pos[0], world.hero.pos[1]+1];
                                 break;
                             case 73: //I
                                 can.state = 'inv';
                                 view.hideGame();
-                                view.uiInventaire(hero);
+                                view.uiInventaire(world.hero);
                                 view.showUi();
                                 break;
                             case 79: //O
@@ -225,13 +224,13 @@ function main() {
                             world.checkAccess(newDirection[1][0], newDirection[1][1])
                                 .then(
                                     () => {
-                                        world.carte[world.lvl][hero.pos[0]][hero.pos[1]].hero = 0;
-                                        world.carte[world.lvl][newDirection[1][0]][newDirection[1][1]].hero = hero;
+                                        world.carte[world.lvl][world.hero.pos[0]][world.hero.pos[1]].hero = false;
+                                        world.carte[world.lvl][newDirection[1][0]][newDirection[1][1]].hero = world.hero;
 
-                                        hero.bouger(newDirection);
+                                        world.hero.bouger(newDirection);
 
-                                        world.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
-                                        world.checkItem(hero.pos[0], hero.pos[1]);
+                                        world.cleanFog(world.hero.pos[0], world.hero.pos[1], world.hero.vision);
+                                        world.checkItem(world.hero.pos[0], world.hero.pos[1]);
                                     }, 
                                     raison => {
                                         if(raison === 'fight') {
@@ -306,13 +305,13 @@ function main() {
                         
                         for(let input of inputs) {
                             if(input.type === 'range') {
-                                hero.modSpecs(input.id.toLowerCase(), parseInt(input.value));
+                                world.hero.modSpecs(input.id.toLowerCase(), parseInt(input.value));
                             }
                             else {
-                               hero.modSpecs(input.id, input.value);
+                               world.hero.modSpecs(input.id, input.value);
                             }
                         }
-                        world.start(hero);
+                        world.start(world.hero);
                         form.style.display = 'none';
                         view.uiNextPage();
                         view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1);

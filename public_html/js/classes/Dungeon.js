@@ -27,8 +27,10 @@ class Dungeon {
         this.carte = [];
         this.nbWall = 0;
         this.lvl = 0;
+        
+        this.hero = new Hero();
     };
-    start(hero) {
+    start() {
         let mid = Math.floor(this.nbTilesPerLine/2)-1;
         
         this.generateMapBasics(true);
@@ -47,13 +49,13 @@ class Dungeon {
         this.carte[this.lvl][mid][mid].item = new Item(mid, mid, 'StairDown', 0, 0, 0, 0, '');
         this.carte[this.lvl][mid][mid].item.imgPos = [3,1];
         
-        hero.pos = [mid,1];
-        hero.imgPos = hero.direction.BAS; 
-        this.carte[this.lvl][mid][1].hero = hero;
+        this.hero.pos = [mid,1];
+        this.hero.imgPos = this.hero.direction.BAS; 
+        this.carte[this.lvl][mid][1].hero = this.hero;
         
         this.carte[this.lvl][mid][2].item = new Item(mid, 2, 'test');
         
-        this.cleanFog(hero.pos[0], hero.pos[1], hero.vision);
+        this.cleanFog(this.hero.pos[0], this.hero.pos[1], this.hero.vision);
     };
     generateMapBasics(withFog = true) {
         let fog = (withFog)? 2 : 0;
@@ -148,14 +150,14 @@ class Dungeon {
         if(this.carte[this.lvl][x][y].item){
             if(this.carte[this.lvl][x][y].item.nom === 'StairDown') {
                 this.lvl += (confirm('On descend ?'))? 1 : 0;
-                this.goToLvl(this.carte[this.lvl-1][x][y].hero);
+                this.goToLvl();
             }
             else if(this.carte[this.lvl][x][y].item.nom === 'StairUp') {
                 this.lvl -= (confirm('On monte ?'))? 1 : 0;
-                this.goToLvl(this.carte[this.lvl+1][x][y].hero);
+                this.goToLvl();
             }
             else {
-                this.carte[this.lvl][x][y].hero.rangerObjet(this.carte[this.lvl][x][y].item)
+                this.hero.rangerObjet(this.carte[this.lvl][x][y].item)
                     .then((itemName) => {
                         info.addText('Vous prenez ' + itemName, 'green');
                         this.carte[this.lvl][x][y].item = 0;
@@ -166,12 +168,12 @@ class Dungeon {
             }
         }
     };
-    goToLvl(hero) {
+    goToLvl() {
         if(!this.carte[this.lvl]) {
             this.generateMapBasics(true);
-            this.generateLevel(hero.pos);
+            this.generateLevel(this.hero.pos);
         }
-        this.carte[this.lvl][hero.pos[0]][hero.pos[1]].hero = hero;
+        this.carte[this.lvl][this.hero.pos[0]][this.hero.pos[1]].hero = this.hero;
     };
     random(min = 0, max = 1, int = true) {
         return (int)?  Math.floor(Math.random() * (max - min + 1)) + min : Math.random() * (max - min) + min;
@@ -216,7 +218,7 @@ class Dungeon {
         this.carte[this.lvl][stairPos[0]][stairPos[1]].item = new Item(stairPos[0], stairPos[1], 'StairUp', 0, 0, 0, 0, '');
         this.carte[this.lvl][stairPos[0]][stairPos[1]].item.imgPos = [4,1];
         
-        let index = this.random(1, rooms.length);
+        let index = this.random(1, rooms.length-1);
         let stairX = this.random(rooms[index].x1, rooms[index].x2);
         let stairY = this.random(rooms[index].y1, rooms[index].y2);
         
