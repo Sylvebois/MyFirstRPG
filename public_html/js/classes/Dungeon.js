@@ -60,29 +60,34 @@ class Dungeon {
     midWay() {
         this.generateMapBasics(true);
         let mid = Math.floor(this.nbTilesPerLine/2)
+        
         //Création des pièces
         for(let i = 1; i < this.nbTilesPerLine-1; i++) {
             for (let j = 1; j < 5; j++) {
                 if((i > 0 && i < 5) || (i > this.nbTilesPerLine-6 && i < this.nbTilesPerLine-1)) {
                     this.carte[this.lvl][i][j].sol.setType('ground');
                     this.carte[this.lvl][i][this.nbTilesPerLine-j-1].sol.setType('ground');
+                    this.nbWall -= 2;
                 }
             }
         }
         for(let i = mid-3; i < mid+3; i++) {
             for(let j = mid-3; j < mid+3; j++) {
                this.carte[this.lvl][i][j].sol.setType('ground');
+               this.nbWall--;
             }
         }
         
         //Ajout des couloirs
         for(let i = 4; i < this.nbTilesPerLine-4; i++) {
             this.carte[this.lvl][i][2].sol.setType('ground');
-            this.carte[this.lvl][i][this.nbTilesPerLine-3].sol.setType('ground');    
+            this.carte[this.lvl][i][this.nbTilesPerLine-3].sol.setType('ground'); 
+            this.nbWall -= 2;
         }
         for(let i = 4; i < this.nbTilesPerLine-4; i++) {
             this.carte[this.lvl][2][i].sol.setType('ground');
-            this.carte[this.lvl][this.nbTilesPerLine-3][i].sol.setType('ground');    
+            this.carte[this.lvl][this.nbTilesPerLine-3][i].sol.setType('ground'); 
+            this.nbWall -= 2;
         }
         
         //Ajout des escaliers
@@ -97,7 +102,28 @@ class Dungeon {
         this.carte[this.lvl][1][1].hero = this.hero;
     };
     final(){
+        let mid = Math.floor(this.nbTilesPerLine/2)-1;
         
+        this.generateMapBasics(false);
+        
+        //Création de la pièce
+        for(let i = 1 ; i < this.nbTilesPerLine-1; i++) {
+            for(let j = 1; j < this.nbTilesPerLine-1; j++) {
+                if( (i < 4 || (i >= 6 && i < 14) || i >= 16) ||
+                    (j < 4 || (j >= 6 && j < 9) || (j >= 11 && j < 14) || j >= 16)) {
+                    this.carte[this.lvl][i][j].sol.setType('ground');
+                    this.nbWall--;
+                }
+            }
+        }
+        
+        //Ajout de l'escalier
+        this.carte[this.lvl][mid][this.nbTilesPerLine-2].item = new Item(mid, this.nbTilesPerLine-2, 'StairUp', 0, 0, 0, 0, '');
+        this.carte[this.lvl][mid][this.nbTilesPerLine-2].item.imgPos = [4,1];
+        
+        //Positionne le héro
+        this.hero.pos = [mid, this.nbTilesPerLine-2];
+        this.carte[this.lvl][mid][this.nbTilesPerLine-2].hero = this.hero;
     };
     generateMapBasics(withFog = true) {
         let fog = (withFog)? 2 : 0;
