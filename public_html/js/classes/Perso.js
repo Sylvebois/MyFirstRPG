@@ -11,6 +11,8 @@ class Perso extends Base {
         this._finalDx = this._dx;
         this._finalIq = this._iq;
         this._finalHt = this._ht;
+        
+        this.hp = this._finalHt;
 
         this._body = {
             'TETE'  : 0,

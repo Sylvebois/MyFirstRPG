@@ -17,12 +17,12 @@ class Game {
         can.uiContext.font = fontSize + 'px ' + font;
     };
     uiBasics() {
-        let fontSize = Math.floor(50*can.ratio);
+        let fontSize = Math.floor(60*can.ratio);
 
         can.uiContext.drawImage(images.scroll, 0, 0, can.ui.width, can.ui.height);
         
         this.uiFontStyle(fontSize,'enchantedLandRegular');
-        can.uiContext.fillText('MyFirstRPG - V2', can.ui.width/2, can.ui.height*15/100);       
+        can.uiContext.fillText('Scroll of Stupidity', can.ui.width/2, can.ui.height*15/100);       
     };
     uiDrawText(textes, nbTextes, fontSize) {
         this.uiFontStyle(fontSize);
@@ -117,13 +117,19 @@ class Game {
         can.itemsContext.clearRect(0,0,can.size, can.size);
         can.persoContext.clearRect(0,0,can.size, can.size);
         
+        let hp = [];
+        
         for(let y = length; y >= 0; y--) {
             for(let x = length; x >= 0; x--) {                
                 if(carte[x][y].fog === 0) {
                     carte[x][y].sol.draw(can.mapContext, images.tileset);
                     (carte[x][y].item)? carte[x][y].item.draw(can.itemsContext, images.items) : null;
                     (carte[x][y].monstre)? carte[x][y].monstre.draw(can.persoContext, images.monsters) : null;
-                    (carte[x][y].hero)? carte[x][y].hero.draw(can.persoContext, images.hero) : null;
+                    
+                    if(carte[x][y].hero){
+                        carte[x][y].hero.draw(can.persoContext, images.hero);
+                        hp = [carte[x][y].hero.hp, carte[x][y].hero._finalHt];
+                    }
                 }
                 else if(carte[x][y].fog === 1) {
                     carte[x][y].sol.draw(can.mapContext, images.tileset);
@@ -135,10 +141,21 @@ class Game {
                     can.persoContext.fillStyle = 'rgba(0,0,0,1)';
                     can.persoContext.fillRect(x*tileSizeOnScreen, y*tileSizeOnScreen, tileSizeOnScreen, tileSizeOnScreen);    
                 }
-
             }
         }
+        
+        this.gameHud(hp[0], hp[1]);
     };
+    gameHud(hpLeft, baseHp){
+        let text = hpLeft + '/' + baseHp;
+        
+        can.hudContext.fillStyle = 'white';
+        can.hudContext.textAlign = 'left';  
+        can.hudContext.font = tileSizeOnScreen + 'px Arial';
+        
+        can.hudContext.fillText(text, 0, tileSizeOnScreen-2);
+    };
+    
     /*
      * Masque / Affiche l'interface ou le jeu
      */

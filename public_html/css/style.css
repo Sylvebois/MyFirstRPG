@@ -38,6 +38,7 @@ canvas {
 
 #hud {
     z-index: 4;
+    opacity: 0.5;
 }
 
 #ui {

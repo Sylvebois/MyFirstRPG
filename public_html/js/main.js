@@ -82,6 +82,9 @@ var can = {
         if(form.style.display !== 'none'){
             form.setAttribute('style', `font-size: ${Math.floor(30*this.ratio)}px;`);
         }
+        else {
+            form.setAttribute('style', `font-size: ${Math.floor(30*this.ratio)}px; display: none;`);
+        }
     
         for (let valeur of canvases) {
             valeur.setAttribute('width',this.size);
