@@ -57,6 +57,48 @@ class Dungeon {
         
         this.cleanFog(this.hero.pos[0], this.hero.pos[1], this.hero.vision);
     };
+    midWay() {
+        this.generateMapBasics(true);
+        let mid = Math.floor(this.nbTilesPerLine/2)
+        //Création des pièces
+        for(let i = 1; i < this.nbTilesPerLine-1; i++) {
+            for (let j = 1; j < 5; j++) {
+                if((i > 0 && i < 5) || (i > this.nbTilesPerLine-6 && i < this.nbTilesPerLine-1)) {
+                    this.carte[this.lvl][i][j].sol.setType('ground');
+                    this.carte[this.lvl][i][this.nbTilesPerLine-j-1].sol.setType('ground');
+                }
+            }
+        }
+        for(let i = mid-3; i < mid+3; i++) {
+            for(let j = mid-3; j < mid+3; j++) {
+               this.carte[this.lvl][i][j].sol.setType('ground');
+            }
+        }
+        
+        //Ajout des couloirs
+        for(let i = 4; i < this.nbTilesPerLine-4; i++) {
+            this.carte[this.lvl][i][2].sol.setType('ground');
+            this.carte[this.lvl][i][this.nbTilesPerLine-3].sol.setType('ground');    
+        }
+        for(let i = 4; i < this.nbTilesPerLine-4; i++) {
+            this.carte[this.lvl][2][i].sol.setType('ground');
+            this.carte[this.lvl][this.nbTilesPerLine-3][i].sol.setType('ground');    
+        }
+        
+        //Ajout des escaliers
+        this.carte[this.lvl][1][1].item = new Item(1, 1, 'StairUp', 0, 0, 0, 0, '');
+        this.carte[this.lvl][1][1].item.imgPos = [4,1];
+        
+        this.carte[this.lvl][this.nbTilesPerLine-2][this.nbTilesPerLine-2].item = new Item(this.nbTilesPerLine-2, this.nbTilesPerLine-2, 'StairDown', 0, 0, 0, 0, '');
+        this.carte[this.lvl][this.nbTilesPerLine-2][this.nbTilesPerLine-2].item.imgPos = [4,1];
+        
+        //Positionne le héro
+        this.hero.pos = [1,1];
+        this.carte[this.lvl][1][1].hero = this.hero;
+    };
+    final(){
+        
+    };
     generateMapBasics(withFog = true) {
         let fog = (withFog)? 2 : 0;
         
@@ -169,11 +211,18 @@ class Dungeon {
         }
     };
     goToLvl() {
-        if(!this.carte[this.lvl]) {
+        if(this.lvl === 4 && !this.carte[this.lvl]) {
+            this.midWay();
+        }
+        else if(this.lvl === 4 && !this.carte[this.lvl]) {
+            this.final();
+        }
+        else if(!this.carte[this.lvl]) {
             this.generateMapBasics(true);
             this.generateLevel(this.hero.pos);
-        }
-        this.carte[this.lvl][this.hero.pos[0]][this.hero.pos[1]].hero = this.hero;
+            
+            this.carte[this.lvl][this.hero.pos[0]][this.hero.pos[1]].hero = this.hero;
+        }        
     };
     random(min = 0, max = 1, int = true) {
         return (int)?  Math.floor(Math.random() * (max - min + 1)) + min : Math.random() * (max - min) + min;
