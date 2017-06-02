@@ -222,7 +222,20 @@ class Dungeon {
             this.generateLevel(this.hero.pos);
             
             this.carte[this.lvl][this.hero.pos[0]][this.hero.pos[1]].hero = this.hero;
-        }        
+        }
+        else {
+            let x, y;
+    
+            for(let i = 0; i < this.nbTilesPerLine; i++) {
+                x = i;
+                y = this.carte[this.lvl][i].indexOf(this.carte[this.lvl][i].find(liste => liste.hero !== false));
+
+                if(y > -1) {
+                    break;
+                }
+            }
+            this.hero.pos = [x,y];
+        }
     };
     random(min = 0, max = 1, int = true) {
         return (int)?  Math.floor(Math.random() * (max - min + 1)) + min : Math.random() * (max - min) + min;
