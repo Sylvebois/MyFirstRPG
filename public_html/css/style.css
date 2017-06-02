@@ -66,19 +66,4 @@ canvas {
     top: 23%;
     left: 15%;
     z-index: 50;  
-    font-size: 20px;
-}
-
-/* Small Devices, Tablets */
-@media only screen and (min-width : 768px) {
-    #createHero {
-        font-size: 30px;
-    }
-}
-
-/* Large Devices, Wide Screens */
-@media only screen and (min-width : 1200px) {
-    #createHero {
-        font-size: 40px;
-    }
 }

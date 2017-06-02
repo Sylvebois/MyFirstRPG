@@ -17,7 +17,7 @@ class Game {
         can.uiContext.font = fontSize + 'px ' + font;
     };
     uiBasics() {
-        let fontSize = (can.size < 700)? 40 : 80;
+        let fontSize = Math.floor(50*can.ratio);
 
         can.uiContext.drawImage(images.scroll, 0, 0, can.ui.width, can.ui.height);
         
@@ -43,7 +43,7 @@ class Game {
         }
     };
     uiScreen() {
-        let fontSize = (can.size < 700)? 20 : 40;
+        let fontSize = Math.floor(30*can.ratio);
         
         let textes = [];
         switch(can.state) {

@@ -48,6 +48,8 @@ var can = {
         this.state = 'acc';
         this.uiFrom = '';
         
+        this.ratio = 1;
+        
         this.map = document.getElementById('map');
         this.mapContext = this.map.getContext('2d');
         
@@ -69,6 +71,8 @@ var can = {
     },
     setSize() {
         this.size = Math.min(window.innerWidth, window.innerHeight);
+        this.ratio = this.size/720; //720 = taille par défaut du canvas
+        
         let canvases = document.getElementsByTagName('canvas');
         let container = document.getElementById('container');
         let form = document.getElementById('createHero');
@@ -76,7 +80,7 @@ var can = {
         container.setAttribute('style', `width: ${this.size}px; height: ${this.size}px;`);
         
         if(form.style.display !== 'none'){
-            form.setAttribute('style', `font-size: ${(this.size < 700)? 20 : 30}px;`);
+            form.setAttribute('style', `font-size: ${Math.floor(30*this.ratio)}px;`);
         }
     
         for (let valeur of canvases) {
