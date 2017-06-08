@@ -38,14 +38,14 @@ class Game {
                 w: can.uiContext.measureText(textes[i]).width, 
                 h: fontSize
             };
-
-            can.uiContext.fillText(textes[i], can.ui.width/2, can.ui.height*45/100+2*(i-1)*fontSize); 
+            
+            can.uiContext.fillText(textes[i], can.ui.width/2, can.ui.height*45/100+2*(i-1)*fontSize, can.size); 
         }
     };
     uiScreen() {
         let fontSize = Math.floor(30*can.ratio);
-        
         let textes = [];
+
         switch(can.state) {
             case 'acc':
                 textes = ['Nouvelle partie', 'Charger partie'];
@@ -58,7 +58,7 @@ class Game {
                 break;
             default:
                 break;   
-        }   
+        }
         
         can.uiContext.clearRect(0, 0, can.size, can.size);
         
@@ -112,6 +112,48 @@ class Game {
         //Dessins de détails
         can.uiContext.drawImage(images.invThrow, 15*tileSizeOnScreen, 17*tileSizeOnScreen, 2*tileSizeOnScreen, 2*tileSizeOnScreen);
         can.uiContext.drawImage(images.invBody, 6*tileSizeOnScreen, tileSizeOnScreen, 7*tileSizeOnScreen, 13*tileSizeOnScreen);
+    };
+    uiStory(part) {
+        let fontSize = Math.floor(20*can.ratio);
+        
+        let textes = story[`${part}`].split('\n');
+        let finalText = [];
+
+        textes.forEach(elem => {
+            let textWidth = Math.ceil(can.uiContext.measureText(elem).width);
+            let maxChar = Math.floor(elem.length * can.size / textWidth);
+            let nbCut = Math.ceil(textWidth / can.size);
+
+            if(nbCut > 1){
+                let startIndex = 0;
+                let endIndex = maxChar;
+           
+                for(let j = 0; j < nbCut; j++) {
+                    while(elem[endIndex] && elem[endIndex-1] !== ' ') {
+                        endIndex++;
+                    }
+                    
+                    let end = (j+1 === nbCut)? elem.length : endIndex;                
+                    finalText.push(elem.slice(startIndex, end)); 
+                    
+                    startIndex = endIndex;
+                    endIndex += maxChar;
+                }
+            }
+            else {
+                finalText.push(elem);
+            }    
+        });
+        
+        can.uiContext.clearRect(0, 0, can.size, can.size);
+        
+        this.uiBasics();
+        this.uiFontStyle(fontSize, 'Arial', 'black', 'left');
+        
+        finalText.forEach((elem, index) => {            
+            can.uiContext.fillText(elem, can.size*15/100, can.size*25/100+(index-1)*fontSize, can.size); 
+        });
+        
     };
     gameScreen(carte, length) {
         can.itemsContext.clearRect(0,0,can.size, can.size);
@@ -199,6 +241,10 @@ class Game {
             case 'Retour':
                 (can.uiFrom === 'opt')? this.uiNextPage('opt') : this.uiNextPage('Abandonner');
                 this.uiScreen();
+                break;
+            case 'Story':
+                can.state = 'story';
+                this.uiStory('intro');
                 break;
             default: 
                 can.state = 'jeu';

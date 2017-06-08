@@ -160,6 +160,9 @@ function main() {
                         case 'new':
                             view.uiNewGame();
                             break;
+                        case 'story':
+                            view.uiStory('intro');
+                            break;
                         case 'inv':
                             view.uiInventaire(world.hero);
                             break;
@@ -174,6 +177,13 @@ function main() {
                         can.checkClickText(e)
                             .then(action => view.uiNextPage(action))
                             .catch(() => console.log('pas un clic utile'));
+                    }
+                    else if(can.state === 'story') {
+                        view.uiNextPage();
+                        view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1);
+                        
+                        info.addText('Bienvenue dans ce petit RPG !');
+                        info.addText('Utilisez les flèches pour vous déplacer, "O" pour les options et "I" pour l\'inventaire');
                     }
                 };
                 can.ui.onmousemove = (e) => {
@@ -320,10 +330,7 @@ function main() {
                         }
                         world.start(world.hero);
                         form.style.display = 'none';
-                        view.uiNextPage();
-                        view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1);
-                        info.addText('Bienvenue dans ce petit RPG !');
-                        info.addText('Utilisez les flèches pour vous déplacer, "O" pour les options et "I" pour l\'inventaire');
+                        view.uiNextPage('Story');
                     }
                     else {
                         alert('Fiche incomplète');
