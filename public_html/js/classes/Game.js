@@ -24,23 +24,23 @@ class Game {
         this.uiFontStyle(fontSize,'enchantedLandRegular');
         can.uiContext.fillText('Scroll of Stupidity', can.ui.width/2, can.ui.height*15/100);       
     };
-    uiDrawText(textes, nbTextes, fontSize) {
+    uiDrawText(textes, fontSize) {
         this.uiFontStyle(fontSize);
         
-        for(let i = 0; i < nbTextes; i++) {
-            let posX = Math.floor(can.ui.width/2 - can.uiContext.measureText(textes[i]).width/2);
-            let posY = Math.floor(can.ui.height*45/100+2*(i-1)*fontSize-fontSize);
+        textes.map((text, index) => {
+            let posX = Math.floor(can.ui.width/2 - can.uiContext.measureText(text).width/2);
+            let posY = Math.floor(can.ui.height*45/100+2*(index-1)*fontSize-fontSize);
             
-            can.textPos[i] = {
-                name: (can.state === 'load')? textes[i] : textes[i].substr(0, textes[i].length-7),
+            can.textPos[index] = {
+                name: (can.state === 'load')? text : text.substr(0, text.length-7),
                 x: posX, 
                 y: posY, 
-                w: can.uiContext.measureText(textes[i]).width, 
+                w: can.uiContext.measureText(text).width, 
                 h: fontSize
             };
             
-            can.uiContext.fillText(textes[i], can.ui.width/2, can.ui.height*45/100+2*(i-1)*fontSize, can.size); 
-        }
+            can.uiContext.fillText(text, can.ui.width/2, can.ui.height*45/100+2*(index-1)*fontSize, can.size); 
+        });
     };
     uiScreen() {
         let fontSize = Math.floor(30*can.ratio);
@@ -63,7 +63,7 @@ class Game {
         can.uiContext.clearRect(0, 0, can.size, can.size);
         
         this.uiBasics();
-        this.uiDrawText(textes, textes.length, fontSize);
+        this.uiDrawText(textes, fontSize);
     };
     uiNewGame() {
         this.uiBasics();
@@ -119,7 +119,7 @@ class Game {
         let textes = story[`${part}`].split('\n');
         let finalText = [];
 
-        textes.forEach(elem => {
+        textes.map(elem => {
             let textWidth = Math.ceil(can.uiContext.measureText(elem).width);
             let maxChar = Math.floor(elem.length * can.size / textWidth);
             let nbCut = Math.ceil(textWidth / can.size);
@@ -150,7 +150,7 @@ class Game {
         this.uiBasics();
         this.uiFontStyle(fontSize, 'Arial', 'black', 'left');
         
-        finalText.forEach((elem, index) => {            
+        finalText.map((elem, index) => {            
             can.uiContext.fillText(elem, can.size*15/100, can.size*25/100+(index-1)*fontSize, can.size); 
         });
         

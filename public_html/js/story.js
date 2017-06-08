@@ -5,9 +5,9 @@
 var story = { 
 intro : 
 `Vous vous ennuyez au bar du village, rêvant d'aventure au lieu de garder les poules quand vous entendez la conversation du prêtre avec le mage : 
-- ... et c'est là que j'ai vu Marcel, le troll !
+- ... Et c'est là que j'ai vu Marcel, le troll !
 - Et tu as fait quoi ?
-- Ben, j'ai pris mon courage à deux mains et j'ai courru le plus vite possible jusqu'au village. Mais j'ai perdu 2-3 bricoles en route et je suppose qu'il s'est servi ...'
+- Ben, j'ai pris mon courage à deux mains et j'ai courru le plus vite possible jusqu'au village. Mais j'ai perdu 2-3 bricoles en route et je suppose qu'il s'est servi ...
 - Ouais ... il faudrait pas que ça se sache dans le village, les nouvelles vont vites. 
 - Je sais, j'y ai déjà pensé et je vais dire que j'ai créé un nouveau donjon rempli de trésors qui attend les aventuriers !
 - Bien vu, ça marche à tout les coups ces histoires de donjon, et puis ça relancera l'économie du village ...
@@ -25,7 +25,7 @@ Vous rassemblez ce qui vous reste de courage et d'honneur et vous retournez dans
 
 final :
 `Vous rentrez au village, fier et victorieux !
-Vous avez vaincu Marcel, récupéré les bibelots du prêtre et pouvez enfin prouver que vous êtes un aventurier
+Vous avez vaincu Marcel, récupéré les bibelots du prêtre et pouvez enfin prouver que vous êtes un aventurier.
 Vous êtes accueilli en héro, enfin presque : des potes vous offre des bières, vous racontez votre aventure et d'autres vous racontent comment vous avez couvé un oeuf et picoré la terre avec vos poules quand vous êtiez abruti par le sort ...
 Le prêtre vous remercie et vous offre une belle besace d'or (en échange de votre silence sur sa conversation à la taverne) ...
 Finalement, la journée a été plutôt bonne et vous pouvez rêvez à d'autres aventures !
