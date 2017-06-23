@@ -333,7 +333,8 @@ function main() {
                                input.value = '';
                             }
                         }
-                        world.start(world.hero);
+                        world.hero.hpLeft = world.hero.end;
+                        world.start();
                         form.style.display = 'none';
                         view.uiNextPage('Story');
                     }

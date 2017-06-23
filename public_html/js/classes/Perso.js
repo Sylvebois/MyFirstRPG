@@ -6,13 +6,9 @@ class Perso extends Base {
     constructor(x, y, name, st, dx, iq, ht, level = 1) {
         super(x, y, name, st, dx, iq, ht);
         
-        this.level = level;     
-        this.finalSt = this.st;
-        this.finalDx = this.dx;
-        this.finalIq = this.iq;
-        this.finalHt = this.ht;
+        this.level = level;
         
-        this.hp = this.finalHt;
+        this.hpLeft = this.end;
 
         this.body = {
             'TETE'  : 0,
@@ -29,16 +25,16 @@ class Perso extends Base {
             return;
         }
         else if(equipe) {
-            this.finalSt += this.body[zone].st;
-            this.finalDx += this.body[zone].dx;
-            this.finalIq += this.body[zone].iq;
-            this.finalHt += this.body[zone].ht;        
+            this.modSpecs('st', this.st + this.body[zone].st);
+            this.modSpecs('dx', this.dx + this.body[zone].dx);
+            this.modSpecs('iq', this.iq + this.body[zone].iq);
+            this.modSpecs('ht', this.ht + this.body[zone].ht);        
         }
         else {
-            this.finalSt -= this.body[zone].st;
-            this.finalDx -= this.body[zone].dx;
-            this.finalIq -= this.body[zone].iq;
-            this.finalHt -= this.body[zone].ht;     
+            this.modSpecs('st', this.st - this.body[zone].st);
+            this.modSpecs('dx', this.dx - this.body[zone].dx);
+            this.modSpecs('iq', this.iq - this.body[zone].iq);
+            this.modSpecs('ht', this.ht - this.body[zone].ht);   
         }
     };
     attaque(cible) {

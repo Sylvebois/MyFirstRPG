@@ -170,7 +170,7 @@ class Game {
                     
                     if(carte[x][y].hero){
                         carte[x][y].hero.draw(can.persoContext, images.hero);
-                        hp = [carte[x][y].hero.hp, carte[x][y].hero.finalHt];
+                        hp = [carte[x][y].hero.hpLeft, carte[x][y].hero.end];
                     }
                 }
                 else if(carte[x][y].fog === 1) {

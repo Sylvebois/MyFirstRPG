@@ -92,7 +92,44 @@ class Base extends Tuile {
         this.end = Math.floor(2*this.ht + this.st + this.dx/2);
     };
     modSpecs(type, value = 0) {
-        this[type] = value;
+        switch(type) {
+            case 'st':
+                this.st = value;
+                this.modSpecs('atk', Math.floor(2*this.st + this.dx + this.iq/2));
+                this.modSpecs('esq', Math.floor(2*this.dx + this.iq + this.st/2));
+                this.modSpecs('end', Math.floor(2*this.ht + this.st + this.dx/2));
+                break;
+            case 'dx':
+                this.dx = value;
+                this.modSpecs('atk', Math.floor(2*this.st + this.dx + this.iq/2));
+                this.modSpecs('def', Math.floor(2*this.iq + this.dx + this.ht/2));
+                this.modSpecs('esq', Math.floor(2*this.dx + this.iq + this.st/2));
+                this.modSpecs('end', Math.floor(2*this.ht + this.st + this.dx/2));
+                break;
+            case 'iq':
+                this.iq = value;
+                this.modSpecs('atk', Math.floor(2*this.st + this.dx + this.iq/2));
+                this.modSpecs('def', Math.floor(2*this.iq + this.dx + this.ht/2));
+                this.modSpecs('esq', Math.floor(2*this.dx + this.iq + this.st/2));
+                break;
+            case 'ht':
+                this.ht = value;
+                this.modSpecs('def', Math.floor(2*this.iq + this.dx + this.ht/2));
+                this.modSpecs('end', Math.floor(2*this.ht + this.st + this.dx/2));
+                break;
+            case 'atk':
+                this.atk = value;
+                break;
+            case 'def':
+                this.def = value;
+                break;
+            case 'esq':
+                this.esq = value;
+                break;
+            case 'end':
+                this.end = value;
+                break;
+        };
     };
     get nom() {
         return this.name;
