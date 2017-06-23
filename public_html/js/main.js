@@ -302,7 +302,7 @@ function main() {
                         if(input.type === 'range') {
                             input.value = 1;
                             document.getElementById(input.id).max = 47;
-                            document.getElementById(`show${input.id}`).innerHTML = '';
+                            document.getElementById(`show${input.id}`).innerHTML = '1';
                         }
                         else {
                            input.value = ''; 
@@ -323,9 +323,13 @@ function main() {
                         for(let input of inputs) {
                             if(input.type === 'range') {
                                 world.hero.modSpecs(input.id.toLowerCase(), parseInt(input.value));
+                                input.value = 1;
+                                input.max = 47;
+                                document.getElementById(`show${input.id}`).innerHTML = '1';
                             }
                             else {
                                world.hero.modSpecs(input.id, input.value);
+                               input.value = '';
                             }
                         }
                         world.start(world.hero);
