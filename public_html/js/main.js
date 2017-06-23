@@ -210,7 +210,6 @@ function main() {
                             case 37:
                                 newDirection[0] = 'GAUCHE';
                                 newDirection[1] = [world.hero.pos[0]-1, world.hero.pos[1]];
-                                console.log(world.hero);
                                 break;
                             case 38:
                                 newDirection[0] = 'HAUT';
@@ -252,7 +251,7 @@ function main() {
                                     }, 
                                     raison => {
                                         if(raison === 'fight') {
-                                            console.log('BASTOOOOON !');
+                                            world.hero.attaque(world.carte[world.lvl][newDirection[1][0]][newDirection[1][1]].monstre);
                                         }
                                     }
                                 )

@@ -38,7 +38,12 @@ class Perso extends Base {
         }
     };
     attaque(cible) {
-        
+        if(typeof(cible.vision) === 'undefined'){
+            info.addText('Vous attaquez ' + cible.name + ' ... BASTOOOOON !!!', 'red');
+        }
+        else {
+            info.addText(this.name + ' vous attaque ... ATTENTION !', 'red');
+        }
     };
     equiperObjet() {
         

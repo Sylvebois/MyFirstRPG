@@ -98,6 +98,8 @@ class Dungeon {
         //Positionne le héro
         this.hero.pos = [1,1];
         this.carte[this.lvl][1][1].hero = this.hero;
+        
+        info.addText('Hum ... Ce niveau vous paraît étrange ...', 'yellow');
     };
     final(){
         let mid = Math.floor(this.nbTilesPerLine/2)-1;
