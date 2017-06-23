@@ -6,15 +6,15 @@ class Perso extends Base {
     constructor(x, y, name, st, dx, iq, ht, level = 1) {
         super(x, y, name, st, dx, iq, ht);
         
-        this._level = level;     
-        this._finalSt = this._st;
-        this._finalDx = this._dx;
-        this._finalIq = this._iq;
-        this._finalHt = this._ht;
+        this.level = level;     
+        this.finalSt = this.st;
+        this.finalDx = this.dx;
+        this.finalIq = this.iq;
+        this.finalHt = this.ht;
         
-        this.hp = this._finalHt;
+        this.hp = this.finalHt;
 
-        this._body = {
+        this.body = {
             'TETE'  : 0,
             'COU'   : 0,
             'TORSE' : 0,
@@ -29,16 +29,16 @@ class Perso extends Base {
             return;
         }
         else if(equipe) {
-            this._finalSt += this._body[zone].st;
-            this._finalDx += this._body[zone].dx;
-            this._finalIq += this._body[zone].iq;
-            this._finalHt += this._body[zone].ht;        
+            this.finalSt += this.body[zone].st;
+            this.finalDx += this.body[zone].dx;
+            this.finalIq += this.body[zone].iq;
+            this.finalHt += this.body[zone].ht;        
         }
         else {
-            this._finalSt -= this._body[zone].st;
-            this._finalDx -= this._body[zone].dx;
-            this._finalIq -= this._body[zone].iq;
-            this._finalHt -= this._body[zone].ht;     
+            this.finalSt -= this.body[zone].st;
+            this.finalDx -= this.body[zone].dx;
+            this.finalIq -= this.body[zone].iq;
+            this.finalHt -= this.body[zone].ht;     
         }
     };
     attaque(cible) {
@@ -105,8 +105,8 @@ class Hero extends Perso {
 class Monstre extends Perso {
     constructor(x, y, name, st, dx, iq, ht, level, attitude = 'neutre') {
         super(x, y, name, st, dx, iq, ht, level);
-        this._attitude = attitude;
-        this._image = 0;
+        this.attitude = attitude;
+        this.image = 0;
     };
     compareEquipement() {
         

@@ -210,6 +210,7 @@ function main() {
                             case 37:
                                 newDirection[0] = 'GAUCHE';
                                 newDirection[1] = [world.hero.pos[0]-1, world.hero.pos[1]];
+                                console.log(world.hero);
                                 break;
                             case 38:
                                 newDirection[0] = 'HAUT';
@@ -266,7 +267,7 @@ function main() {
                 form.onchange = (e) => {
                     let inputs = form.getElementsByTagName('input');
                     let nbPoints = document.getElementById('nbPoints');
-                    let points = 50;
+                    let points = 25;
 
                     for(let input of inputs) {
                         if(input.type === 'range') {
@@ -295,13 +296,13 @@ function main() {
                 form.getElementsByTagName('button')[0].onclick = (e) => {
                     e.preventDefault();
                     
-                    document.getElementById('nbPoints').innerHTML = 50;
+                    document.getElementById('nbPoints').innerHTML = 25;
                     
                     let inputs = form.getElementsByTagName('input');
                     for(let input of inputs) {
                         if(input.type === 'range') {
                             input.value = 1;
-                            document.getElementById(input.id).max = 47;
+                            input.max = 22;
                             document.getElementById(`show${input.id}`).innerHTML = '1';
                         }
                         else {
@@ -324,11 +325,11 @@ function main() {
                             if(input.type === 'range') {
                                 world.hero.modSpecs(input.id.toLowerCase(), parseInt(input.value));
                                 input.value = 1;
-                                input.max = 47;
+                                input.max = 22;
                                 document.getElementById(`show${input.id}`).innerHTML = '1';
                             }
                             else {
-                               world.hero.modSpecs(input.id, input.value);
+                               world.hero.nom = input.value;
                                input.value = '';
                             }
                         }

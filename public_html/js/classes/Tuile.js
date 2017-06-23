@@ -4,30 +4,30 @@
 class Tuile {
     constructor(x, y) {        
         // Position de la tuile sur le canvas
-        this._posX = parseInt(x);
-        this._posY = parseInt(y); 
+        this.posX = parseInt(x);
+        this.posY = parseInt(y); 
         
         // Position par défaut de l'image sur le tileset
-        this._imgX = 0;
-        this._imgY = 0;
+        this.imgX = 0;
+        this.imgY = 0;
     };
     get pos(){
-        return [this._posX,this._posY];
+        return [this.posX,this.posY];
     };
     set pos(newCoord){
-        this._posX = parseInt(newCoord[0]);
-        this._posY = parseInt(newCoord[1]); 
+        this.posX = parseInt(newCoord[0]);
+        this.posY = parseInt(newCoord[1]); 
     };
     get imgPos(){
-        return [this._imgX,this._imgY];
+        return [this.imgX,this.imgY];
     };
     set imgPos(newCoord){
-        this._imgX = parseInt(newCoord[0]);
-        this._imgY = parseInt(newCoord[1]); 
+        this.imgX = parseInt(newCoord[0]);
+        this.imgY = parseInt(newCoord[1]); 
     };
     draw(context, image, inventaire = false) {
         let size = (inventaire)? 2*tileSizeOnScreen : tileSizeOnScreen;
-        context.drawImage(image, this._imgX*TILESIZE, this._imgY*TILESIZE, TILESIZE, TILESIZE, this._posX*tileSizeOnScreen, this._posY*tileSizeOnScreen, size, size);    
+        context.drawImage(image, this.imgX*TILESIZE, this.imgY*TILESIZE, TILESIZE, TILESIZE, this.posX*tileSizeOnScreen, this.posY*tileSizeOnScreen, size, size);    
     }
 };
 
@@ -41,32 +41,32 @@ class MapTile extends Tuile {
         this.setType(type);
     };
     setType(type = 'ground') {
-        this._groundType = type.toString();
+        this.groundType = type.toString();
         
         // Donne la position sur l'image et si on peut se déplacer sur la tuile
-        switch(this._groundType) {
+        switch(this.groundType) {
             case 'wall' :
                 this.imgPos = [12,4];
-                this._accessible = false;
+                this.accessible = false;
                 break;
             case 'ground' :
             default:
                 this.imgPos = [1,9];
-                this._accessible = true;
+                this.accessible = true;
                 break;
         }
     };
     get access() {
-        return this._accessible;
+        return this.accessible;
     };
     set access(bool) {
-        this._accessible = bool;
+        this.accessible = bool;
     };
     get typeSol() {
-        return this._groundType;
+        return this.groundType;
     };
     set typeSol(type) {
-        this._groundType = type;
+        this.groundType = type;
     };
 };
 
@@ -75,38 +75,30 @@ class MapTile extends Tuile {
  * Hérite de Tuile
  */
 class Base extends Tuile {
-    constructor(x = 0, y = 0, name = 'No Name', st = 15, dx = 15, iq = 10, ht = 10) {
+    constructor(x = 0, y = 0, name = 'No Name', st = 1, dx = 1, iq = 1, ht = 1) {
         super(x,y);
-        this._name = name;
-        this._st = st;
-        this._dx = dx;
-        this._iq = iq;
-        this._ht = ht;
+        this.name = name;
+        
+        //Primaire
+        this.st = st;
+        this.dx = dx;
+        this.iq = iq;
+        this.ht = ht;
+        
+        //Secondaire
+        this.atk = Math.floor(2*this.st + this.dx + this.iq/2);
+        this.def = Math.floor(2*this.iq + this.dx + this.ht/2);
+        this.esq = Math.floor(2*this.dx + this.iq + this.st/2);
+        this.end = Math.floor(2*this.ht + this.st + this.dx/2);
     };
     modSpecs(type, value = 0) {
-        switch(type) {
-            case 'nom':
-                this._name = value;
-                break;
-            case 'st':
-                this._st = value;
-                break;
-            case 'dx':
-                this._dx = value;
-                break;
-            case 'iq':
-                this._iq = value;
-                break;
-            case 'ht':
-                this._ht = value;
-                break;
-        };
+        this[type] = value;
     };
     get nom() {
-        return this._name;
+        return this.name;
     };
     set nom(name) {
-        this._name = name;
+        this.name = name;
     };
 };
 
@@ -117,6 +109,6 @@ class Base extends Tuile {
 class Item extends Base {
     constructor(x, y, name, st, dx, iq, ht, zone = 'MAING') {
         super(x, y, name, st, dx, iq, ht);
-        this._emplacement = zone;
+        this.emplacement = zone;
     };
 };
