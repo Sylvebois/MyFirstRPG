@@ -24,7 +24,7 @@ What will come :
 - Advanced combat system (close combat, ranged combat, magic ...)
 - Inventory (restrictions for placing equipements ...)
 - Add info about an item when hovering it with the mouse
-- Make the game compatible with IE
+- Make the game compatible with Edge
 - Story
 - Game Over screen
 - Credit Screen

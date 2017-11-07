@@ -86,9 +86,9 @@ var can = {
             form.setAttribute('style', `font-size: ${Math.floor(30*this.ratio)}px; display: none;`);
         }
     
-        for (let valeur of canvases) {
-            valeur.setAttribute('width',this.size);
-            valeur.setAttribute('height',this.size);
+        for (let i = 0; i < canvases.length; i++) {
+            canvases[i].setAttribute('width',this.size);
+            canvases[i].setAttribute('height',this.size);
         }
     },
     checkClickText(e) {
@@ -131,7 +131,7 @@ function main() {
         .then(
             () => { 
                 //IE et Edge ne supportent pas document.fonts
-                return (document.fonts)? document.fonts.load('12px enchantedLandRegular'): new Promise.resolve(); 
+                return (document.fonts)? document.fonts.load('12px enchantedLandRegular'): Promise.resolve(); 
             },
             () => { 
                 console.log('Erreur lors du chargement des images'); 
@@ -268,18 +268,18 @@ function main() {
                     let nbPoints = document.getElementById('nbPoints');
                     let points = 25;
 
-                    for(let input of inputs) {
-                        if(input.type === 'range') {
-                            points -= parseInt(input.value);
-                            document.getElementById(`show${input.id}`).innerHTML = input.value;
+                    for(let i = 0; i < inputs.length; i++) {
+                        if(inputs[i].type === 'range') {
+                            points -= parseInt(inputs[i].value);
+                            document.getElementById(`show${inputs[i].id}`).innerHTML = inputs[i].value;
                         }
                     }
 
-                    for(let input of inputs) {
-                        if(input.type === 'range') {
-                            let reste = points+parseInt(input.value);
+                    for(let i = 0; i < inputs.length; i++) {
+                        if(inputs[i].type === 'range') {
+                            let reste = points+parseInt(inputs[i].value);
                             let max = (reste <= 0)? 1 : reste;
-                            document.getElementById(input.id).max = max;
+                            document.getElementById(inputs[i].id).max = max;
                         }
                     }
 
@@ -298,14 +298,14 @@ function main() {
                     document.getElementById('nbPoints').innerHTML = 25;
                     
                     let inputs = form.getElementsByTagName('input');
-                    for(let input of inputs) {
-                        if(input.type === 'range') {
-                            input.value = 1;
-                            input.max = 22;
-                            document.getElementById(`show${input.id}`).innerHTML = '1';
+                    for(let i = 0; i < inputs.length; i++) {
+                        if(inputs[i].type === 'range') {
+                            inputs[i].value = 1;
+                            inputs[i].max = 22;
+                            document.getElementById(`show${inputs[i].id}`).innerHTML = '1';
                         }
                         else {
-                           input.value = ''; 
+                           inputs[i].value = ''; 
                         }
                     }
                     
@@ -320,16 +320,16 @@ function main() {
                     if(nbPointsLeft === '0' && form.getElementsByTagName('nom').value !== '') {
                         let inputs = form.getElementsByTagName('input');
                         
-                        for(let input of inputs) {
-                            if(input.type === 'range') {
-                                world.hero.modSpecs(input.id.toLowerCase(), parseInt(input.value));
-                                input.value = 1;
-                                input.max = 22;
-                                document.getElementById(`show${input.id}`).innerHTML = '1';
+                        for(let i = 0; i < inputs.length; i++) {
+                            if(inputs[i].type === 'range') {
+                                world.hero.modSpecs(inputs[i].id.toLowerCase(), parseInt(inputs[i].value));
+                                inputs[i].value = 1;
+                                inputs[i].max = 22;
+                                document.getElementById(`show${inputs[i].id}`).innerHTML = '1';
                             }
                             else {
-                               world.hero.nom = input.value;
-                               input.value = '';
+                               world.hero.nom = inputs[i].value;
+                               inputs[i].value = '';
                             }
                         }
                         world.hero.hpLeft = world.hero.end;
