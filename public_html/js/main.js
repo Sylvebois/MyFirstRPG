@@ -252,6 +252,7 @@ function main() {
                                     raison => {
                                         if(raison === 'fight') {
                                             world.hero.attaque(world.carte[world.lvl][newDirection[1][0]][newDirection[1][1]].monstre);
+                                            world.carte[world.lvl][newDirection[1][0]][newDirection[1][1]].monstre.attaque(world.hero);
                                         }
                                     }
                                 )

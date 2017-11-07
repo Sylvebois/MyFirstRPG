@@ -38,11 +38,18 @@ class Perso extends Base {
         }
     };
     attaque(cible) {
+        let dmg = (this.atk - cible.def < 0)? 0 : this.atk - cible.def;
+        cible.end = (cible.end - dmg < 0)? 0 : cible.end - dmg;
+        
         if(typeof(cible.vision) === 'undefined'){
             info.addText('Vous attaquez ' + cible.name + ' ... BASTOOOOON !!!', 'red');
+            info.addText('Vous infligez ' + dmg + 'dégats');
+            (cible.end === 0)? info.addText(cible.name + ' s\'effondre sous vos coups') : null;
         }
         else {
             info.addText(this.name + ' vous attaque ... ATTENTION !', 'red');
+            info.addText('Vous prenez ' + dmg + 'dégats');
+            (cible.end === 0)? info.addText('Vous tombez sous les coups de l\'ennemi ... GAME OVER !', 'red') : null;
         }
     };
     equiperObjet() {
@@ -57,7 +64,6 @@ class Perso extends Base {
  * Classe définissant un héro
  * Hérite de Perso
  */
-
 class Hero extends Perso {
     constructor(x, y, name, st, dx, iq, ht, level) {
         super(x, y, name, st, dx, iq, ht, level);
