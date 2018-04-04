@@ -47,24 +47,24 @@ var can = {
     init() {
         this.state = 'acc';
         this.uiFrom = '';
-        
+
         this.ratio = 1;
-        
+
         this.map = document.getElementById('map');
         this.mapContext = this.map.getContext('2d');
-        
+
         this.items = document.getElementById('items');
         this.itemsContext = this.items.getContext('2d');
-        
+
         this.perso = document.getElementById('perso');
         this.persoContext = this.perso.getContext('2d');
-        
+
         this.hud = document.getElementById('hud');
         this.hudContext = this.perso.getContext('2d');
-        
+
         this.ui = document.getElementById('ui');
         this.uiContext = this.ui.getContext('2d');
-        
+
         this.textPos = [null,null,null,null];
 
         this.setSize();
@@ -72,27 +72,27 @@ var can = {
     setSize() {
         this.size = Math.min(window.innerWidth, window.innerHeight);
         this.ratio = this.size/720; //720 = taille par défaut du canvas
-        
+
         let canvases = document.getElementsByTagName('canvas');
         let container = document.getElementById('container');
         let form = document.getElementById('createHero');
-        
+
         container.setAttribute('style', `width: ${this.size}px; height: ${this.size}px;`);
-        
+
         if(form.style.display !== 'none'){
             form.setAttribute('style', `font-size: ${Math.floor(30*this.ratio)}px;`);
         }
         else {
             form.setAttribute('style', `font-size: ${Math.floor(30*this.ratio)}px; display: none;`);
         }
-    
+
         for (let i = 0; i < canvases.length; i++) {
             canvases[i].setAttribute('width',this.size);
             canvases[i].setAttribute('height',this.size);
         }
     },
     checkClickText(e) {
-        return new Promise((resolve, reject) => {            
+        return new Promise((resolve, reject) => {
             let len = 0;
 
             switch(can.state) {
@@ -106,7 +106,7 @@ var can = {
                     len = 4;
                     break;
                 default:
-                    break;    
+                    break;
             }
 
             for(let i = 0; i < len ; i++) {
@@ -117,24 +117,42 @@ var can = {
             }
             reject();
         });
+    },
+    clickedInTriangle(p, a, b, c) {
+        let vect0 = [c[0]-a[0], c[1]-a[1]];
+        let vect1 = [b[0]-a[0], b[1]-a[1]];
+        let vect2 = [p[0]-a[0], p[1]-a[1]];
+
+        let dot00 = (vect0[0]*vect0[0]) + (vect0[1]*vect0[1]);
+        let dot01 = (vect0[0]*vect1[0]) + (vect0[1]*vect1[1]);
+        let dot02 = (vect0[0]*vect2[0]) + (vect0[1]*vect2[1]);
+        let dot11 = (vect1[0]*vect1[0]) + (vect1[1]*vect1[1]);
+        let dot12 = (vect1[0]*vect2[0]) + (vect1[1]*vect2[1]);
+
+        let invDenom = 1/ (dot00 * dot11 - dot01 * dot01);
+
+        let u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+        let v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+        return ((u >= 0) && (v >= 0) && (u + v < 1));
     }
 };
 can.init();
 
-function main() { 
+function main() {
     //Chargement du formulaire de création et des images
     let form = document.getElementById('createHero');
-    let promisesImgList = images.imgList.map(images.loadImage);  
-    
+    let promisesImgList = images.imgList.map(images.loadImage);
+
     //Vérification du chargement des images et des polices
     Promise.all(promisesImgList)
         .then(
-            () => { 
+            () => {
                 //IE et Edge ne supportent pas document.fonts
-                return (document.fonts)? document.fonts.load('12px enchantedLandRegular'): Promise.resolve(); 
+                return (document.fonts)? document.fonts.load('12px enchantedLandRegular'): Promise.resolve();
             },
-            () => { 
-                console.log('Erreur lors du chargement des images'); 
+            () => {
+                console.log('Erreur lors du chargement des images');
             }
         )
         .then(
@@ -144,11 +162,11 @@ function main() {
 
                 //Mise en place des canvas
                 view.setBaseSizes();
-                view.uiScreen();         
+                view.uiScreen();
                 view.showUi();
 
                 //Ajuste la scène si l'écran change de taille
-                window.onresize = () => { 
+                window.onresize = () => {
                     view.setBaseSizes();
 
                     switch(can.state) {
@@ -167,11 +185,34 @@ function main() {
                             view.uiInventaire(world.hero);
                             break;
                     }
-                    
+
                     view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1);
                 };
 
                 //Ajout des évenements sur les canvas
+                can.hud.onclick = (e) => {
+                    if(can.state === 'jeu') {
+                        let clickPos = [e.x,e.y];
+                        let center = [can.size/2,can.size/2]
+                        let triangleUp = [[0,0], [can.size,0]];
+                        let triangleDown = [[0, can.size], [can.size, can.size]];
+                        let triangleLeft = [[0,0], [0, can.size]];
+                        let triangleRight = [[can.size,0], [can.size, can.size]];
+
+                        if(can.clickedInTriangle(clickPos, triangleUp[0], triangleUp[1], center)) {
+                           alert('Vers le haut');
+                        }
+                        else if(can.clickedInTriangle(clickPos, triangleDown[0], triangleDown[1], center)) {
+                           alert('Vers le bas');
+                        }
+                        else if(can.clickedInTriangle(clickPos, triangleLeft[0], triangleLeft[1], center)) {
+                           alert('Vers la gauche');
+                        }
+                        else if(can.clickedInTriangle(clickPos, triangleRight[0], triangleRight[1], center)) {
+                           alert('Vers la droite');
+                        }
+                    }
+                }
                 can.ui.onclick = (e) => {
                     if(can.state === 'acc' || can.state === 'opt' || can.state === 'load') {
                         can.checkClickText(e)
@@ -181,7 +222,7 @@ function main() {
                     else if(can.state === 'story') {
                         view.uiNextPage();
                         view.gameScreen(world.carte[world.lvl], world.nbTilesPerLine-1);
-                        
+
                         info.addText('Bienvenue dans ce petit RPG !');
                         info.addText('Utilisez les flèches pour vous déplacer, "O" pour les options et "I" pour l\'inventaire');
                     }
@@ -205,7 +246,7 @@ function main() {
                     }
                     else if (can.state === 'jeu') {
                         let newDirection = ['', 0];
-                        
+
                         switch(e.which) {
                             case 37:
                                 newDirection[0] = 'GAUCHE';
@@ -236,7 +277,7 @@ function main() {
                                 view.showUi();
                                 break;
                         }
-                        
+
                         if(newDirection[1] !== 0) {
                             world.checkAccess(newDirection[1][0], newDirection[1][1])
                                 .then(
@@ -248,7 +289,7 @@ function main() {
 
                                         world.checkItem(world.hero.pos[0], world.hero.pos[1]);
                                         world.cleanFog(world.hero.pos[0], world.hero.pos[1], world.hero.vision);
-                                    }, 
+                                    },
                                     raison => {
                                         if(raison === 'fight') {
                                             world.hero.attaque(world.carte[world.lvl][newDirection[1][0]][newDirection[1][1]].monstre);
@@ -295,9 +336,9 @@ function main() {
                 };
                 form.getElementsByTagName('button')[0].onclick = (e) => {
                     e.preventDefault();
-                    
+
                     document.getElementById('nbPoints').innerHTML = 25;
-                    
+
                     let inputs = form.getElementsByTagName('input');
                     for(let i = 0; i < inputs.length; i++) {
                         if(inputs[i].type === 'range') {
@@ -306,11 +347,11 @@ function main() {
                             document.getElementById(`show${inputs[i].id}`).innerHTML = '1';
                         }
                         else {
-                           inputs[i].value = ''; 
+                           inputs[i].value = '';
                         }
                     }
-                    
-                    form.style.display = 'none';    
+
+                    form.style.display = 'none';
                     view.uiNextPage('Abandonner');
                 };
                 form.getElementsByTagName('button')[1].onclick = (e) => {
@@ -320,7 +361,7 @@ function main() {
 
                     if(nbPointsLeft === '0' && form.getElementsByTagName('nom').value !== '') {
                         let inputs = form.getElementsByTagName('input');
-                        
+
                         for(let i = 0; i < inputs.length; i++) {
                             if(inputs[i].type === 'range') {
                                 world.hero.modSpecs(inputs[i].id.toLowerCase(), parseInt(inputs[i].value));
