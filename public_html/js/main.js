@@ -1,9 +1,9 @@
-//Taille des tuiles (sur les tilesets et à l'écran)
+//Tiles size (on the tileset and on screen)
 const TILESIZE = 32;
 const nbTilesPerLine = 20;
 var tileSizeOnScreen = 0;
 
-//Chargement des images
+//Loads Images
 var images = {
     imgList: ['plume.png', 'pioche.png', 'scroll.png', 'tileset.png', 'hero.png', 'items.png', 'monsters.png', 'invBody.png', 'invThrow.png'],
     loadImage(name) {
@@ -19,7 +19,7 @@ var images = {
     }
 };
 
-//Chargement de la zone d'info
+//Loads Info zone
 var info = {
     div : document.getElementById('info'),
     setPos() {
@@ -42,7 +42,7 @@ var info = {
     }
 };
 
-//Chargement et gestion des canvas
+//Loads and manage canvases
 var can = {
     init() {
         this.state = 'acc';
@@ -118,7 +118,7 @@ var can = {
             reject();
         });
     },
-    clickedInTriangle(p, a, b, c) {
+    checkClickTriangle(p, a, b, c) {
         let vect0 = [c[0]-a[0], c[1]-a[1]];
         let vect1 = [b[0]-a[0], b[1]-a[1]];
         let vect2 = [p[0]-a[0], p[1]-a[1]];
@@ -140,15 +140,15 @@ var can = {
 can.init();
 
 function main() {
-    //Chargement du formulaire de création et des images
+    //Loads Hero's creation form and images
     let form = document.getElementById('createHero');
     let promisesImgList = images.imgList.map(images.loadImage);
 
-    //Vérification du chargement des images et des polices
+    //Checks that all images and Fonts are loaded
     Promise.all(promisesImgList)
         .then(
             () => {
-                //IE et Edge ne supportent pas document.fonts
+                //IE et Edge doesn't support document.fonts
                 return (document.fonts)? document.fonts.load('12px enchantedLandRegular'): Promise.resolve();
             },
             () => {
@@ -160,12 +160,12 @@ function main() {
                 let view = new Game();
                 let world = new Dungeon();
 
-                //Mise en place des canvas
+                //Setting up canvases
                 view.setBaseSizes();
                 view.uiScreen();
                 view.showUi();
 
-                //Ajuste la scène si l'écran change de taille
+                //Modify canvas size if screen size change
                 window.onresize = () => {
                     view.setBaseSizes();
 
@@ -189,7 +189,7 @@ function main() {
                     view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1);
                 };
 
-                //Ajout des évenements sur les canvas
+                //Add events on canvases
                 can.hud.onclick = (e) => {
                     if(can.state === 'jeu') {
                         let clickPos = [e.x,e.y];
@@ -199,16 +199,16 @@ function main() {
                         let triangleLeft = [[0,0], [0, can.size]];
                         let triangleRight = [[can.size,0], [can.size, can.size]];
 
-                        if(can.clickedInTriangle(clickPos, triangleUp[0], triangleUp[1], center)) {
+                        if(can.checkClickTriangle(clickPos, triangleUp[0], triangleUp[1], center)) {
                            alert('Vers le haut');
                         }
-                        else if(can.clickedInTriangle(clickPos, triangleDown[0], triangleDown[1], center)) {
+                        else if(can.checkClickTriangle(clickPos, triangleDown[0], triangleDown[1], center)) {
                            alert('Vers le bas');
                         }
-                        else if(can.clickedInTriangle(clickPos, triangleLeft[0], triangleLeft[1], center)) {
+                        else if(can.checkClickTriangle(clickPos, triangleLeft[0], triangleLeft[1], center)) {
                            alert('Vers la gauche');
                         }
-                        else if(can.clickedInTriangle(clickPos, triangleRight[0], triangleRight[1], center)) {
+                        else if(can.checkClickTriangle(clickPos, triangleRight[0], triangleRight[1], center)) {
                            alert('Vers la droite');
                         }
                     }
@@ -304,7 +304,7 @@ function main() {
                     }
                 };
 
-                //Ajout des événements sur le formulaire
+                //Add events on form
                 form.onchange = (e) => {
                     let inputs = form.getElementsByTagName('input');
                     let nbPoints = document.getElementById('nbPoints');
