@@ -17,9 +17,9 @@ C'est l'occasion rêvée de prouver à ces pecnots que vous avez l'étoffe d'un 
 
 firstRun :
 `Quand la brume dans votre esprit se disperse, vous êtes chez vous, affalé sur le sol avec un goût de terre en bouche ... 
-Quand vous sortez voir le prêtre pour comprendre ce qui s'est passé, les gloussements et ricanements de vos concitoyens vous fait dire que votre quête ne s'est pas déroulée comme prévu ...
+Quand vous sortez voir le prêtre pour comprendre ce qui s'est passé, les gloussements et ricanements de vos concitoyens vous font dire que votre quête ne s'est pas déroulée comme prévu ...
 Le prêtre vous explique : "hum, Marcel a réussi à lire un parchemin de stupidité, il supprime toute l'intelligence de la cible. C'est un miracle que vous ayez pu rentrer chez vous. Il vous faudrait un casque de protection mais je l'ai ... heu ... égaré."
-De toute façon, le barguinage des lanceurs de sort ressemble à du troll commun, alors un troll qui baraguine de la magie n'a rien d'étonnant selon vous.
+De toute façon, le baraguinage des lanceurs de sort ressemble à du troll commun, alors un troll qui baraguine de la magie n'a rien d'étonnant selon vous.
 
 Vous rassemblez ce qui vous reste de courage et d'honneur et vous retournez dans la caverne, décidé à mettre une raclée à Marcel ...`,
 
