@@ -1,13 +1,13 @@
-/* 
- * Tuile de base contenant la position sur le canvas et les fonctions de dessin
+/*
+ * Basic Tile containing position on the canvas and the drawing functions
  */
-class Tuile {
-    constructor(x, y) {        
-        // Position de la tuile sur le canvas
+class Tile {
+    constructor(x, y) {
+        // Tile position on the canvas
         this.posX = parseInt(x);
-        this.posY = parseInt(y); 
-        
-        // Position par défaut de l'image sur le tileset
+        this.posY = parseInt(y);
+
+        // Default position of the image in the tileset
         this.imgX = 0;
         this.imgY = 0;
     };
@@ -16,34 +16,33 @@ class Tuile {
     };
     set pos(newCoord){
         this.posX = parseInt(newCoord[0]);
-        this.posY = parseInt(newCoord[1]); 
+        this.posY = parseInt(newCoord[1]);
     };
     get imgPos(){
         return [this.imgX,this.imgY];
     };
     set imgPos(newCoord){
         this.imgX = parseInt(newCoord[0]);
-        this.imgY = parseInt(newCoord[1]); 
+        this.imgY = parseInt(newCoord[1]);
     };
-    draw(context, image, inventaire = false) {
-        let size = (inventaire)? 2*tileSizeOnScreen : tileSizeOnScreen;
-        context.drawImage(image, this.imgX*TILESIZE, this.imgY*TILESIZE, TILESIZE, TILESIZE, this.posX*tileSizeOnScreen, this.posY*tileSizeOnScreen, size, size);    
+    draw(context, image, inventory = false) {
+        let size = (inventory)? 2*tileSizeOnScreen : tileSizeOnScreen;
+        context.drawImage(image, this.imgX*TILESIZE, this.imgY*TILESIZE, TILESIZE, TILESIZE, this.posX*tileSizeOnScreen, this.posY*tileSizeOnScreen, size, size);
     }
 };
 
-/* 
- * Définition du type de sol ou de mur
- * Hérite de Tuile
+/*
+ * Define the ground or wall type
  */
-class MapTile extends Tuile {
+class MapTile extends Tile {
     constructor(x, y, type = 'ground') {
-        super(x, y); 
+        super(x, y);
         this.setType(type);
     };
     setType(type = 'ground') {
         this.groundType = type.toString();
-        
-        // Donne la position sur l'image et si on peut se déplacer sur la tuile
+
+        // Give the position on the tileset and if the tile is accessible
         switch(this.groundType) {
             case 'wall' :
                 this.imgPos = [12,4];
@@ -70,21 +69,20 @@ class MapTile extends Tuile {
     };
 };
 
-/* 
- * Classe définissant les caractéristiques de base d'un objet / personnage 
- * Hérite de Tuile
+/*
+ * Basic specs definition of a character / item
  */
-class Base extends Tuile {
+class Base extends Tile {
     constructor(x = 0, y = 0, name = 'No Name', st = 1, dx = 1, iq = 1, ht = 1) {
         super(x,y);
         this.name = name;
-        
+
         //Primaire
         this.st = st;
         this.dx = dx;
         this.iq = iq;
         this.ht = ht;
-        
+
         //Secondaire
         this.atk = Math.floor(2*this.st + this.dx + this.iq/2);
         this.def = Math.floor(2*this.iq + this.dx + this.ht/2);
@@ -139,13 +137,12 @@ class Base extends Tuile {
     };
 };
 
-/* 
- * Classe définissant un objet 
- * Hérite de Base
+/*
+ * Items definition
  */
 class Item extends Base {
     constructor(x, y, name, st, dx, iq, ht, zone = 'MAING') {
         super(x, y, name, st, dx, iq, ht);
-        this.emplacement = zone;
+        this.slot = zone;
     };
 };
