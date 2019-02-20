@@ -1,19 +1,19 @@
 /*
- * Classe gérant les données des niveaux
+ * Classes managing the data of the levels
  */
 class Room {
     constructor(x = 0, y = 0, width = 0, height = 0) {
-        //coordonnees de depart et d'arrivee de la piece
+        //Starting and ending coordinates of the room
         this.x1 = x;
         this.y1 = y;
         this.x2 = x + width;
         this.y2 = y + height;
 
-        //largeur et hauteur de la piece
+        //Width and height of the room
         this.w = width;
         this.h = height;
 
-        //milieu de la piece
+        //middle of the room
         this.mid = [Math.floor((this.x1 + this.x2)/2), Math.floor((this.y1 + this.y2)/2)];
     };
     intersects (room) {
@@ -35,7 +35,7 @@ class Dungeon {
 
         this.generateMapBasics(true);
 
-        //Changements spécifiques au niveau de départ
+        //Specific changes to starting level
         this.carte[this.lvl][mid][0].sol.setType('ground');
         this.nbWall--;
 
@@ -61,7 +61,7 @@ class Dungeon {
         this.generateMapBasics(true);
         let mid = Math.floor(this.nbTilesPerLine/2);
 
-        //Création des pièces
+        //Room creation
         for(let i = 1; i < this.nbTilesPerLine-1; i++) {
             for (let j = 1; j < 5; j++) {
                 if((i > 0 && i < 5) || (i > this.nbTilesPerLine-6 && i < this.nbTilesPerLine-1)) {
@@ -76,7 +76,7 @@ class Dungeon {
             }
         }
 
-        //Ajout des couloirs
+        //Adding corridors
         for(let i = 4; i < this.nbTilesPerLine-4; i++) {
             this.carte[this.lvl][i][2].sol.setType('ground');
             this.carte[this.lvl][i][this.nbTilesPerLine-3].sol.setType('ground');
@@ -88,14 +88,14 @@ class Dungeon {
 
         this.countFloorTiles();
 
-        //Ajout des escaliers
+        //Adding stairs
         this.carte[this.lvl][1][1].item = new Item(1, 1, 'StairUp', 0, 0, 0, 0, '');
         this.carte[this.lvl][1][1].item.imgPos = [4,1];
 
         this.carte[this.lvl][this.nbTilesPerLine-2][this.nbTilesPerLine-2].item = new Item(this.nbTilesPerLine-2, this.nbTilesPerLine-2, 'StairDown', 0, 0, 0, 0, '');
         this.carte[this.lvl][this.nbTilesPerLine-2][this.nbTilesPerLine-2].item.imgPos = [4,1];
 
-        //Positionne le héro
+        //Positionning Hero
         this.hero.pos = [1,1];
         this.carte[this.lvl][1][1].hero = this.hero;
 
@@ -106,7 +106,7 @@ class Dungeon {
 
         this.generateMapBasics(false);
 
-        //Création de la pièce
+        //Room creation
         for(let i = 1 ; i < this.nbTilesPerLine-1; i++) {
             for(let j = 1; j < this.nbTilesPerLine-1; j++) {
                 if( (i < 4 || (i >= 6 && i < 14) || i >= 16) ||
@@ -118,11 +118,11 @@ class Dungeon {
 
         this.countFloorTiles();
 
-        //Ajout de l'escalier
+        //Adding stair
         this.carte[this.lvl][mid][this.nbTilesPerLine-2].item = new Item(mid, this.nbTilesPerLine-2, 'StairUp', 0, 0, 0, 0, '');
         this.carte[this.lvl][mid][this.nbTilesPerLine-2].item.imgPos = [4,1];
 
-        //Positionne le héro
+        //Positionning Hero
         this.hero.pos = [mid, this.nbTilesPerLine-2];
         this.carte[this.lvl][mid][this.nbTilesPerLine-2].hero = this.hero;
     };

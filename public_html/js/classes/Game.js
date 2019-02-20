@@ -1,5 +1,5 @@
 /*
- * Interfaces et écrans du jeu
+ * Interfaces and game screens
  */
 class Game {
     constructor() { };
@@ -9,7 +9,7 @@ class Game {
         tileSizeOnScreen = Math.floor(can.size/nbTilesPerLine);
     };
     /*
-     * Dessine les différents écrans d'interface
+     * Draw the interfaces
      */
     uiFontStyle(fontSize = 40, font = 'Arial', fontColor = 'black', align = 'center') {
         can.uiContext.fillStyle = fontColor;
@@ -74,14 +74,14 @@ class Game {
     uiInventaire(hero) {
         can.uiContext.clearRect(0, 0, can.size, can.size);
 
-        //Dessin du background
+        //Draw background
         for(let i = 0; i < nbTilesPerLine; i++) {
             for(let j = 0; j < nbTilesPerLine; j++) {
                 can.uiContext.drawImage(images.tileset, 12*TILESIZE, 4*TILESIZE, TILESIZE, TILESIZE, i*tileSizeOnScreen, j*tileSizeOnScreen, tileSizeOnScreen, tileSizeOnScreen);
             }
         }
 
-        //Dessin des slots d'équipement
+        //Draw equipment slots
         can.uiContext.fillStyle = '#65AED8';
         for(let i = hero.bodySlot.length-1; i >= 0; i--) {
             let x = (i%2 === 0)? 15 : 3;
@@ -95,7 +95,7 @@ class Game {
             }
         }
 
-        //Dessin des slots d'inventaire
+        //Draw inventory slots
         can.uiContext.fillStyle = '#E09A23';
         for(let i = hero.inventaire.length-1; i >= 0; i--) {
             let x = (i < 7)? 2 * i + 3 : 2 * (i-7) + 3;
@@ -109,7 +109,7 @@ class Game {
             }
         }
 
-        //Dessins de détails
+        //Draw détails
         can.uiContext.drawImage(images.invThrow, 15*tileSizeOnScreen, 17*tileSizeOnScreen, 2*tileSizeOnScreen, 2*tileSizeOnScreen);
         can.uiContext.drawImage(images.invBody, 6*tileSizeOnScreen, tileSizeOnScreen, 7*tileSizeOnScreen, 13*tileSizeOnScreen);
     };
@@ -186,9 +186,8 @@ class Game {
                     }
                 }
             }
+            this.gameHud(hp[0], hp[1]);
         }
-
-        this.gameHud(hp[0], hp[1]);
     };
     gameHud(hpLeft, baseHp){
         let text = hpLeft + '/' + baseHp;
@@ -201,7 +200,7 @@ class Game {
     };
 
     /*
-     * Masque / Affiche l'interface ou le jeu
+     * Show / Hide game interface
      */
     showUi() {
         can.ui.style.display = 'block';

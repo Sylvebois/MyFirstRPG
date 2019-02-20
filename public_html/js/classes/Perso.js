@@ -1,6 +1,5 @@
 /*
- * Classe définissant un personnage(monstre ou héros)
- * Hérite de Base
+ * Define a character (monster or Hero)
  */
 class Perso extends Base {
     constructor(x, y, name, st, dx, iq, ht, level = 1) {
@@ -61,8 +60,7 @@ class Perso extends Base {
 };
 
 /*
- * Classe définissant un héro
- * Hérite de Perso
+ * Define the Hero
  */
 class Hero extends Perso {
     constructor(x, y, name, st, dx, iq, ht, level) {
@@ -72,7 +70,7 @@ class Hero extends Perso {
         this.inventaire = [0,0,0,0,0,0,0,0,0,0];
         this.bodySlot = [0,0,0,0,0,0,0];
 
-        //Image à utiliser en fonction de la direction
+        //Different image depending on the direction
         this.direction = {
             'DROITE' : [0,0],
             'DROITE_ANIM' : [1,0],
@@ -106,8 +104,7 @@ class Hero extends Perso {
 };
 
 /*
- * Classe définissant un monstre
- * Hérite de Perso
+ * Define a monster
  */
 class Monstre extends Perso {
     constructor(x, y, name, st, dx, iq, ht, level, attitude = 'neutre') {

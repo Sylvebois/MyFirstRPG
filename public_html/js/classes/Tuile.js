@@ -77,13 +77,13 @@ class Base extends Tile {
         super(x,y);
         this.name = name;
 
-        //Primaire
+        //Primary
         this.st = st;
         this.dx = dx;
         this.iq = iq;
         this.ht = ht;
 
-        //Secondaire
+        //Secondary
         this.atk = Math.floor(2*this.st + this.dx + this.iq/2);
         this.def = Math.floor(2*this.iq + this.dx + this.ht/2);
         this.esq = Math.floor(2*this.dx + this.iq + this.st/2);
