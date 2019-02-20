@@ -192,6 +192,7 @@ function main() {
                 //Add events on canvases
                 can.hud.onclick = (e) => {
                     if(can.state === 'jeu') {
+                        let newDirection = ['', 0];
                         let clickPos = [e.x,e.y];
                         let center = [can.size/2,can.size/2]
                         let triangleUp = [[0,0], [can.size,0]];
@@ -200,16 +201,44 @@ function main() {
                         let triangleRight = [[can.size,0], [can.size, can.size]];
 
                         if(can.checkClickTriangle(clickPos, triangleUp[0], triangleUp[1], center)) {
-                           alert('Vers le haut');
+                            newDirection[0] = 'HAUT';
+                            newDirection[1] = [world.hero.pos[0], world.hero.pos[1]-1];
                         }
                         else if(can.checkClickTriangle(clickPos, triangleDown[0], triangleDown[1], center)) {
-                           alert('Vers le bas');
+                            newDirection[0] = 'BAS';
+                            newDirection[1] = [world.hero.pos[0], world.hero.pos[1]+1];
                         }
                         else if(can.checkClickTriangle(clickPos, triangleLeft[0], triangleLeft[1], center)) {
-                           alert('Vers la gauche');
+                            newDirection[0] = 'GAUCHE';
+                            newDirection[1] = [world.hero.pos[0]-1, world.hero.pos[1]];
                         }
                         else if(can.checkClickTriangle(clickPos, triangleRight[0], triangleRight[1], center)) {
-                           alert('Vers la droite');
+                            newDirection[0] = 'DROITE';
+                            newDirection[1] = [world.hero.pos[0]+1, world.hero.pos[1]];
+                        }
+
+                        if(newDirection[1] !== 0) {
+                            world.checkAccess(newDirection[1][0], newDirection[1][1])
+                                .then(
+                                    () => {
+                                        world.carte[world.lvl][world.hero.pos[0]][world.hero.pos[1]].hero = false;
+                                        world.carte[world.lvl][newDirection[1][0]][newDirection[1][1]].hero = world.hero;
+
+                                        world.hero.bouger(newDirection);
+
+                                        world.checkItem(world.hero.pos[0], world.hero.pos[1]);
+                                        world.cleanFog(world.hero.pos[0], world.hero.pos[1], world.hero.vision);
+                                    },
+                                    raison => {
+                                        if(raison === 'fight') {
+                                            world.hero.attaque(world.carte[world.lvl][newDirection[1][0]][newDirection[1][1]].monstre);
+                                            world.carte[world.lvl][newDirection[1][0]][newDirection[1][1]].monstre.attaque(world.hero);
+                                        }
+                                    }
+                                )
+                                .then(
+                                    () => view.gameScreen(world.carte[world.lvl], nbTilesPerLine-1)
+                                );
                         }
                     }
                 }
