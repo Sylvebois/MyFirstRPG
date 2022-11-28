@@ -37,8 +37,8 @@
 
   <div id="gameInterface">
     <div id="hud">
-      <button class="inv"></button>
       <button class="menu"></button>
+      <button class="inv"></button>
       <span class="live"></span>
     </div>
     <canvas id="map"></canvas>
@@ -46,57 +46,73 @@
     <canvas id="ui">Votre navigateur ne supporte pas CANVAS</canvas>
   </div>
 
-  <div id="mainMenu">
+  <div id="menu">
     <h1>Scroll of Stupidity</h1>
-    <button class="new"></button>
-    <button class="load"></button>
-    <button class="options"></button>
-    <button class="credits"></button>
-  </div>
 
-  <div id="creationForm">
-    <h2>Start a new game</h2>
-    <form method="get" action="#" id="createHero">
-      <div>
-        <label for="name">Votre nom : </label>
-        <input type="text" name="nom" id="name" placeholder="Nom du héro">
-      </div>
-      <div class="pointsLeft">Il vous reste <span id="nbPoints">25</span> points à répartir</div>
-      <div>
-        <label for="st">Force : </label>
-        <input type="range" name="force" id="st" min="1" max="22" value="1"><span id="showSt"></span><br>
-        <label for="dx">Dexterité : </label>
-        <input type="range" name="dexterite" id="dx" min="1" max="22" value="1"><span id="showDx"></span><br>
-        <label for="iq">Intelligence : </label>
-        <input type="range" name="intellect" id="iq" min="1" max="22" value="1"><span id="showIq"></span><br>
-        <label for="ht">Santé : </label>
-        <input type="range" name="sante" id="ht" min="1" max="22" value="1"><span id="showHt"></span><br>
-      </div>
-      <button class="back">Retour</button>
-      <button class="start">Start</button>
-    </form>
-  </div>
+    <div id="mainMenu">
+      <button class="new"></button>
+      <button class="load"></button>
+      <button class="options"></button>
+      <button class="credits"></button>
+    </div>
 
-  <div id="optionsForm">
-    <h2>Options</h2>
-    <form method="get" action="#" id="options">
-      <div>
-        <span>Music : </span>
-        <input type="radio" id="musicOn" name="musicSwitch" value="1"><label for="musicOn">ON</label>
-        <input type="radio" id="musicOff" name="musicSwitch" value="0"><label for="musicOff">OFF</label>
-      </div>
-      <div>
-        <span>Sounds : </span>
-        <input type="radio" id="soundOn" name="soundSwitch" value="1"><label for="soundOn">ON</label>
-        <input type="radio" id="soundOff" name="soundSwitch" value="0"><label for="soundOff">OFF</label>
-      </div>
-      <div>
-        <span>Language : </span>
-        <input type="radio" id="langFr" name="langSwitch" value="fr"><label for="langFr">FR</label>
-        <input type="radio" id="langEn" name="langSwitch" value="en"><label for="langEn">EN</label>
-      </div>
+    <div id="creationForm">
+      <h2>Start a new game</h2>
+      <form method="get" action="#" id="createHero">
+        <div>
+          <label for="name">Votre nom : </label>
+          <input type="text" name="nom" id="name" placeholder="Nom du héro">
+        </div>
+        <div class="pointsLeft">Il vous reste <span id="nbPoints">25</span> points à répartir</div>
+        <div>
+          <label for="st">Force : </label>
+          <input type="range" name="force" id="st" min="1" max="22" value="1"><span id="showSt"></span><br>
+          <label for="dx">Dexterité : </label>
+          <input type="range" name="dexterite" id="dx" min="1" max="22" value="1"><span id="showDx"></span><br>
+          <label for="iq">Intelligence : </label>
+          <input type="range" name="intellect" id="iq" min="1" max="22" value="1"><span id="showIq"></span><br>
+          <label for="ht">Santé : </label>
+          <input type="range" name="sante" id="ht" min="1" max="22" value="1"><span id="showHt"></span><br>
+        </div>
+        <button class="back">Retour</button>
+        <button class="start">Start</button>
+      </form>
+    </div>
+
+    <div id="loadForm">
       <button class="back">Retour</button>
-    </form>
+    </div>
+    
+    <div id="optionsForm">
+      <h2>Options</h2>
+      <form method="get" action="#" id="options">
+        <div>
+          <span>Music : </span>
+          <input type="radio" id="musicOn" name="musicSwitch" value="1"><label for="musicOn">ON</label>
+          <input type="radio" id="musicOff" name="musicSwitch" value="0"><label for="musicOff">OFF</label>
+        </div>
+        <div>
+          <span>Sounds : </span>
+          <input type="radio" id="soundOn" name="soundSwitch" value="1"><label for="soundOn">ON</label>
+          <input type="radio" id="soundOff" name="soundSwitch" value="0"><label for="soundOff">OFF</label>
+        </div>
+        <div>
+          <span>Language : </span>
+          <input type="radio" id="langFr" name="langSwitch" value="fr"><label for="langFr">FR</label>
+          <input type="radio" id="langEn" name="langSwitch" value="en"><label for="langEn">EN</label>
+        </div>
+        <button class="back">Retour</button>
+      </form>
+    </div>
+    <div id="credits">
+      <div></div>
+      <button class="back">Retour</button>
+    </div>
+
+    <div id="story">
+      <div></div>
+      <button class="start">Démarrer</button>
+    </div>
   </div>
 
   <script type="module" src="js/main.js"></script>

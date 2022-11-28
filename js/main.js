@@ -1,9 +1,31 @@
-import { buttons as buttonsText, forms as formsText } from "./text.js";
+import { buttons as buttonsText, forms as formsText } from './text.js';
+import Menu from './scenes/Menu.js';
 
 //Tiles size (on the tileset and on screen)
 const TILESIZE = 32;
 const nbTilesPerLine = 20;
 var tileSizeOnScreen = 0;
+
+let state = {
+    currScene: 'loading',
+    options: {
+        language: 'fr',
+        music: false,
+        sound: false,
+    },
+    game: {
+        levels: [],
+        player: { name: '', hp: 0, level: 0 }
+    }
+}
+
+const updateText = newLang => {
+    let allButtons = document.querySelectorAll('button');
+    allButtons.forEach(b => b.innerText = buttonsText[b.className][newLang]);
+
+    let allLabels = document.querySelectorAll('label');
+    allLabels.forEach(l => l.innerText = formsText[l.htmlFor][newLang]);
+}
 
 const stopSpinner = () => {
     let spinner = document.getElementsByTagName('svg')[0];
@@ -15,52 +37,60 @@ const stopSpinner = () => {
     startButton.addEventListener('click', goToMainMenu);
 }
 
-const updateText = newLang => {
-    let allButtons = document.querySelectorAll('button');
-    allButtons.forEach(b => b.innerText = buttonsText[b.className][newLang]);
-
-    let allLabels = document.querySelectorAll('label');
-    allLabels.forEach(l => {console.log(l.htmlFor);l.innerText = formsText[l.htmlFor][newLang]});
-}
-
 const goToMainMenu = e => {
     document.getElementById(e.target.parentNode.id).style.display = 'none';
+    document.getElementById('menu').style.display = 'block';
     document.getElementById('mainMenu').style.display = 'block';
 
-    let buttons = document.querySelectorAll('#mainMenu button');
-    buttons.forEach(button => button.addEventListener('click', goTo))
+    state.currScene='mainMenu';
+
+    let buttons = document.querySelectorAll('#menu button');
+    buttons.forEach(button => button.addEventListener('click', mainButtonsGoTo));
 }
 
-const switchTo = (curr, next) => {
-    document.getElementById(curr).style.display = 'none';
-    document.getElementById(nextMenu).style.display = 'block';
-    this.currMenu = nextMenu;
+const mainButtonsGoTo = e => {
+    e.preventDefault();
+    let buttonClass = e.target.className;
+
+    switch (buttonClass) {
+        case 'new':
+            switchTo('creationForm');
+            break;
+        case 'load':
+            switchTo('loadForm');
+            break;
+        case 'options':
+            switchTo('optionsForm');
+            break;
+        case 'credits':
+            switchTo('credits');
+            break;
+        case 'back':
+            switchTo('mainMenu');
+            break;
+        case 'start':
+            state.currScene === 'story' ? goToGame() : switchTo('story');
+            break;
+    }
 }
 
-const goTo = e => {
-    let buttonText = e.target.innerText;
+const switchTo = (next) => {
+    document.getElementById(state.currScene).style.display = 'none';
+    document.getElementById(next).style.display = 'block';
+    state.currScene = next;
 }
 
-const goToHeroCreation = e => {
-    document.getElementById('mainMenu').style.display = 'none';
-    document.getElementById('creationForm').style.display = 'block';
+const goToGame = () => {
+    document.getElementById('menu').style.display = 'none';
+    document.getElementById(state.currScene).style.display = 'none';
+    document.getElementById('gameInterface').style.display = 'block';
+
+    state.currScene = 'gameInterface';
 }
 
 window.onresize = e => console.log('resize');
 
 window.onload = e => {
-    let state = {
-        currScene:'loading',
-        options: {
-            language: 'fr',
-            music: false,
-            sound: false,
-        },
-        game: {
-            levels: [],
-            player: { name: '', hp: 0, level: 0 }
-        }
-    }
     updateText(state.options.language);
     stopSpinner();
 }
