@@ -1,8 +1,71 @@
+import { buttons as buttonsText, forms as formsText } from "./text.js";
+
 //Tiles size (on the tileset and on screen)
 const TILESIZE = 32;
 const nbTilesPerLine = 20;
 var tileSizeOnScreen = 0;
 
+const stopSpinner = () => {
+    let spinner = document.getElementsByTagName('svg')[0];
+    spinner.style.display = 'none';
+    spinner.nextSibling.nextSibling.style.display = 'none';
+
+    let startButton = document.querySelector('#loading button');
+    startButton.style.display = 'block';
+    startButton.addEventListener('click', goToMainMenu);
+}
+
+const updateText = newLang => {
+    let allButtons = document.querySelectorAll('button');
+    allButtons.forEach(b => b.innerText = buttonsText[b.className][newLang]);
+
+    let allLabels = document.querySelectorAll('label');
+    allLabels.forEach(l => {console.log(l.htmlFor);l.innerText = formsText[l.htmlFor][newLang]});
+}
+
+const goToMainMenu = e => {
+    document.getElementById(e.target.parentNode.id).style.display = 'none';
+    document.getElementById('mainMenu').style.display = 'block';
+
+    let buttons = document.querySelectorAll('#mainMenu button');
+    buttons.forEach(button => button.addEventListener('click', goTo))
+}
+
+const switchTo = (curr, next) => {
+    document.getElementById(curr).style.display = 'none';
+    document.getElementById(nextMenu).style.display = 'block';
+    this.currMenu = nextMenu;
+}
+
+const goTo = e => {
+    let buttonText = e.target.innerText;
+}
+
+const goToHeroCreation = e => {
+    document.getElementById('mainMenu').style.display = 'none';
+    document.getElementById('creationForm').style.display = 'block';
+}
+
+window.onresize = e => console.log('resize');
+
+window.onload = e => {
+    let state = {
+        currScene:'loading',
+        options: {
+            language: 'fr',
+            music: false,
+            sound: false,
+        },
+        game: {
+            levels: [],
+            player: { name: '', hp: 0, level: 0 }
+        }
+    }
+    updateText(state.options.language);
+    stopSpinner();
+}
+
+/*
 //Loads Images
 var images = {
     imgList: ['plume.png', 'pioche.png', 'scroll.png', 'tileset.png', 'hero.png', 'items.png', 'monsters.png', 'invBody.png', 'invThrow.png'],
@@ -418,3 +481,4 @@ function main() {
             }
         );
 }
+*/

@@ -1,70 +1,151 @@
 @font-face {
     font-family: 'enchantedLandRegular';
-    src: url('../fonts/enchanted_land-webfont.woff2') format('woff2'),
-         url('../fonts/enchanted_land-webfont.woff') format('woff'),
-         url('../fonts/enchanted_land-webfont.otf') format('otf');
+    src: url('./fonts/enchanted_land-webfont.woff2') format('woff2'),
+        url('./fonts/enchanted_land-webfont.woff') format('woff'),
+        url('./fonts/enchanted_land-webfont.otf') format('otf');
     font-weight: normal;
     font-style: normal;
-
 }
 
 body {
-    background-color: #f0f0f0;
-    margin: 0;
-    overflow: hidden;
-}
-
-#container {
     position: relative;
+    background-color: black;
+    font-family: 'enchantedLandRegular';
+    color: white;
 }
 
-canvas {
+body, #loading, #mainMenu, #gameInterface {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+#assets, #gameInterface, #mainMenu, #creationForm, #optionsForm {
+    display: none;
+}
+
+/* Main menu (buttons and forms) */
+#mainMenu {
+    background-color: black;
+    background-image: url('./assets/img/scroll.png');
+    background-size: 100% 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    text-align: center;
+}
+
+#mainMenu h1 {
+    font-size: 10vh;
+    margin: 7vh auto;
+}
+
+#mainMenu button {
+    display: block;
+    font-size: 7vh;
+    margin: 4vh auto;
+    padding: 10px;
+    background: none;
+    border: none;
+}
+
+#mainMenu button:hover {
+    background: rgba(100,100,100,0.5);
+    color: red;
+}
+
+/* Game interface (canvases and div) */
+#gameInterface {
+    background-color: yellow;
     position: absolute;
     top: 0;
     left: 0;
 }
 
-#map {
-    z-index: 1;
-}
-
-#items {
-    z-index: 2;
-}
-
-#perso {
-    z-index: 3;
-}
-
 #hud {
-    z-index: 4;
-    opacity: 0.5;
-}
-
-#ui {
-    z-index: 10;
-}
-
-/*
- * Zone affichant les informations
- */
-#info {
+    background-color: red;
     position: absolute;
-    background-color: black;
-    color: white;
-    overflow-y: scroll;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 10vh;
 }
 
-#info p {
-    margin-left: 5px;
+#hud button {
+    display: inline-block;
 }
 
-/*
- * Formulaire de création du personnage 
- */
-#createHero {
+#map,#objects,#ui {
+    background-color: pink;
     position: absolute;
-    top: 23%;
-    left: 15%;
-    z-index: 50;  
+    top: 10vh;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 90vh;
+}
+
+/* Loading screen */
+#loading {
+    font-size: 5vh;
+    text-align: center;
+}
+
+#loading button {
+    margin: 5vh auto;
+    background: none;
+    font-family: 'enchantedLandRegular';
+    font-size: 15vh;
+    padding: 10px;
+    animation: light_blink 2s linear infinite;
+}
+
+@keyframes light_blink {
+    0% { 
+        color:white;
+        border: 3px solid white;  
+    }
+    50% {
+        color:grey;
+        border: 3px solid grey;  
+    }
+    100% { 
+        color:white;
+        border: 3px solid white;  
+    }
+}
+
+/* Spinner animation*/
+#loading svg,
+#loading img {
+    display: inline-block;
+    margin-top: 2vh;
+    fill: white;
+}
+
+.spinner_1 {
+    animation: spinner_anim 2.4s linear infinite;
+    animation-delay: -2.4s
+}
+
+.spinner_2 {
+    animation-delay: -1.6s
+}
+
+.spinner_3 {
+    animation-delay: -.8s
+}
+
+@keyframes spinner_anim {
+    8.33% { x: 13px; y: 1px }
+    25% { x: 13px; y: 1px }
+    33.3% { x: 13px; y: 13px }
+    50% { x: 13px; y: 13px }
+    58.33% { x: 1px; y: 13px }
+    75% { x: 1px; y: 13px }
+    83.33% { x: 1px; y: 1px }
 }

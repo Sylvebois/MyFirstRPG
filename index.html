@@ -1,48 +1,105 @@
 <!DOCTYPE html>
-
 <html>
-  <head>
-    <title>Scroll of Stupidity</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <link rel="stylesheet" href="index.css" />
-  </head>
-  
-  <body onload="main()">
-    <div id="container">
-      <canvas id="map"></canvas>
-      <canvas id="items"></canvas>
-      <canvas id="perso"></canvas>
-      <canvas id="hud"></canvas>
-      <canvas id="ui">Votre navigateur ne supporte pas CANVAS</canvas>
-      
-      <form method="get" action="#" style="display: none;" id="createHero">
-        <div>
-            <label for="nom">Votre nom : </label>
-            <input type="text" name="nom" id="nom" placeholder="Nom du héro" />
-        </div>
-        <div>Il vous reste <span id="nbPoints">25</span> points à répartir</div>
-        <div>                   
-            <label for="St">Force : </label>
-            <input type="range" name="force" id="St" min="1" max="22" value="1" /><span id="showSt"></span><br />
-            <label for="Dx">Dexterité : </label>
-            <input type="range" name="dexterite" id="Dx" min="1" max="22" value="1" /><span id="showDx"></span><br />
-            <label for="Iq">Intelligence : </label>
-            <input type="range" name="intellect" id="Iq" min="1" max="22" value="1" /><span id="showIq"></span><br />
-            <label for="Ht">Santé : </label>
-            <input type="range" name="sante" id="Ht" min="1" max="22" value="1"/><span id="showHt"></span><br />
-        </div>
-            <button>Retour</button>
-            <button>Start</button>
-      </form>
+
+<head>
+  <title>Scroll of Stupidity</title>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="index.css">
+  <!-- Add here some og Facebook / Twitter / schema data -->
+</head>
+
+<body>
+  <div id="loading">
+    <img src="assets/img/logo.png" alt="Feather'n'peek studio logo">
+    <div>Feather'n'peek studio</div>
+    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <rect class="spinner_1" x="1" y="1" rx="1" width="10" height="10"></rect>
+      <rect class="spinner_1 spinner_2" x="1" y="1" rx="1" width="10" height="10"></rect>
+      <rect class="spinner_1 spinner_3" x="1" y="1" rx="1" width="10" height="10"></rect>
+    </svg>
+    <div>Loading ...</div>
+    <button style="display: none;" class="start"></button>
+  </div>
+
+  <div id="assets">
+    <img id="heroImg" src="assets/img/hero.png" alt="The different hero images">
+    <img id="invBodyImg" src="assets/img/invBody.png" alt="Central body image for inventory">
+    <img id="invThrowImg" src="assets/img/invThrow.png" alt="Throw image for inventory">
+    <img id="itemsImg" src="assets/img/items.png" alt="The different items of the game">
+    <img id="mobnstersImg" src="assets/img/monsters.png" alt="the different monsters of the game">
+    <img id="scrollImg" src="assets/img/scroll.png" alt="The main background image">
+    <img id="tilesetImg" src="assets/img/tileset.png" alt="The different images of the floor">
+  </div>
+
+  <div id="gameInterface">
+    <div id="hud">
+      <button class="inv"></button>
+      <button class="menu"></button>
+      <span class="live"></span>
     </div>
-    <div id="info"></div>
-    
-    <script src="js/classes/Game.js"></script>
-    <script src="js/classes/Tuile.js"></script>
-    <script src="js/classes/Perso.js"></script>
-    <script src="js/classes/Dungeon.js"></script>
-    <script src="js/story.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+    <canvas id="map"></canvas>
+    <canvas id="objects"></canvas> <!-- to display items, player and monsters -->
+    <canvas id="ui">Votre navigateur ne supporte pas CANVAS</canvas>
+  </div>
+
+  <div id="mainMenu">
+    <h1>Scroll of Stupidity</h1>
+    <button class="new"></button>
+    <button class="load"></button>
+    <button class="options"></button>
+    <button class="credits"></button>
+  </div>
+
+  <div id="creationForm">
+    <h2>Start a new game</h2>
+    <form method="get" action="#" id="createHero">
+      <div>
+        <label for="name">Votre nom : </label>
+        <input type="text" name="nom" id="name" placeholder="Nom du héro">
+      </div>
+      <div class="pointsLeft">Il vous reste <span id="nbPoints">25</span> points à répartir</div>
+      <div>
+        <label for="st">Force : </label>
+        <input type="range" name="force" id="st" min="1" max="22" value="1"><span id="showSt"></span><br>
+        <label for="dx">Dexterité : </label>
+        <input type="range" name="dexterite" id="dx" min="1" max="22" value="1"><span id="showDx"></span><br>
+        <label for="iq">Intelligence : </label>
+        <input type="range" name="intellect" id="iq" min="1" max="22" value="1"><span id="showIq"></span><br>
+        <label for="ht">Santé : </label>
+        <input type="range" name="sante" id="ht" min="1" max="22" value="1"><span id="showHt"></span><br>
+      </div>
+      <button class="back">Retour</button>
+      <button class="start">Start</button>
+    </form>
+  </div>
+
+  <div id="optionsForm">
+    <h2>Options</h2>
+    <form method="get" action="#" id="options">
+      <div>
+        <span>Music : </span>
+        <input type="radio" id="musicOn" name="musicSwitch" value="1"><label for="musicOn">ON</label>
+        <input type="radio" id="musicOff" name="musicSwitch" value="0"><label for="musicOff">OFF</label>
+      </div>
+      <div>
+        <span>Sounds : </span>
+        <input type="radio" id="soundOn" name="soundSwitch" value="1"><label for="soundOn">ON</label>
+        <input type="radio" id="soundOff" name="soundSwitch" value="0"><label for="soundOff">OFF</label>
+      </div>
+      <div>
+        <span>Language : </span>
+        <input type="radio" id="langFr" name="langSwitch" value="fr"><label for="langFr">FR</label>
+        <input type="radio" id="langEn" name="langSwitch" value="en"><label for="langEn">EN</label>
+      </div>
+      <button class="back">Retour</button>
+    </form>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+
 </html>
