@@ -1,7 +1,6 @@
 export default class Menu {
     constructor(currentScene) {
         this.currentScene = currentScene;
-        this.main = document.getElementById('menu');
         this.buttons = document.querySelectorAll('#menu button');
         this.buttons.forEach(button => button.addEventListener('click', e => {
             e.preventDefault();
@@ -24,7 +23,7 @@ export default class Menu {
                     this.switchTo('mainMenu');
                     break;
                 case 'start':
-                    this.currScene === 'story' ? this.hide() : this.switchTo('story');
+                    this.currentScene === 'story' ? this.goToGame() : this.switchTo('story');
                     break;
             } 
         }));
@@ -41,8 +40,9 @@ export default class Menu {
         document.getElementById(this.currentScene).style.display = 'block';
     }
 
-    hide() {
+    goToGame() {
         document.getElementById('menu').style.display = 'none';
         document.getElementById(this.currentScene).style.display = 'none';
+        document.getElementById('gameInterface').style.display = 'block';
     }
 }

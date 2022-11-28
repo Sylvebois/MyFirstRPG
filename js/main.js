@@ -1,5 +1,7 @@
 import { buttons as buttonsText, forms as formsText } from './text.js';
+import Loader from './scenes/Loader.js';
 import Menu from './scenes/Menu.js';
+import Game from './scenes/Game.js';
 
 //Tiles size (on the tileset and on screen)
 const TILESIZE = 32;
@@ -27,72 +29,17 @@ const updateText = newLang => {
     allLabels.forEach(l => l.innerText = formsText[l.htmlFor][newLang]);
 }
 
-const stopSpinner = () => {
-    let spinner = document.getElementsByTagName('svg')[0];
-    spinner.style.display = 'none';
-    spinner.nextSibling.nextSibling.style.display = 'none';
-
-    let startButton = document.querySelector('#loading button');
-    startButton.style.display = 'block';
-    startButton.addEventListener('click', goToMainMenu);
-}
-
-const goToMainMenu = e => {
-    document.getElementById(e.target.parentNode.id).style.display = 'none';
-    document.getElementById('menu').style.display = 'block';
-    document.getElementById('mainMenu').style.display = 'block';
-
-    state.currScene='mainMenu';
-
-    let buttons = document.querySelectorAll('#menu button');
-    buttons.forEach(button => button.addEventListener('click', mainButtonsGoTo));
-}
-
-const mainButtonsGoTo = e => {
-    e.preventDefault();
-    let buttonClass = e.target.className;
-
-    switch (buttonClass) {
-        case 'new':
-            switchTo('creationForm');
-            break;
-        case 'load':
-            switchTo('loadForm');
-            break;
-        case 'options':
-            switchTo('optionsForm');
-            break;
-        case 'credits':
-            switchTo('credits');
-            break;
-        case 'back':
-            switchTo('mainMenu');
-            break;
-        case 'start':
-            state.currScene === 'story' ? goToGame() : switchTo('story');
-            break;
-    }
-}
-
-const switchTo = (next) => {
-    document.getElementById(state.currScene).style.display = 'none';
-    document.getElementById(next).style.display = 'block';
-    state.currScene = next;
-}
-
-const goToGame = () => {
-    document.getElementById('menu').style.display = 'none';
-    document.getElementById(state.currScene).style.display = 'none';
-    document.getElementById('gameInterface').style.display = 'block';
-
-    state.currScene = 'gameInterface';
-}
-
 window.onresize = e => console.log('resize');
 
 window.onload = e => {
     updateText(state.options.language);
-    stopSpinner();
+
+    let loader = new Loader();
+    let menu = new Menu('mainMenu');
+    let game = new Game();
+
+    loader.hideSpinner();
+    loader.showButton();
 }
 
 /*
