@@ -3,11 +3,9 @@
 
 <head>
   <title>Scroll of Stupidity</title>
-
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <link rel="stylesheet" href="index.css">
   <!-- Add here some og Facebook / Twitter / schema data -->
 </head>
@@ -26,13 +24,13 @@
   </div>
 
   <div id="assets">
-    <img id="heroImg" src="assets/img/hero.png" alt="The different hero images">
+    <img id="hero" src="assets/img/hero.png" alt="The different hero images">
     <img id="invBodyImg" src="assets/img/invBody.png" alt="Central body image for inventory">
     <img id="invThrowImg" src="assets/img/invThrow.png" alt="Throw image for inventory">
-    <img id="itemsImg" src="assets/img/items.png" alt="The different items of the game">
-    <img id="mobnstersImg" src="assets/img/monsters.png" alt="the different monsters of the game">
-    <img id="scrollImg" src="assets/img/scroll.png" alt="The main background image">
-    <img id="tilesetImg" src="assets/img/tileset.png" alt="The different images of the floor">
+    <img id="items" src="assets/img/items.png" alt="The different items of the game">
+    <img id="monsters" src="assets/img/monsters.png" alt="the different monsters of the game">
+    <img id="scroll" src="assets/img/scroll.png" alt="The main background image">
+    <img id="ground" src="assets/img/tileset.png" alt="The different images of the floor">
   </div>
 
   <div id="gameInterface">
@@ -41,7 +39,7 @@
       <button class="inv"></button>
       <span class="live"></span>
     </div>
-    <canvas id="map"></canvas>
+    <canvas id="background"></canvas>
     <canvas id="objects"></canvas> <!-- to display items, player and monsters -->
     <canvas id="ui">Votre navigateur ne supporte pas CANVAS</canvas>
   </div>
@@ -57,7 +55,7 @@
     </div>
 
     <div id="creationForm">
-      <h2>Start a new game</h2>
+      <h2 class="newGame">Start a new game</h2>
       <form method="get" action="#" id="createHero">
         <div>
           <label for="name">Votre nom : </label>
@@ -80,30 +78,32 @@
     </div>
 
     <div id="loadForm">
+      <h2 class="loadGame">Load a game</h2>
       <button class="back">Retour</button>
     </div>
     
     <div id="optionsForm">
-      <h2>Options</h2>
+      <h2 class="optionsGame">Options</h2>
       <form method="get" action="#" id="options">
         <div>
-          <span>Music : </span>
+          <span class="music">Music : </span>
           <input type="radio" id="musicOn" name="musicSwitch" value="1"><label for="musicOn">ON</label>
           <input type="radio" id="musicOff" name="musicSwitch" value="0"><label for="musicOff">OFF</label>
         </div>
         <div>
-          <span>Sounds : </span>
+          <span class="sound">Sounds : </span>
           <input type="radio" id="soundOn" name="soundSwitch" value="1"><label for="soundOn">ON</label>
           <input type="radio" id="soundOff" name="soundSwitch" value="0"><label for="soundOff">OFF</label>
         </div>
         <div>
-          <span>Language : </span>
+          <span class="lang">Language : </span>
           <input type="radio" id="langFr" name="langSwitch" value="fr"><label for="langFr">FR</label>
           <input type="radio" id="langEn" name="langSwitch" value="en"><label for="langEn">EN</label>
         </div>
         <button class="back">Retour</button>
       </form>
     </div>
+
     <div id="credits">
       <div></div>
       <button class="back">Retour</button>

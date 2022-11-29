@@ -49,17 +49,26 @@ const buttons = {
 };
 
 const forms = {
-    name: { fr: "Nom", en: "Name" },
-    st: { fr: "Force", en: "Strength" },
-    dx: { fr: "Dexterité", en: "Dexterity" },
-    iq: { fr: "Intellect", en: "Intellect" },
-    ht: { fr: "Santé", en: "Health" },
+    name: { fr: "Nom : ", en: "Name : " },
+    st: { fr: "Force : ", en: "Strength : " },
+    dx: { fr: "Dexterité : ", en: "Dexterity :" },
+    iq: { fr: "Intellect : ", en: "Intellect : " },
+    ht: { fr: "Santé : ", en: "Health : " },
+    music: { fr: "Musique : ", en: "Music : " },
     musicOn: { fr: "ON", en: "ON" },
     musicOff: { fr: "OFF", en: "OFF" },
+    sound: { fr: "Sons : ", en: "Sounds : " },
     soundOn: { fr: "ON", en: "ON" },
     soundOff: { fr: "OFF", en: "OFF" },
+    lang: { fr: "Langue : ", en: "Language : " },
     langFr: { fr: "Français", en: "French" },
     langEn: { fr: "Anglais", en: "English" }
 }
 
-export { story, buttons, forms };
+const titles = {
+    newGame: { fr: "Nouvelle partie", en: "Start a new game" },
+    loadGame: { fr: "Charger une partie", en: "Load a game" },
+    optionsGame: { fr: "Options", en: "Options" }
+}
+
+export { story, buttons, forms, titles };

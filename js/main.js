@@ -1,4 +1,4 @@
-import { buttons as buttonsText, forms as formsText } from './text.js';
+import { buttons as buttonsText, forms as formsText, titles as titlesText } from './text.js';
 import Loader from './scenes/Loader.js';
 import Menu from './scenes/Menu.js';
 import Game from './scenes/Game.js';
@@ -22,11 +22,17 @@ let state = {
 }
 
 const updateText = newLang => {
+    let allTitles = document.querySelectorAll('h2');
+    allTitles.forEach(t => t.innerText = titlesText[t.className][newLang]);
+
     let allButtons = document.querySelectorAll('button');
     allButtons.forEach(b => b.innerText = buttonsText[b.className][newLang]);
 
     let allLabels = document.querySelectorAll('label');
     allLabels.forEach(l => l.innerText = formsText[l.htmlFor][newLang]);
+
+    let optionSpans = document.querySelectorAll('#optionsForm span');
+    optionSpans.forEach(s => s.innerText = formsText[s.className][newLang]);
 }
 
 window.onresize = e => console.log('resize');
