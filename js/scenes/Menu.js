@@ -20,6 +20,7 @@ export default class Menu {
                     this.switchTo('credits');
                     break;
                 case 'back':
+                    this.currentScene === 'creationForm' ? this.resetCreationForm() : null;
                     this.switchTo('mainMenu');
                     break;
                 case 'start':
@@ -29,20 +30,24 @@ export default class Menu {
         }));
     }
 
+    show() {
+        document.getElementById('menu').style.display = 'block';
+        document.getElementById(this.currentScene).style.display = 'block';
+    }
+
     switchTo(next) {
         document.getElementById(this.currentScene).style.display = 'none';
         document.getElementById(next).style.display = 'block';
         this.currentScene = next;
     }
 
-    show() {
-        document.getElementById('menu').style.display = 'block';
-        document.getElementById(this.currentScene).style.display = 'block';
-    }
-
     goToGame() {
         document.getElementById('menu').style.display = 'none';
         document.getElementById(this.currentScene).style.display = 'none';
         document.getElementById('gameInterface').style.display = 'block';
+    }
+
+    resetCreationForm() {
+
     }
 }

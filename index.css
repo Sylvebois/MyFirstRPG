@@ -41,18 +41,57 @@ body, #loading, #menu, #gameInterface {
     margin: 7vh auto;
 }
 
-#mainMenu button {
-    display: block;
+#menu h2 {
     font-size: 7vh;
-    margin: 4vh auto;
+    margin: 2vh auto;
+}
+
+#menu button {
+    font-size: 7vh;
     padding: 10px;
     background: none;
     border: none;
 }
 
-#mainMenu button:hover {
+#menu button:hover {
     background: rgba(100,100,100,0.5);
     color: red;
+}
+
+#menu form {
+    font-size: 4vh;
+    font-family: 'sans serif';
+}
+
+#menu form button {
+    display: inline-block;
+    margin: auto;
+}
+
+#mainMenu button {
+    display: block;
+    margin: 4vh auto;
+}
+
+#creationForm div {
+    margin: 2vh auto;
+}
+
+#creationForm .back {
+    margin-right: 15px;
+}
+
+#creationForm .start {
+    margin-left: 15px;
+}
+
+#options div {
+    margin: 5vh auto;
+}
+
+#options input {
+    width: 3vh;
+    height: 3vh;
 }
 
 /* Game interface (canvases and div) */
@@ -78,7 +117,7 @@ body, #loading, #menu, #gameInterface {
     display: inline-block;
 }
 
-#map,#objects,#ui {
+#background,#objects,#ui {
     background-color: pink;
     position: absolute;
     top: 10vh;
@@ -87,6 +126,18 @@ body, #loading, #menu, #gameInterface {
     padding: 0;
     width: 100vw;
     height: 90vh;
+}
+
+#background{
+    z-index: 1;
+}
+
+#objects {
+    z-index: 2;
+}
+
+#ui {
+    z-index: 3;
 }
 
 /* Loading screen */
