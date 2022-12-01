@@ -1,3 +1,5 @@
+import { story } from "../text.js";
+
 export default class Menu {
     constructor(state) {
         this.buttons = document.querySelectorAll('#menu button');
@@ -5,35 +7,26 @@ export default class Menu {
             e.preventDefault();
             let buttonClass = e.target.className;
 
-            switch (buttonClass) {
-                case 'new':
-                    this.switchTo(state, 'creationForm');
-                    break;
-                case 'load':
-                    this.switchTo(state, 'loadForm');
-                    break;
-                case 'options':
-                    this.switchTo(state, 'optionsForm');
-                    break;
-                case 'credits':
-                    this.switchTo(state, 'credits');
-                    break;
-                case 'back':
-                    state.currScene === 'creationForm' ? this.resetCreationForm() : null;
-                    this.switchTo(state, 'mainMenu');
-                    break;
-                case 'start':
-                    if (state.currScene === 'story') {
-                        this.goToGame(state);
+            if (buttonClass === 'new') { this.switchTo(state, 'creationForm'); }
+            else if (buttonClass === 'load') { this.switchTo(state, 'loadForm'); }
+            else if (buttonClass === 'options') { this.switchTo(state, 'optionsForm'); }
+            else if (buttonClass === 'credits') { this.switchTo(state, 'credits'); }
+            else if (buttonClass === 'back') {
+                state.currScene === 'creationForm' ? this.resetCreationForm() : null;
+                this.switchTo(state, 'mainMenu');
+            }
+            else if (buttonClass === 'start') {
+                if (state.currScene === 'story') {
+                    this.goToGame(state);
+                }
+                else {
+                    if (this.validateCreationForm()) {
+                        this.setCreationFormData(state);
+                        this.resetCreationForm();
+                        this.setIntroText(state);
+                        this.switchTo(state, 'story');
                     }
-                    else {
-                        if (this.validateCreationForm()) {
-                            this.setCreationFormData(state);
-                            this.resetCreationForm();
-                            this.switchTo(state, 'story');
-                        }
-                    }
-                    break;
+                }
             }
         }));
 
@@ -60,16 +53,8 @@ export default class Menu {
         state.currScene = 'gameInterface';
     }
 
-    resetCreationForm() {
-        document.getElementById('nbPoints').innerHTML = 25;
-
-        let inputs = document.querySelectorAll('#creationForm input[type="range"]');
-        inputs.forEach(elem => {
-            elem.value = 1;
-            elem.max = 22;
-            elem.nextSibling.innerHTML = '1';
-        })
-        this.creationForm.querySelector('input[type="text"').value = '';
+    setIntroText(state) {
+        document.getElementById('story').firstElementChild.innerText = story.intro[state.options.language]
     }
 
     updateCreationForm(e) {
@@ -87,7 +72,7 @@ export default class Menu {
         })
 
         nbPoints.innerHTML = points;
-        nbPoints.style = `color: ${points >= 0 ? '#00ee00' : '#ff0000'}`;
+        nbPoints.style = `color: ${points > 0 ? '#00ee00' : '#ff0000'}`;
     }
 
     validateCreationForm() {
@@ -99,6 +84,18 @@ export default class Menu {
     setCreationFormData(state) {
         let inputs = this.creationForm.querySelectorAll('input[type="range"]');
         inputs.forEach(elem => state.game.player[elem.id] = parseInt(elem.value));
-        state.game.player.name = this.creationForm.querySelector('input[type="text"').value ;
+        state.game.player.name = this.creationForm.querySelector('input[type="text"').value;
+    }
+
+    resetCreationForm() {
+        document.getElementById('nbPoints').innerHTML = 25;
+
+        let inputs = document.querySelectorAll('#creationForm input[type="range"]');
+        inputs.forEach(elem => {
+            elem.value = 1;
+            elem.max = 22;
+            elem.nextSibling.innerHTML = '1';
+        })
+        this.creationForm.querySelector('input[type="text"').value = '';
     }
 }

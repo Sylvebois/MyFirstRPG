@@ -60,7 +60,7 @@ body, #loading, #menu, #gameInterface {
 
 #menu form {
     font-size: 4vh;
-    font-family: 'sans serif';
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #menu form button {
@@ -92,6 +92,16 @@ body, #loading, #menu, #gameInterface {
 #options input {
     width: 3vh;
     height: 3vh;
+}
+
+#story > div {
+    margin: 0 auto;
+    height:50vh;
+    width: 70vw;
+    overflow-y: scroll;
+    text-align: left;
+    font-size: 4vh;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 /* Game interface (canvases and div) */
