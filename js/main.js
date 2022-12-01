@@ -17,7 +17,7 @@ let state = {
     },
     game: {
         levels: [],
-        player: { name: '', hp: 0, level: 0 }
+        player: { name: '', st: 0, dx: 0, iq: 0, hp: 0, level: 0 }
     }
 }
 
@@ -40,9 +40,9 @@ window.onresize = e => console.log('resize');
 window.onload = e => {
     updateText(state.options.language);
 
-    let loader = new Loader();
-    let menu = new Menu('mainMenu');
-    let game = new Game();
+    let loader = new Loader(state);
+    let menu = new Menu(state);
+    let game = new Game(state);
 
     loader.hideSpinner();
     loader.showButton();

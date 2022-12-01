@@ -1,5 +1,5 @@
 export default class Game {
-    constructor() {
+    constructor(state) {
         this.tilesize = 32;
         this.canvases = this.initCanvases();
         this.images = this.initImages();
