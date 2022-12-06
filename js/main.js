@@ -22,25 +22,9 @@ let state = {
     }
 }
 
-const updateText = newLang => {
-    let allTitles = document.querySelectorAll('h2');
-    allTitles.forEach(t => t.innerText = titlesText[t.className][newLang]);
-
-    let allButtons = document.querySelectorAll('button');
-    allButtons.forEach(b => b.innerText = buttonsText[b.className][newLang]);
-
-    let allLabels = document.querySelectorAll('label');
-    allLabels.forEach(l => l.innerText = formsText[l.htmlFor][newLang]);
-
-    let optionSpans = document.querySelectorAll('#optionsForm span');
-    optionSpans.forEach(s => s.innerText = formsText[s.className][newLang]);
-}
-
 window.onresize = e => console.log('resize');
 
 window.onload = async (e) => {
-    updateText(state.options.language);
-
     let loader = new Loader(state);
     let promisesImgList = loader.loadImg(state.assets.images);
 
@@ -49,9 +33,9 @@ window.onload = async (e) => {
         let menu = new Menu(state);
         let game = new Game(state);
 
+        menu.updateText(state.options.language);
         loader.hideSpinner();
         loader.showButton();
-        console.log(state)
     })
     .catch(error => console.log(error));
 }

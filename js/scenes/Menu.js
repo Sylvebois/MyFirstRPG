@@ -1,4 +1,4 @@
-import { story } from "../text.js";
+import { buttons as buttonsText, forms as formsText, titles as titlesText, story } from "../text.js";
 
 export default class Menu {
     constructor(state) {
@@ -33,6 +33,8 @@ export default class Menu {
         this.creationForm = document.getElementById('createHero');
         this.creationForm.addEventListener('change', this.updateCreationForm);
         this.resetCreationForm(); // Reset on the first run in case the user reloaded the page
+        this.optionsForm = document.getElementById('options');
+        this.manageOptionsForm(state.options);
     }
 
     show(state) {
@@ -97,5 +99,50 @@ export default class Menu {
             elem.nextSibling.innerHTML = '1';
         })
         this.creationForm.querySelector('input[type="text"').value = '';
+    }
+
+    manageOptionsForm(options) {
+        let soundSwitch = this.optionsForm.querySelectorAll('#options input[name="soundSwitch"]');
+        soundSwitch.forEach(radio => radio.addEventListener('change', () => options.sound = parseInt(radio.value) ? true : false));
+        
+        let musicSwitch = this.optionsForm.querySelectorAll('#options input[name="musicSwitch"]');
+        musicSwitch.forEach(radio => radio.addEventListener('change', () => {
+            if (parseInt(radio.value)) {
+                options.music = true;
+                this.playMusic();
+            }
+            else {
+                options.music = false;
+                this.stopMusic();
+            }
+        }));
+
+        let langSwitch = this.optionsForm.querySelectorAll('#options input[name="langSwitch"]');
+        langSwitch.forEach(radio => radio.addEventListener('change', () => {
+            options.language = radio.value;
+            this.updateText(options.language);
+        }));
+    }
+
+    playMusic(){
+
+    }
+
+    stopMusic(){
+
+    }
+
+    updateText(newLang){
+        let allTitles = document.querySelectorAll('h2');
+        allTitles.forEach(t => t.innerText = titlesText[t.className][newLang]);
+    
+        let allButtons = document.querySelectorAll('button');
+        allButtons.forEach(b => b.innerText = buttonsText[b.className][newLang]);
+    
+        let allLabels = document.querySelectorAll('label');
+        allLabels.forEach(l => l.innerText = formsText[l.htmlFor][newLang]);
+    
+        let optionSpans = document.querySelectorAll('#optionsForm span');
+        optionSpans.forEach(s => s.innerText = formsText[s.className][newLang]);
     }
 }

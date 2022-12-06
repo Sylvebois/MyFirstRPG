@@ -36,4 +36,12 @@ export default class Loader {
             })
         })
     }
+
+    loadMusic(musics) {
+
+    }
+
+    loadSounds(sounds) {
+        
+    }
 }
