@@ -21,7 +21,7 @@ body, #loading, #menu, #gameInterface {
     height: 100vh;
 }
 
-#assets, #gameInterface, #menu, #mainMenu, #creationForm, #loadForm, #optionsForm, #credits, #story {
+#gameInterface, #menu, #mainMenu, #creationForm, #loadForm, #optionsForm, #credits, #story {
     display: none;
 }
 

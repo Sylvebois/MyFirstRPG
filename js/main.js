@@ -10,6 +10,7 @@ var tileSizeOnScreen = 0;
 
 let state = {
     currScene: 'loading',
+    assets: { images: [], musics: [], sounds: [] },
     options: {
         language: 'fr',
         music: false,
@@ -37,15 +38,22 @@ const updateText = newLang => {
 
 window.onresize = e => console.log('resize');
 
-window.onload = e => {
+window.onload = async (e) => {
     updateText(state.options.language);
 
     let loader = new Loader(state);
-    let menu = new Menu(state);
-    let game = new Game(state);
+    let promisesImgList = loader.loadImg(state.assets.images);
 
-    loader.hideSpinner();
-    loader.showButton();
+    Promise.all(promisesImgList)
+    .then(() => {
+        let menu = new Menu(state);
+        let game = new Game(state);
+
+        loader.hideSpinner();
+        loader.showButton();
+        console.log(state)
+    })
+    .catch(error => console.log(error));
 }
 
 /*

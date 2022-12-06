@@ -18,4 +18,22 @@ export default class Loader {
     showButton() {
         this.button.style.display = 'block';
     }
+
+    loadImg(images) {
+        const imgList = ['tileset.png', 'hero.png', 'items.png', 'monsters.png', 'invBody.png', 'invThrow.png'];
+        const loadingText = document.querySelector('#loading svg + div');
+
+        return imgList.map(imgName => {
+            return new Promise((resolve, reject) => {
+                let paramName = imgName.split('.')[0];
+                let url = './assets/img/' + imgName;
+
+                images[paramName] = new Image();
+                images[paramName].addEventListener('loadstart', () => loadingText.innerText = `Loading ${imgName} ...`)
+                images[paramName].addEventListener('loadend', () => resolve(console.log(`OK --> ${imgName}`)));
+                images[paramName].addEventListener('error', err => reject(loadingText.innerText = `ERROR loading ${imgName}`));
+                images[paramName].src = url;
+            })
+        })
+    }
 }
