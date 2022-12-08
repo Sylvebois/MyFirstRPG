@@ -24,7 +24,7 @@ let state = {
 
 window.onresize = e => console.log('resize');
 
-(async (e) => {
+(async () => {
     let loader = new Loader(state);
     let promisesImgList = loader.loadImg(state.assets.images);
 

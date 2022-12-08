@@ -103,45 +103,62 @@ export default class Menu {
 
     manageOptionsForm(options) {
         let soundSwitch = this.optionsForm.querySelectorAll('#options input[name="soundSwitch"]');
-        soundSwitch.forEach(radio => radio.addEventListener('change', () => options.sound = parseInt(radio.value) ? true : false));
-        
+        soundSwitch.forEach(radio => {
+            if ((options.sound && radio.id === 'soundOn') ||
+                (!options.sound && radio.id === 'soundOff')) {
+                radio.checked = true;
+            }
+            radio.addEventListener('change', () => options.sound = parseInt(radio.value) ? true : false)
+        });
+
         let musicSwitch = this.optionsForm.querySelectorAll('#options input[name="musicSwitch"]');
-        musicSwitch.forEach(radio => radio.addEventListener('change', () => {
-            if (parseInt(radio.value)) {
-                options.music = true;
-                this.playMusic();
+        musicSwitch.forEach(radio => {
+            if ((options.music && radio.id === 'musicOn') ||
+                (!options.music && radio.id === 'musicOff')) {
+                radio.checked = true;
             }
-            else {
-                options.music = false;
-                this.stopMusic();
-            }
-        }));
+            radio.addEventListener('change', () => {
+                if (parseInt(radio.value)) {
+                    options.music = true;
+                    this.playMusic();
+                }
+                else {
+                    options.music = false;
+                    this.stopMusic();
+                }
+            })
+        });
 
         let langSwitch = this.optionsForm.querySelectorAll('#options input[name="langSwitch"]');
-        langSwitch.forEach(radio => radio.addEventListener('change', () => {
-            options.language = radio.value;
-            this.updateText(options.language);
-        }));
+        langSwitch.forEach(radio => {
+            if (options.language === radio.value) {
+                radio.checked = true;
+            }
+            radio.addEventListener('change', () => {
+                options.language = radio.value;
+                this.updateText(options.language);
+            })
+        });
     }
 
-    playMusic(){
+    playMusic() {
 
     }
 
-    stopMusic(){
+    stopMusic() {
 
     }
 
-    updateText(newLang){
+    updateText(newLang) {
         let allTitles = document.querySelectorAll('h2');
         allTitles.forEach(t => t.innerText = titlesText[t.className][newLang]);
-    
+
         let allButtons = document.querySelectorAll('button');
         allButtons.forEach(b => b.innerText = buttonsText[b.className][newLang]);
-    
+
         let allLabels = document.querySelectorAll('label');
         allLabels.forEach(l => l.innerText = formsText[l.htmlFor][newLang]);
-    
+
         let optionSpans = document.querySelectorAll('#optionsForm span');
         optionSpans.forEach(s => s.innerText = formsText[s.className][newLang]);
     }
