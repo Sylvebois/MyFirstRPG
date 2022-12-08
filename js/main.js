@@ -24,7 +24,7 @@ let state = {
 
 window.onresize = e => console.log('resize');
 
-window.onload = async (e) => {
+(async (e) => {
     let loader = new Loader(state);
     let promisesImgList = loader.loadImg(state.assets.images);
 
@@ -38,7 +38,7 @@ window.onload = async (e) => {
         loader.showButton();
     })
     .catch(error => console.log(error));
-}
+})()
 
 /*
 //Loads Images
