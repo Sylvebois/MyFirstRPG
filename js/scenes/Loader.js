@@ -42,6 +42,20 @@ export default class Loader {
     }
 
     loadSounds(sounds) {
-        
+        const soundList = ['interface.mp3', 'ogre.mp3', 'swing.mp3', 'sword.mp3'];
+        const loadingText = document.querySelector('#loading svg + div');
+
+        return soundList.map(soundName => {
+            return new Promise((resolve, reject) => {
+                let paramName = soundName.split('.')[0];
+                let url = './assets/sounds/' + soundName;
+
+                sounds[paramName] = new Audio();
+                sounds[paramName].addEventListener('loadstart', () => loadingText.innerText = `Loading ${soundName} ...`)
+                sounds[paramName].addEventListener('loadend', () => resolve(console.log(`OK --> ${soundName}`)));
+                sounds[paramName].addEventListener('error', err => reject(loadingText.innerText = `ERROR loading ${soundName}`));
+                sounds[paramName].src = url;
+            })
+        })
     }
 }

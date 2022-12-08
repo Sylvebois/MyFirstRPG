@@ -27,8 +27,9 @@ window.onresize = e => console.log('resize');
 (async () => {
     let loader = new Loader(state);
     let promisesImgList = loader.loadImg(state.assets.images);
+    let promisesSoundList = loader.loadSounds(state.assets.sounds);
 
-    Promise.all(promisesImgList)
+    Promise.all(promisesImgList, promisesSoundList)
     .then(() => {
         let menu = new Menu(state);
         let game = new Game(state);
