@@ -26,14 +26,17 @@ window.onresize = e => console.log('resize');
 
 (async () => {
     let loader = new Loader(state);
-    let promisesImgList = loader.loadImg(state.assets.images);
-    let promisesSoundList = loader.loadSounds(state.assets.sounds);
+    let allPromises = loader.loadImg(state.assets.images).concat(
+        loader.loadSounds(state.assets.sounds),
+        loader.loadMusic(state.assets.musics)
+    );
 
-    Promise.all(promisesImgList, promisesSoundList)
+    Promise.all(allPromises)
     .then(() => {
         let menu = new Menu(state);
         let game = new Game(state);
 
+        state.options.music ? state.assets.musics.menu.play() : state.assets.musics.menu.pause();
         menu.updateText(state.options.language);
         loader.hideSpinner();
         loader.showButton();

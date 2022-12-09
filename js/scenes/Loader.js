@@ -38,7 +38,21 @@ export default class Loader {
     }
 
     loadMusic(musics) {
+        const musicList = ['menu.mp3'];
+        const loadingText = document.querySelector('#loading svg + div');
 
+        return musicList.map(musicName => {
+            return new Promise((resolve, reject) => {
+                let paramName = musicName.split('.')[0];
+                let url = './assets/musics/' + musicName;
+
+                musics[paramName] = new Audio();
+                musics[paramName].addEventListener('loadeddata', e => loadingText.innerText = `Loading ${musicName} ...`)
+                musics[paramName].addEventListener('canplaythrough', e => resolve(console.log(`OK --> ${musicName}`)));
+                musics[paramName].addEventListener('error', err => reject(loadingText.innerText = `ERROR loading ${musicName}`));
+                musics[paramName].src = url;
+            })
+        })
     }
 
     loadSounds(sounds) {
@@ -51,8 +65,8 @@ export default class Loader {
                 let url = './assets/sounds/' + soundName;
 
                 sounds[paramName] = new Audio();
-                sounds[paramName].addEventListener('loadstart', () => loadingText.innerText = `Loading ${soundName} ...`)
-                sounds[paramName].addEventListener('loadend', () => resolve(console.log(`OK --> ${soundName}`)));
+                sounds[paramName].addEventListener('loadeddata', e => loadingText.innerText = `Loading ${soundName} ...`)
+                sounds[paramName].addEventListener('canplaythrough', e => resolve(console.log(`OK --> ${soundName}`)));
                 sounds[paramName].addEventListener('error', err => reject(loadingText.innerText = `ERROR loading ${soundName}`));
                 sounds[paramName].src = url;
             })

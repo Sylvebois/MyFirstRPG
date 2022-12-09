@@ -34,7 +34,7 @@ export default class Menu {
         this.creationForm.addEventListener('change', this.updateCreationForm);
         this.resetCreationForm(); // Reset on the first run in case the user reloaded the page
         this.optionsForm = document.getElementById('options');
-        this.manageOptionsForm(state.options);
+        this.manageOptionsForm(state);
     }
 
     show(state) {
@@ -101,7 +101,8 @@ export default class Menu {
         this.creationForm.querySelector('input[type="text"').value = '';
     }
 
-    manageOptionsForm(options) {
+    manageOptionsForm(state) {
+        let options = state.options;
         let soundSwitch = this.optionsForm.querySelectorAll('#options input[name="soundSwitch"]');
         soundSwitch.forEach(radio => {
             if ((options.sound && radio.id === 'soundOn') ||
@@ -120,11 +121,11 @@ export default class Menu {
             radio.addEventListener('change', () => {
                 if (parseInt(radio.value)) {
                     options.music = true;
-                    this.playMusic();
+                    this.playMusic(state.assets.musics.menu);
                 }
                 else {
                     options.music = false;
-                    this.stopMusic();
+                    this.stopMusic(state.assets.musics.menu);
                 }
             })
         });
@@ -141,12 +142,13 @@ export default class Menu {
         });
     }
 
-    playMusic() {
-
+    playMusic(music) {
+        console.log(music)
+        if (music.paused) { music.play(); }
     }
 
-    stopMusic() {
-
+    stopMusic(music) {
+        if (!music.paused) { music.pause(); }
     }
 
     updateText(newLang) {
@@ -160,6 +162,8 @@ export default class Menu {
         allLabels.forEach(l => l.innerText = formsText[l.htmlFor][newLang]);
 
         let optionSpans = document.querySelectorAll('#optionsForm span');
-        optionSpans.forEach(s => s.innerText = formsText[s.className][newLang]);
+        optionSpans.forEach(s => s.innerHTML = formsText[s.className][newLang]);
+
+        document.querySelector('.pointsLeft').innerHTML = formsText['pointsLeft'][newLang];
     }
 }
