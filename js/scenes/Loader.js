@@ -4,6 +4,7 @@ export default class Loader {
         this.button = document.querySelector('#loading button');
         this.button.addEventListener('click', e => {
             state.currScene = 'mainMenu';
+            if(state.options.music) { state.assets.musics.menu.play(); }
             document.getElementById('loading').style.display = 'none';
             document.getElementById('menu').style.display = 'block';
             document.getElementById(state.currScene).style.display = 'block';
@@ -38,7 +39,7 @@ export default class Loader {
     }
 
     loadMusic(musics) {
-        const musicList = ['menu.mp3'];
+        const musicList = ['menu.webm'];
         const loadingText = document.querySelector('#loading svg + div');
 
         return musicList.map(musicName => {
@@ -51,6 +52,7 @@ export default class Loader {
                 musics[paramName].addEventListener('canplaythrough', e => resolve(console.log(`OK --> ${musicName}`)));
                 musics[paramName].addEventListener('error', err => reject(loadingText.innerText = `ERROR loading ${musicName}`));
                 musics[paramName].src = url;
+                musics[paramName].loop = true;
             })
         })
     }

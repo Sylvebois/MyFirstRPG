@@ -13,7 +13,7 @@ let state = {
     assets: { images: [], musics: [], sounds: [] },
     options: {
         language: 'fr',
-        music: false,
+        music: true,
         sound: false,
     },
     game: {
@@ -36,7 +36,6 @@ window.onresize = e => console.log('resize');
         let menu = new Menu(state);
         let game = new Game(state);
 
-        state.options.music ? state.assets.musics.menu.play() : state.assets.musics.menu.pause();
         menu.updateText(state.options.language);
         loader.hideSpinner();
         loader.showButton();
