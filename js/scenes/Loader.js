@@ -4,7 +4,7 @@ export default class Loader {
         this.button = document.querySelector('#loading button');
         this.button.addEventListener('click', e => {
             state.currScene = 'mainMenu';
-            if(state.options.music) { state.assets.musics.menu.play(); }
+            if (state.options.music) { state.assets.musics.menu.play(); }
             document.getElementById('loading').style.display = 'none';
             document.getElementById('menu').style.display = 'block';
             document.getElementById(state.currScene).style.display = 'block';
@@ -30,16 +30,15 @@ export default class Loader {
                 let url = './assets/img/' + imgName;
 
                 images[paramName] = new Image();
-                images[paramName].addEventListener('loadstart', () => loadingText.innerText = `Loading ${imgName} ...`)
-                images[paramName].addEventListener('loadend', () => resolve(console.log(`OK --> ${imgName}`)));
-                images[paramName].addEventListener('error', err => reject(loadingText.innerText = `ERROR loading ${imgName}`));
                 images[paramName].src = url;
+                images[paramName].addEventListener('load', () => { loadingText.innerText = `Loading ${imgName} ...`; resolve(console.log(`OK --> ${imgName}`)); });
+                images[paramName].addEventListener('error', err => reject(`ERROR loading ${imgName}`));
             })
         })
     }
 
     loadMusic(musics) {
-        const musicList = ['menu.webm'];
+        const musicList = ['menu.mp3'];
         const loadingText = document.querySelector('#loading svg + div');
 
         return musicList.map(musicName => {
@@ -48,10 +47,14 @@ export default class Loader {
                 let url = './assets/musics/' + musicName;
 
                 musics[paramName] = new Audio();
+
+                if (musics[paramName].canPlayType('audio/mp3')) {
+                    musics[paramName].setAttribute('src', url);
+                    musics[paramName].setAttribute('type', 'audio/mp3');
+                }
                 musics[paramName].addEventListener('loadeddata', e => loadingText.innerText = `Loading ${musicName} ...`)
                 musics[paramName].addEventListener('canplaythrough', e => resolve(console.log(`OK --> ${musicName}`)));
                 musics[paramName].addEventListener('error', err => reject(loadingText.innerText = `ERROR loading ${musicName}`));
-                musics[paramName].src = url;
                 musics[paramName].loop = true;
             })
         })
