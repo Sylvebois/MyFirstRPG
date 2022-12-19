@@ -5,7 +5,7 @@
 const story = {
     intro: {
         fr:
-`Vous vous ennuyez au bar du village, rêvant d'aventure au lieu de garder les poules quand vous entendez la conversation du prêtre avec le mage : 
+            `Vous vous ennuyez au bar du village, rêvant d'aventure au lieu de garder les poules quand vous entendez la conversation du prêtre avec le mage : 
 - ... Et c'est là que j'ai vu Marcel, le troll !
 - Et tu as fait quoi ?
 - Ben, j'ai pris mon courage à deux mains et j'ai courru le plus vite possible jusqu'au village. Mais j'ai perdu 2-3 bricoles en route et je suppose qu'il s'est servi ...
@@ -18,7 +18,7 @@ C'est l'occasion rêvée de prouver à ces pecnots que vous avez l'étoffe d'un 
     },
     firstRun: {
         fr:
-`Quand la brume dans votre esprit se disperse, vous êtes chez vous, affalé sur le sol avec un goût de terre en bouche ... 
+            `Quand la brume dans votre esprit se disperse, vous êtes chez vous, affalé sur le sol avec un goût de terre en bouche ... 
 Quand vous sortez voir le prêtre pour comprendre ce qui s'est passé, les gloussements et ricanements de vos concitoyens vous font dire que votre quête ne s'est pas déroulée comme prévu ...
 Le prêtre vous explique : "hum, Marcel a réussi à lire un parchemin de stupidité, il supprime toute l'intelligence de la cible. C'est un miracle que vous ayez pu rentrer chez vous. Il vous faudrait un casque de protection mais je l'ai ... heu ... égaré."
 De toute façon, le baraguinage des lanceurs de sort ressemble à du troll commun, alors un troll qui baraguine de la magie n'a rien d'étonnant selon vous.
@@ -27,7 +27,7 @@ Vous rassemblez ce qui vous reste de courage et d'honneur et vous retournez dans
     },
     final: {
         fr:
-`Vous rentrez au village, fier et victorieux !
+            `Vous rentrez au village, fier et victorieux !
 Vous avez vaincu Marcel, récupéré les bibelots du prêtre et pouvez enfin prouver que vous êtes un aventurier.
 Vous êtes accueilli en héro, enfin presque : des potes vous offre des bières, vous racontez votre aventure et d'autres vous racontent comment vous avez couvé un oeuf et picoré la terre avec vos poules quand vous êtiez abruti par le sort ...
 Le prêtre vous remercie et vous offre une belle besace d'or (en échange de votre silence sur sa conversation à la taverne) ...
@@ -37,8 +37,20 @@ FIN`
     }
 };
 
+const dialogs = {
+    firstLvl: [
+        {
+            fr: "Sérieusement, ce donjon commence avec une chauve-souris ?!? Et puis quoi après ? Un blob ?",
+            en: "Seriously, this dungeon start with a bat ?!? And what then ? A blob ?"
+        },
+        { fr: "*Soupirs*", en: "*Sig*" }
+    ],
+    midLvl:[],
+    lastLvl:[]
+};
+
 const buttons = {
-    start: {fr: "Démarrer", en: "Start"},
+    start: { fr: "Démarrer", en: "Start" },
     new: { fr: "Nouveau", en: "New" },
     load: { fr: "Charger", en: "Load" },
     options: { fr: "Options", en: "Options" },
@@ -54,7 +66,7 @@ const forms = {
     dx: { fr: "Dexterité : ", en: "Dexterity :" },
     iq: { fr: "Intellect : ", en: "Intellect : " },
     ht: { fr: "Santé : ", en: "Health : " },
-    pointsLeft: { 
+    pointsLeft: {
         fr: 'Il vous reste <span id="nbPoints">25</span> points à répartir.',
         en: 'There is still <span id="nbPoints">25</span> points to dispatch.'
     },
@@ -73,6 +85,13 @@ const titles = {
     newGame: { fr: "Nouvelle partie", en: "Start a new game" },
     loadGame: { fr: "Charger une partie", en: "Load a game" },
     optionsGame: { fr: "Options", en: "Options" }
+}
+
+const credits = {
+    thanks: {
+        fr: "musiques : The Naheulband - \"A l'aventure compagnon (instrumental)\"",
+        en: "musics : The Naheulband - \"A l'aventure compagnon (instrumental)\""
+    }
 }
 
 export { story, buttons, forms, titles };
