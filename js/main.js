@@ -26,21 +26,28 @@ window.onresize = e => console.log('resize');
 
 (async () => {
     let loader = new Loader(state);
-    let allPromises = loader.loadImg(state.assets.images).concat(
+    let allPromises = new Array().concat(
+        loader.loadImg(state.assets.images),
         loader.loadSounds(state.assets.sounds),
         loader.loadMusic(state.assets.musics)
     );
 
-    Promise.all(allPromises)
-    .then(() => {
-        let menu = new Menu(state);
-        let game = new Game(state);
-
-        menu.updateText(state.options.language);
-        loader.hideSpinner();
-        loader.showButton();
+    Promise.allSettled(allPromises)
+    .then(results => {
+        let failed = results.filter(prom => prom.status === 'rejected');
+        
+        if(failed.length > 0) {
+            document.querySelector('#loading svg + div').innerText = failed[0].reason;
+        }
+        else {
+            let menu = new Menu(state);
+            let game = new Game(state);
+    
+            menu.updateText(state.options.language);
+            loader.hideSpinner();
+            loader.showButton();
+        }
     })
-    .catch(error => console.log(error));
 })()
 
 /*
