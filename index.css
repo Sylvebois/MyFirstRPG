@@ -121,13 +121,36 @@ body, #loading, #menu, #gameInterface {
     padding: 0;
     width: 100vw;
     height: 10vh;
+    display:flex;
+    justify-content: space-between;
 }
 
-#hud button {
+#hud div, #hud button, #hud img, #hud span {
     display: inline-block;
+    margin-right: 1vw;
+    height: inherit;
 }
 
-#background,#objects,#ui {
+#hud span {
+    font-size: 10vh;
+}
+
+#dialog {
+    position: absolute;
+    top: 10vh; 
+    left: 50%;
+    transform: translate(-50%);
+    margin: 0;
+    padding: 0;
+    width: 90vw;
+    height: 70vh;
+    background-color: blue;
+    border: 5px solid white;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+#gameZone {
     background-color: pink;
     position: absolute;
     top: 10vh;
@@ -138,15 +161,30 @@ body, #loading, #menu, #gameInterface {
     height: 90vh;
 }
 
-#background{
+#background {
     z-index: 1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
 }
 
 #objects {
     z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
 }
 
 #ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
     z-index: 3;
 }
 

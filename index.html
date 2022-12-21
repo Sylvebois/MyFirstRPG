@@ -25,13 +25,21 @@
 
   <div id="gameInterface">
     <div id="hud">
-      <button class="menu"></button>
-      <button class="inv"></button>
-      <span class="health"></span>
+      <div>
+        <button class="menu"></button>
+        <button class="inv"></button>
+      </div>
+      <div>
+        <img src="./assets/img/logo.png" alt="heart">
+        <span class="health">10/10</span>
+      </div>
     </div>
-    <canvas id="background"></canvas>
-    <canvas id="objects"></canvas> <!-- to display items, player and monsters -->
-    <canvas id="ui">Votre navigateur ne supporte pas CANVAS</canvas>
+    <div id="dialog"></div>
+    <div id="gameZone">
+      <canvas id="background"></canvas>
+      <canvas id="objects"></canvas> <!-- to display items, player and monsters -->
+      <canvas id="ui">Votre navigateur ne supporte pas CANVAS</canvas>
+    </div>
   </div>
 
   <div id="menu">
