@@ -20,9 +20,7 @@ let state = {
         levels: [],
         player: { name: '', st: 0, dx: 0, iq: 0, hp: 0, level: 0 }
     }
-}
-
-window.onresize = e => console.log('resize');
+};
 
 (async () => {
     let loader = new Loader(state);
@@ -46,6 +44,13 @@ window.onresize = e => console.log('resize');
             menu.updateText(state.options.language);
             loader.hideSpinner();
             loader.showButton();
+
+            window.addEventListener('resize', e => game.setCanvasSize());
+            
+            const observer = new MutationObserver(m => {
+                m.forEach(mr => {console.log(mr);window.dispatchEvent(new Event('resize'));});
+            });
+            observer.observe(game.gameInterface, { attributes: true, attributeFilter: ['style'] });
         }
     })
 })()
