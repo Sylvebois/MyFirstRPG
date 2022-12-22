@@ -46,11 +46,6 @@ let state = {
             loader.showButton();
 
             window.addEventListener('resize', e => game.setCanvasSize());
-            
-            const observer = new MutationObserver(m => {
-                m.forEach(mr => {console.log(mr);window.dispatchEvent(new Event('resize'));});
-            });
-            observer.observe(game.gameInterface, { attributes: true, attributeFilter: ['style'] });
         }
     })
 })()

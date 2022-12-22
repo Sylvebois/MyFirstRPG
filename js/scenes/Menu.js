@@ -51,7 +51,7 @@ export default class Menu {
     goToGame(state) {
         document.getElementById('menu').style.display = 'none';
         document.getElementById(state.currScene).style.display = 'none';
-        document.getElementById('gameInterface').style.display = 'block';
+        document.getElementById('gameInterface').style.visibility = 'visible';
         state.currScene = 'gameInterface';
     }
 

@@ -21,7 +21,7 @@ body, #loading, #menu, #gameInterface {
     height: 100vh;
 }
 
-#gameInterface, #menu, #mainMenu, #creationForm, #loadForm, #optionsForm, #credits, #story {
+#menu, #mainMenu, #creationForm, #loadForm, #optionsForm, #credits, #story {
     display: none;
 }
 
@@ -110,6 +110,7 @@ body, #loading, #menu, #gameInterface {
     position: absolute;
     top: 0;
     left: 0;
+    visibility: hidden;
 }
 
 #hud {
