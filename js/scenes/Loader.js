@@ -38,7 +38,7 @@ export default class Loader {
     }
 
     loadMusic(musics) {
-        const musicList = ['menu.mp3'];
+        const musicList = ['menu.mp3', 'bossCave.mp3'];
         const loadingText = document.querySelector('#loading svg + div');
 
         return musicList.map(musicName => {
@@ -47,15 +47,12 @@ export default class Loader {
                 let url = './assets/musics/' + musicName;
 
                 musics[paramName] = new Audio();
-
-                if (musics[paramName].canPlayType('audio/mp3')) {
-                    musics[paramName].setAttribute('src', url);
-                    musics[paramName].setAttribute('type', 'audio/mp3');
-                }
+                musics[paramName].setAttribute('src', url);
+                musics[paramName].setAttribute('type', 'audio/mp3');
+                musics[paramName].setAttribute('loop', 'loop');
                 musics[paramName].addEventListener('loadeddata', e => loadingText.innerText = `Loading ${musicName} ...`)
                 musics[paramName].addEventListener('canplaythrough', e => resolve(console.log(`OK --> ${musicName}`)));
                 musics[paramName].addEventListener('error', err => reject(loadingText.innerText = `ERROR loading ${musicName}`));
-                musics[paramName].loop = true;
             })
         })
     }
