@@ -1,40 +1,58 @@
 import { buttons as buttonsText, forms as formsText, titles as titlesText, story } from "../text.js";
+import { CreationFormManager } from "../classes/CreationFormManager.js";
 
 export default class Menu {
     constructor(state) {
-        this.buttons = document.querySelectorAll('#menu button');
-        this.buttons.forEach(button => button.addEventListener('click', e => {
+        this.initEventListeners(state);
+        this.creationForm = new CreationFormManager();
+        this.optionsForm = document.getElementById('options');
+        this.manageOptionsForm(state);
+    }
+
+    initEventListeners(state) {
+        let buttons = document.querySelectorAll('#menu button');
+        buttons.forEach(button => button.addEventListener('click', e => {
             e.preventDefault();
             let buttonClass = e.target.className;
 
             if (buttonClass === 'new') { this.switchTo(state, 'creationForm'); }
             else if (buttonClass === 'load') { this.switchTo(state, 'loadForm'); }
+            else if (buttonClass === 'save') { this.saveData(state); }
             else if (buttonClass === 'options') { this.switchTo(state, 'optionsForm'); }
             else if (buttonClass === 'credits') { this.switchTo(state, 'credits'); }
-            else if (buttonClass === 'back') {
-                state.currScene === 'creationForm' ? this.resetCreationForm() : null;
+            else if (buttonClass === 'backToMain') {
                 this.switchTo(state, 'mainMenu');
+                state.gameIsRunning = false;
             }
             else if (buttonClass === 'start') {
                 if (state.currScene === 'story') {
                     this.goToGame(state);
                 }
                 else {
-                    if (this.validateCreationForm()) {
-                        this.setCreationFormData(state);
-                        this.resetCreationForm();
+                    if (this.creationForm.validate()) {
+                        this.creationForm.setData(state);
+                        this.creationForm.reset();
                         this.setIntroText(state);
                         this.switchTo(state, 'story');
                     }
                 }
             }
-        }));
+            else if (buttonClass === 'back') {
+                if (state.currScene === 'creationForm') { this.creationForm.reset(); }
 
-        this.creationForm = document.getElementById('createHero');
-        this.creationForm.addEventListener('change', this.updateCreationForm);
-        this.resetCreationForm(); // Reset on the first run in case the user reloaded the page
-        this.optionsForm = document.getElementById('options');
-        this.manageOptionsForm(state);
+                if (state.currScene === 'inGameMenu') { this.goToGame(state); }
+                else if (state.currScene === 'optionsForm' && state.gameIsRunning) {
+                    this.switchTo(state, 'inGameMenu');
+                }
+                else {
+                    this.switchTo(state, 'mainMenu');
+                }
+            }
+        }));
+    }
+
+    saveData(state) {
+        console.log('SAVED');
     }
 
     show(state) {
@@ -53,52 +71,11 @@ export default class Menu {
         document.getElementById(state.currScene).style.display = 'none';
         document.getElementById('gameInterface').style.visibility = 'visible';
         state.currScene = 'gameInterface';
+        state.gameIsRunning = true;
     }
 
     setIntroText(state) {
         document.getElementById('story').firstElementChild.innerText = story.intro[state.options.language]
-    }
-
-    updateCreationForm(e) {
-        let inputs = document.querySelectorAll('#creationForm input[type="range"]');
-        let nbPoints = document.getElementById('nbPoints');
-        let points = 25;
-
-        inputs.forEach(elem => {
-            points -= parseInt(elem.value);
-            elem.nextSibling.innerHTML = elem.value;
-        });
-        inputs.forEach(elem => {
-            let reste = points + parseInt(elem.value);
-            elem.max = reste <= 0 ? 1 : reste;
-        })
-
-        nbPoints.innerHTML = points;
-        nbPoints.style = `color: ${points > 0 ? '#00ee00' : '#ff0000'}`;
-    }
-
-    validateCreationForm() {
-        let nbPointsLeft = document.getElementById('nbPoints').firstChild.nodeValue;
-        let nameFieldValue = document.getElementById('name').value;
-        return (nbPointsLeft === '0' && nameFieldValue !== '') ? true : false;
-    }
-
-    setCreationFormData(state) {
-        let inputs = this.creationForm.querySelectorAll('input[type="range"]');
-        inputs.forEach(elem => state.game.player[elem.id] = parseInt(elem.value));
-        state.game.player.name = this.creationForm.querySelector('input[type="text"').value;
-    }
-
-    resetCreationForm() {
-        document.getElementById('nbPoints').innerHTML = 25;
-
-        let inputs = document.querySelectorAll('#creationForm input[type="range"]');
-        inputs.forEach(elem => {
-            elem.value = 1;
-            elem.max = 22;
-            elem.nextSibling.innerHTML = '1';
-        })
-        this.creationForm.querySelector('input[type="text"').value = '';
     }
 
     manageOptionsForm(state) {
