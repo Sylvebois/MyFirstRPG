@@ -10,6 +10,7 @@ var tileSizeOnScreen = 0;
 
 let state = {
     currScene: 'loading',
+    gameIsRunning: false,
     assets: { images: [], musics: [], sounds: [] },
     options: {
         language: 'fr',
