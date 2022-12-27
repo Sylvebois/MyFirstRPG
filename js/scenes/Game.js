@@ -5,11 +5,44 @@ export default class Game {
         this.hud = document.getElementById('hud');
         this.gameZone = document.getElementById('gameZone');
         this.dialogBox = document.getElementById('dialog');
-        this.dialogBox.addEventListener('click', e => this.dialogBox.style.display = 'none');
         this.dialogBox.style.display = 'none';
 
         this.canvases = this.initCanvases();
-        this.images = this.initImages();
+        this.images = state.assets.images;
+        this.initEventListeners(state);
+    }
+
+    initEventListeners(state) {
+        this.dialogBox.addEventListener('click', e => this.dialogBox.style.display = 'none');
+
+        const buttons = this.hud.getElementsByTagName('button');
+        buttons[0].addEventListener('click', e => this.goToMenu(state));
+        buttons[1].addEventListener('click', e => this.goToInventory(state));
+
+        window.addEventListener('resize', e => this.setCanvasSize());
+        window.addEventListener('keydown', e => {
+            if (state.currScene === 'gameInterface') {
+                if (e.key === 'ArrowUp') {
+
+                }
+                else if (e.key === 'ArrowDown') {
+
+                }
+                else if (e.key === 'ArrowLeft') {
+
+                }
+                else if (e.key === 'ArrowRight') {
+
+                }
+                else if (e.key === 'o' || e.key === 'O') { this.goToMenu(state); }
+                else if (e.key === 'i' || e.key === 'I') { this.goToInventory(state); }
+            }
+            else if(state.currScene === 'inventory') {
+                if(e.key === 'Escape' || e.key === 'i' || e.key ==='I') { 
+                    this.goToGame(state);
+                }
+            }
+        });
     }
 
     initCanvases() {
@@ -26,13 +59,6 @@ export default class Game {
         return result;
     }
 
-    initImages() {
-        let result = new Map();
-        let img = document.querySelectorAll('#assets img');
-        for (let elem of img) { result.set(elem.id, elem) }
-        return result;
-    }
-
     setCanvasSize() {
         let size = Math.min(this.gameZone.offsetWidth, this.gameZone.offsetHeight);
         let ratio = this.size / 720; //720 = default size of canvas
@@ -40,5 +66,22 @@ export default class Game {
             elem.can.setAttribute('width', size);
             elem.can.setAttribute('height', size);
         })
+    }
+
+    goToInventory(state) {
+        state.currScene = 'inventory';
+        this.gameInterface.style.visibility = 'hidden';
+    }
+
+    goToGame(state) {
+        state.currScene = 'gameInterface';
+        this.gameInterface.style.visibility = 'visible';
+    }
+
+    goToMenu(state) {
+        state.currScene = 'inGameMenu';
+        document.getElementById('menu').style.display = 'block';
+        document.getElementById(state.currScene).style.display = 'block';
+        this.gameInterface.style.visibility = 'hidden';
     }
 }

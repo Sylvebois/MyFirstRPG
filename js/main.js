@@ -45,8 +45,6 @@ let state = {
             menu.updateText(state.options.language);
             loader.hideSpinner();
             loader.showButton();
-
-            window.addEventListener('resize', e => game.setCanvasSize());
         }
     })
 })()
