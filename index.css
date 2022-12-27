@@ -21,7 +21,7 @@ body, #loading, #menu, #gameInterface {
     height: 100vh;
 }
 
-#menu, #mainMenu, #creationForm, #loadForm, #optionsForm, #credits, #story {
+#menu, #mainMenu, #inGameMenu, #creationForm, #loadForm, #optionsForm, #credits, #story {
     display: none;
 }
 
@@ -68,7 +68,7 @@ body, #loading, #menu, #gameInterface {
     margin: auto;
 }
 
-#mainMenu button {
+#mainMenu button, #inGameMenu button {
     display: block;
     margin: 4vh auto;
 }
@@ -83,6 +83,10 @@ body, #loading, #menu, #gameInterface {
 
 #creationForm .start {
     margin-left: 15px;
+}
+
+#creationForm #nbPoints {
+    color: #00ee00;
 }
 
 #options div {
