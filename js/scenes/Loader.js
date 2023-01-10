@@ -1,3 +1,5 @@
+import { newTileset } from "../imgMap.js";
+
 export default class Loader {
     constructor(state) {
         this.spinner = document.getElementsByTagName('svg')[0];
@@ -21,7 +23,8 @@ export default class Loader {
     }
 
     loadImg(images) {
-        const imgList = ['tileset.png', 'hero.png', 'items.png', 'monsters.png', 'invBody.png', 'invThrow.png'];
+        //const imgList = ['tileset.png', 'hero.png', 'items.png', 'monsters.png', 'invBody.png', 'invThrow.png'];
+        const imgList = ['newTileset.png', 'scroll.png', 'invBody.png', 'invThrow.png'];
         const loadingText = document.querySelector('#loading svg + div');
 
         return imgList.map(imgName => {
@@ -33,6 +36,7 @@ export default class Loader {
                 images[paramName].src = url;
                 images[paramName].addEventListener('load', () => { loadingText.innerText = `Loading ${imgName} ...`; resolve(console.log(`OK --> ${imgName}`)); });
                 images[paramName].addEventListener('error', err => reject(`ERROR loading ${imgName}`));
+                if (paramName === "newTileset") { images[paramName].data = newTileset }
             })
         })
     }
