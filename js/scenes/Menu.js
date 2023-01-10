@@ -2,7 +2,8 @@ import { buttons as buttonsText, forms as formsText, titles as titlesText, story
 import { CreationFormManager } from "../classes/CreationFormManager.js";
 
 export default class Menu {
-    constructor(state) {
+    constructor(state, game) {
+        this.game = game;
         this.initEventListeners(state);
         this.creationForm = new CreationFormManager();
         this.optionsForm = document.getElementById('options');
@@ -69,9 +70,10 @@ export default class Menu {
     goToGame(state) {
         document.getElementById('menu').style.display = 'none';
         document.getElementById(state.currScene).style.display = 'none';
-        document.getElementById('gameInterface').style.visibility = 'visible';
-        state.currScene = 'gameInterface';
-        state.gameIsRunning = true;
+
+        if(state.game.levels.length === 0) { this.game.generateLvl(state.game) }
+        this.game.goToGame(state);
+        this.game.drawLvl(state.game.levels[state.game.player.level]);
     }
 
     setIntroText(state) {
