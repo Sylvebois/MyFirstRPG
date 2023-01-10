@@ -3,11 +3,6 @@ import Loader from './scenes/Loader.js';
 import Menu from './scenes/Menu.js';
 import Game from './scenes/Game.js';
 
-//Tiles size (on the tileset and on screen)
-const TILESIZE = 32;
-const nbTilesPerLine = 20;
-var tileSizeOnScreen = 0;
-
 let state = {
     currScene: 'loading',
     gameIsRunning: false,
@@ -19,7 +14,7 @@ let state = {
     },
     game: {
         levels: [],
-        player: { name: '', st: 0, dx: 0, iq: 0, hp: 0, level: 0 }
+        player: { name: '', st: 0, dx: 0, iq: 0, hp: 0, level: 0, vision: 2 }
     }
 };
 
@@ -32,21 +27,21 @@ let state = {
     );
 
     Promise.allSettled(allPromises)
-    .then(results => {
-        let failed = results.filter(prom => prom.status === 'rejected');
-        
-        if(failed.length > 0) {
-            document.querySelector('#loading svg + div').innerText = failed[0].reason;
-        }
-        else {
-            let menu = new Menu(state);
-            let game = new Game(state);
-    
-            menu.updateText(state.options.language);
-            loader.hideSpinner();
-            loader.showButton();
-        }
-    })
+        .then(results => {
+            let failed = results.filter(prom => prom.status === 'rejected');
+
+            if (failed.length > 0) {
+                document.querySelector('#loading svg + div').innerText = failed[0].reason;
+            }
+            else {
+                let game = new Game(state);
+                let menu = new Menu(state, game);
+
+                menu.updateText(state.options.language);
+                loader.hideSpinner();
+                loader.showButton();
+            }
+        })
 })()
 
 /*
