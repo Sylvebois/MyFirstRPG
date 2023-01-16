@@ -1,4 +1,3 @@
-import { buttons as buttonsText, forms as formsText, titles as titlesText } from './text.js';
 import Loader from './scenes/Loader.js';
 import Menu from './scenes/Menu.js';
 import Game from './scenes/Game.js';
@@ -15,7 +14,13 @@ let state = {
     game: {
         levels: [],
         player: { name: '', st: 0, dx: 0, iq: 0, hp: 0, level: 0, vision: 2 }
-    }
+    },
+    update: (newX, newY) => { 
+        state.game.levels[state.game.player.level][state.game.player.x][state.game.player.y].content.hero = false;
+        state.game.levels[state.game.player.level][newX][newY].content.hero = true;
+        state.game.player.x = newX;
+        state.game.player.y = newY;
+     }
 };
 
 (async () => {

@@ -24,6 +24,7 @@ export default class Menu {
             else if (buttonClass === 'backToMain') {
                 this.switchTo(state, 'mainMenu');
                 state.gameIsRunning = false;
+                // Should reset dungeon and state
             }
             else if (buttonClass === 'start') {
                 if (state.currScene === 'story') {

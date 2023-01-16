@@ -32,20 +32,40 @@ export default class Game {
 
         window.addEventListener('keydown', e => {
             if (state.currScene === 'gameInterface') {
-                if (e.key === 'ArrowUp') {
+                let hero = state.game.player;
+                let newPos = { x: hero.x, y: hero.y };
+                let result = null;
 
+                if (e.key === 'ArrowUp') {
+                    newPos.y = hero.y - 1;
+                    result = this.dungeon.checkAccess(newPos.x, newPos.y);
                 }
                 else if (e.key === 'ArrowDown') {
-
+                    newPos.y = hero.y + 1;
+                    result = this.dungeon.checkAccess(newPos.x, newPos.y);
                 }
                 else if (e.key === 'ArrowLeft') {
-
+                    newPos.x = hero.x - 1;
+                    result = this.dungeon.checkAccess(newPos.x, newPos.y);
                 }
                 else if (e.key === 'ArrowRight') {
-
+                    newPos.x = hero.x + 1;
+                    result = this.dungeon.checkAccess(newPos.x, newPos.y);
                 }
                 else if (e.key === 'o' || e.key === 'O') { this.goToMenu(state); }
                 else if (e.key === 'i' || e.key === 'I') { this.goToInventory(state); }
+
+                if (result === 'move') {
+                    state.update(newPos.x, newPos.y);
+                    this.drawLvl(state.game.levels[hero.level]);
+
+                    if(state.game.levels[hero.level][newPos.x][newPos.y].content.artefact === 'stairDown') {
+
+                    }
+                }
+                else if(result === 'monster') {
+
+                }
             }
             else if (state.currScene === 'inventory') {
                 if (e.key === 'Escape' || e.key === 'i' || e.key === 'I') {
@@ -98,9 +118,15 @@ export default class Game {
     }
 
     generateLvl(gameData) {
+        let lvl = null;
+
         if (gameData.levels.length === 0) {
-            gameData.levels.push(this.dungeon.generateFirstLvl());
+            lvl = this.dungeon.generateFirstLvl();
         }
+
+        gameData.player.x = lvl.heroX;
+        gameData.player.y = lvl.heroY;
+        gameData.levels.push(lvl.lvlMap);
     }
 
     drawLvl(lvl) {
@@ -108,16 +134,20 @@ export default class Game {
         const img = this.images['newTileset'];
 
         lvl.forEach((x, idx) => x.forEach((tile, idy) => {
-            back.context.drawImage(
-                img,
-                img.data[tile.type].x * img.data.tileSize,
-                img.data[tile.type].y * img.data.tileSize,
+            const finalData = [
                 img.data.tileSize,
                 img.data.tileSize,
                 this.tileSizeOnScreen * idx,
                 this.tileSizeOnScreen * idy,
                 this.tileSizeOnScreen,
                 this.tileSizeOnScreen
+            ]
+            
+            back.context.drawImage(
+                img,
+                img.data[tile.type].x * img.data.tileSize,
+                img.data[tile.type].y * img.data.tileSize,
+                ...finalData
             );
 
             if (tile.content.artefact) {
@@ -125,12 +155,7 @@ export default class Game {
                     img,
                     img.data[tile.content.artefact].x * img.data.tileSize,
                     img.data[tile.content.artefact].y * img.data.tileSize,
-                    img.data.tileSize,
-                    img.data.tileSize,
-                    this.tileSizeOnScreen * idx,
-                    this.tileSizeOnScreen * idy,
-                    this.tileSizeOnScreen,
-                    this.tileSizeOnScreen
+                    ...finalData
                 );
             }
 
@@ -139,12 +164,7 @@ export default class Game {
                     img,
                     img.data['heroGoLeft'].x * img.data.tileSize,
                     img.data['heroGoLeft'].y * img.data.tileSize,
-                    img.data.tileSize,
-                    img.data.tileSize,
-                    this.tileSizeOnScreen * idx,
-                    this.tileSizeOnScreen * idy,
-                    this.tileSizeOnScreen,
-                    this.tileSizeOnScreen
+                    ...finalData
                 );
             }
         }))

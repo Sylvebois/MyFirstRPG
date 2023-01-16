@@ -19,8 +19,8 @@ export class DungeonManager {
 
     generateFirstLvl() {
         const middle = {
-            x: Math.floor((this.mapSize[0]-1) / 2),
-            y: Math.floor((this.mapSize[1]-1) / 2)
+            x: Math.floor((this.mapSize[0] - 1) / 2),
+            y: Math.floor((this.mapSize[1] - 1) / 2)
         };
 
         this.generateBasicMap(true);
@@ -39,7 +39,7 @@ export class DungeonManager {
         this.lvlMaps[this.currLvl][middle.x][1].content.hero = true;
 
         this.cleanFog(middle.x, 1, 2);
-        return this.lvlMaps[this.currLvl];
+        return { lvlMap: this.lvlMaps[this.currLvl], heroX: middle.x, heroY: 1 };
     }
 
     generateLvl() {
@@ -96,4 +96,18 @@ export class DungeonManager {
             }
         }
     }
+
+    checkAccess(x, y) {
+        if(x >= 0 && x < this.mapSize[0] && y >= 0 && y < this.mapSize[1]) {
+            if (this.lvlMaps[this.currLvl][x][y].type === 'wall') {
+                return 'wall';
+            }
+            else if (this.lvlMaps[this.currLvl][x][y].content.monster === true) {
+                return 'monster';
+            }
+            else {
+                return 'move';
+            }
+        }
+    };
 }
