@@ -2,9 +2,8 @@ import { DungeonManager } from '../classes/LevelsManager.js';
 
 export default class Game {
     constructor(state) {
-        this.tilesize = 32;
-        this.tileSizeOnScreen = 32;
-        this.mapSize = [20, 20];
+        this.tileSizeOnScreen = 64;
+        this.mapSize = [30, 20];
         this.dungeon = new DungeonManager(this.mapSize);
 
         this.gameInterface = document.getElementById('gameInterface');
@@ -27,7 +26,7 @@ export default class Game {
 
         window.addEventListener('resize', e => {
             this.setCanvasSize();
-            this.drawLvl(state.game.levels[state.game.player.level]);
+            this.drawLvl(state.game.levels[state.game.currLvl]);
         });
 
         window.addEventListener('keydown', e => {
@@ -56,14 +55,15 @@ export default class Game {
                 else if (e.key === 'i' || e.key === 'I') { this.goToInventory(state); }
 
                 if (result === 'move') {
-                    state.update(newPos.x, newPos.y);
-                    this.drawLvl(state.game.levels[hero.level]);
+                    state.updatePos(newPos.x, newPos.y);
+                    this.dungeon.updatePos(state.game.currLvl, newPos.x, newPos.y);
+                    this.drawLvl(state.game.levels[state.game.currLvl]);
 
-                    if(state.game.levels[hero.level][newPos.x][newPos.y].content.artefact === 'stairDown') {
+                    if (state.game.levels[state.game.currLvl][newPos.x][newPos.y].content.artefact === 'stairDown') {
 
                     }
                 }
-                else if(result === 'monster') {
+                else if (result === 'monster') {
 
                 }
             }
@@ -76,14 +76,17 @@ export default class Game {
     }
 
     initCanvases() {
+        const width = Math.min(this.gameZone.offsetWidth, this.tileSizeOnScreen * this.mapSize[0]);
+        const height = Math.min(this.gameZone.offsetHeight, this.tileSizeOnScreen * this.mapSize[1]);
+        const margin = (this.gameZone.offsetWidth - width) / 2;
+
         let result = new Map();
-        let size = Math.min(this.gameZone.offsetWidth, this.gameZone.offsetHeight);
-        this.tileSizeOnScreen = size / this.mapSize[0];
         let tags = document.getElementsByTagName('canvas');
 
         for (let elem of tags) {
-            elem.setAttribute('width', size);
-            elem.setAttribute('height', size);
+            elem.setAttribute('width', width);
+            elem.setAttribute('height', height);
+            elem.setAttribute('style', `margin-left: ${margin}px`);
             result.set(elem.id, { can: elem, context: elem.getContext('2d') })
         }
 
@@ -91,11 +94,14 @@ export default class Game {
     }
 
     setCanvasSize() {
-        let size = Math.min(this.gameZone.offsetWidth, this.gameZone.offsetHeight);
-        this.tileSizeOnScreen = size / this.mapSize[0];
+        const width = Math.min(this.gameZone.offsetWidth, this.tileSizeOnScreen * this.mapSize[0]);
+        const height = Math.min(this.gameZone.offsetHeight, this.tileSizeOnScreen * this.mapSize[1]);
+        const margin = (this.gameZone.offsetWidth - width) / 2;
+
         this.canvases.forEach(elem => {
-            elem.can.setAttribute('width', size);
-            elem.can.setAttribute('height', size);
+            elem.can.setAttribute('width', width);
+            elem.can.setAttribute('height', height);
+            elem.can.setAttribute('style', `margin-left: ${margin}px`);
         })
     }
 
@@ -132,17 +138,25 @@ export default class Game {
     drawLvl(lvl) {
         const back = this.canvases.get('background');
         const img = this.images['newTileset'];
+        const heroAbsX = this.dungeon.hero.x * this.tileSizeOnScreen;
+        const heroAbsY = this.dungeon.hero.y * this.tileSizeOnScreen;
+        const distToBorderX = (this.mapSize[0] - this.dungeon.hero.x) * this.tileSizeOnScreen;
+        const cam = {
+            x: (heroAbsX < back.can.width / 2) ? 0  : back.can.width / 2 - heroAbsX,
+            y: (heroAbsY < back.can.height / 2) ? 0 : back.can.height / 2 - heroAbsY
+        }
 
         lvl.forEach((x, idx) => x.forEach((tile, idy) => {
+
             const finalData = [
                 img.data.tileSize,
                 img.data.tileSize,
-                this.tileSizeOnScreen * idx,
-                this.tileSizeOnScreen * idy,
+                this.tileSizeOnScreen * idx + cam.x,
+                this.tileSizeOnScreen * idy + cam.y,
                 this.tileSizeOnScreen,
                 this.tileSizeOnScreen
             ]
-            
+
             back.context.drawImage(
                 img,
                 img.data[tile.type].x * img.data.tileSize,

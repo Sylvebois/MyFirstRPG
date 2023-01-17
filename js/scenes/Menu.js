@@ -74,7 +74,7 @@ export default class Menu {
 
         if(state.game.levels.length === 0) { this.game.generateLvl(state.game) }
         this.game.goToGame(state);
-        this.game.drawLvl(state.game.levels[state.game.player.level]);
+        this.game.drawLvl(state.game.levels[state.game.currLvl]);
     }
 
     setIntroText(state) {

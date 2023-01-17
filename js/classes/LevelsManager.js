@@ -9,12 +9,34 @@ class Tile {
     }
 }
 
+class Room {
+    constructor(x = 0, y = 0, width = 0, height = 0) {
+        this.startX = x;
+        this.startY = y;
+        this.endX = x + width;
+        this.endY = y + height;
+        this.w = width;
+        this.h = height;
+        this.mid = [Math.floor((this.startX + this.endX) / 2), Math.floor((this.startY + this.endY) / 2)];
+    }
+
+    intersects(room) {
+        return (this.startX <= room.endX && this.endX >= room.startX &&
+            this.startY <= room.endY && this.endY >= room.startY) ? true : false;
+    }
+}
+
 export class DungeonManager {
     constructor(mapSize) {
         this.mapSize = mapSize;
         this.lvlMaps = [];
         this.nbWall = 0;
         this.currLvl = 0;
+        this.hero = { x: 0, y: 0, vision: 2 };
+    }
+
+    random(min = 0, max = 1, int = true) {
+        return (int) ? Math.floor(Math.random() * (max - min + 1)) + min : Math.random() * (max - min) + min;
     }
 
     generateFirstLvl() {
@@ -35,11 +57,15 @@ export class DungeonManager {
             }
         }
 
-        this.lvlMaps[this.currLvl][middle.x][middle.y].content.artefact = 'stairDown';
-        this.lvlMaps[this.currLvl][middle.x][1].content.hero = true;
+        this.hero.x = middle.x;
+        this.hero.y = 1;
 
-        this.cleanFog(middle.x, 1, 2);
-        return { lvlMap: this.lvlMaps[this.currLvl], heroX: middle.x, heroY: 1 };
+        this.lvlMaps[this.currLvl][middle.x][middle.y].content.artefact = 'stairDown';
+        this.lvlMaps[this.currLvl][this.hero.x][this.hero.y].content.hero = true;
+
+        this.cleanFog(this.hero.x, this.hero.y, this.hero.vision);
+
+        return { lvlMap: this.lvlMaps[this.currLvl], heroX: this.hero.x, heroY: this.hero.y };
     }
 
     generateLvl() {
@@ -98,11 +124,11 @@ export class DungeonManager {
     }
 
     checkAccess(x, y) {
-        if(x >= 0 && x < this.mapSize[0] && y >= 0 && y < this.mapSize[1]) {
+        if (x >= 0 && x < this.mapSize[0] && y >= 0 && y < this.mapSize[1]) {
             if (this.lvlMaps[this.currLvl][x][y].type === 'wall') {
                 return 'wall';
             }
-            else if (this.lvlMaps[this.currLvl][x][y].content.monster === true) {
+            else if (this.lvlMaps[this.currLvl][x][y].content.monster) {
                 return 'monster';
             }
             else {
@@ -110,4 +136,12 @@ export class DungeonManager {
             }
         }
     };
+
+    updatePos(lvl, x, y) {
+        this.lvlMaps[lvl][this.hero.x][this.hero.y].content.hero = false;
+        this.lvlMaps[lvl][x][y].content.hero = true;
+        this.hero.x = x;
+        this.hero.y = y;
+        this.cleanFog(this.hero.x, this.hero.y, this.hero.vision);
+    }
 }
