@@ -13,11 +13,12 @@ let state = {
     },
     game: {
         levels: [],
-        player: { name: '', st: 0, dx: 0, iq: 0, hp: 0, level: 0, vision: 2 }
+        currLvl: 0,
+        player: { name: '', st: 0, dx: 0, iq: 0, hp: 0, vision: 2 }
     },
-    update: (newX, newY) => { 
-        state.game.levels[state.game.player.level][state.game.player.x][state.game.player.y].content.hero = false;
-        state.game.levels[state.game.player.level][newX][newY].content.hero = true;
+    updatePos: (newX, newY) => { 
+        state.game.levels[state.game.currLvl][state.game.player.x][state.game.player.y].content.hero = false;
+        state.game.levels[state.game.currLvl][newX][newY].content.hero = true;
         state.game.player.x = newX;
         state.game.player.y = newY;
      }
