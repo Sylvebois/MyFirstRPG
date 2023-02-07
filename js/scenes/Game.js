@@ -138,16 +138,17 @@ export default class Game {
     drawLvl(lvl) {
         const back = this.canvases.get('background');
         const img = this.images['newTileset'];
-        const heroAbsX = this.dungeon.hero.x * this.tileSizeOnScreen;
-        const heroAbsY = this.dungeon.hero.y * this.tileSizeOnScreen;
-        const distToBorderX = (this.mapSize[0] - this.dungeon.hero.x) * this.tileSizeOnScreen;
+        const mid = { w: back.can.width / 2, h: back.can.height / 2 };
+        const mapSizeAbs = { w: this.mapSize[0] * this.tileSizeOnScreen, h: this.mapSize[1] * this.tileSizeOnScreen };
+        const heroAbs = { x: this.dungeon.hero.x * this.tileSizeOnScreen, y: this.dungeon.hero.y * this.tileSizeOnScreen };
+        const distToBorder = { x: mapSizeAbs.w - heroAbs.x, y: mapSizeAbs.h - heroAbs.y };
         const cam = {
-            x: (heroAbsX < back.can.width / 2) ? 0  : back.can.width / 2 - heroAbsX,
-            y: (heroAbsY < back.can.height / 2) ? 0 : back.can.height / 2 - heroAbsY
+            x: (heroAbs.x < mid.w) ? 0 : (distToBorder.x <= mid.w) ? -1 * (mapSizeAbs.w - back.can.w) : mid.w - heroAbs.x,
+            y: (heroAbs.y < mid.h) ? 0 : (distToBorder.y <= mid.h) ? -1 * (mapSizeAbs.h - back.can.h) : mid.h - heroAbs.y
         }
 
         lvl.forEach((x, idx) => x.forEach((tile, idy) => {
-            const finalData = [
+            const commonData = [
                 img.data.tileSize,
                 img.data.tileSize,
                 this.tileSizeOnScreen * idx + cam.x,
@@ -160,7 +161,7 @@ export default class Game {
                 img,
                 img.data[tile.type].x * img.data.tileSize,
                 img.data[tile.type].y * img.data.tileSize,
-                ...finalData
+                ...commonData
             );
 
             if (tile.content.artefact) {
@@ -168,7 +169,7 @@ export default class Game {
                     img,
                     img.data[tile.content.artefact].x * img.data.tileSize,
                     img.data[tile.content.artefact].y * img.data.tileSize,
-                    ...finalData
+                    ...commonData
                 );
             }
 
@@ -177,7 +178,7 @@ export default class Game {
                     img,
                     img.data['heroGoLeft'].x * img.data.tileSize,
                     img.data['heroGoLeft'].y * img.data.tileSize,
-                    ...finalData
+                    ...commonData
                 );
             }
 
