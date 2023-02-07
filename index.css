@@ -12,9 +12,11 @@ body {
     background-color: black;
     font-family: 'enchantedLandRegular';
     color: white;
+    margin: 0;
+    padding: 0;
 }
 
-body, #loading, #menu, #gameInterface {
+#loading, #menu, #gameInterface {
     margin: 0;
     padding: 0;
     width: 100vw;
@@ -166,31 +168,20 @@ body, #loading, #menu, #gameInterface {
     height: 90vh;
 }
 
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+}
+
 #background {
     z-index: 1;
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
 }
 
-#objects {
+#foreground {
     z-index: 2;
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
-}
-
-#ui {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: 0;
-    padding: 0;
-    z-index: 3;
 }
 
 /* Loading screen */
