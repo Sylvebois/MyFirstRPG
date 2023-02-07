@@ -147,7 +147,6 @@ export default class Game {
         }
 
         lvl.forEach((x, idx) => x.forEach((tile, idy) => {
-
             const finalData = [
                 img.data.tileSize,
                 img.data.tileSize,
@@ -155,7 +154,7 @@ export default class Game {
                 this.tileSizeOnScreen * idy + cam.y,
                 this.tileSizeOnScreen,
                 this.tileSizeOnScreen
-            ]
+            ];
 
             back.context.drawImage(
                 img,
@@ -180,6 +179,16 @@ export default class Game {
                     img.data['heroGoLeft'].y * img.data.tileSize,
                     ...finalData
                 );
+            }
+
+            if(tile.fogLvl > 0) {
+                back.context.fillStyle = tile.fogLvl === 2 ? 'black' : 'rgba(0,0,0,0.5)';
+                back.context.fillRect(
+                    this.tileSizeOnScreen * idx + cam.x,
+                    this.tileSizeOnScreen * idy + cam.y,
+                    this.tileSizeOnScreen,
+                    this.tileSizeOnScreen
+                )
             }
         }))
     }
