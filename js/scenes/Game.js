@@ -33,23 +33,27 @@ export default class Game {
         window.addEventListener('keydown', e => {
             if (state.currScene === 'gameInterface') {
                 let hero = state.game.player;
-                let newPos = { x: hero.x, y: hero.y };
+                let newPos = { x: hero.x, y: hero.y, direction:'heroGoLeft' };
                 let result = null;
 
                 if (e.key === 'ArrowUp') {
                     newPos.y = hero.y - 1;
+                    newPos.direction = 'heroGoUp';
                     result = this.dungeon.checkAccess(newPos.x, newPos.y);
                 }
                 else if (e.key === 'ArrowDown') {
                     newPos.y = hero.y + 1;
+                    newPos.direction = 'heroGoDown';
                     result = this.dungeon.checkAccess(newPos.x, newPos.y);
                 }
                 else if (e.key === 'ArrowLeft') {
                     newPos.x = hero.x - 1;
+                    newPos.direction = 'heroGoLeft';
                     result = this.dungeon.checkAccess(newPos.x, newPos.y);
                 }
                 else if (e.key === 'ArrowRight') {
                     newPos.x = hero.x + 1;
+                    newPos.direction = 'heroGoRight';
                     result = this.dungeon.checkAccess(newPos.x, newPos.y);
                 }
                 else if (e.key === 'o' || e.key === 'O') { this.goToMenu(state); }
@@ -58,7 +62,7 @@ export default class Game {
                 if (result === 'move') {
                     state.updatePos(newPos.x, newPos.y);
                     this.dungeon.updatePos(state.game.currLvl, newPos.x, newPos.y);
-                    this.drawLvl(state.game.levels[state.game.currLvl]);
+                    this.drawLvl(state.game.levels[state.game.currLvl], newPos.direction);
 
                     if (state.game.levels[state.game.currLvl][newPos.x][newPos.y].content.artefact === 'stairDown') {
 
@@ -136,7 +140,7 @@ export default class Game {
         gameData.levels.push(lvl.lvlMap);
     }
 
-    drawLvl(lvl) {
+    drawLvl(lvl, heroDirection = 'heroGoLeft') {
         const back = this.canvases.get('background');
         const img = this.images['newTileset'];
         const mid = { w: back.can.width / 2, h: back.can.height / 2 };
@@ -177,8 +181,8 @@ export default class Game {
             if (tile.content.hero) {
                 back.context.drawImage(
                     img,
-                    img.data['heroGoLeft'].x * img.data.tileSize,
-                    img.data['heroGoLeft'].y * img.data.tileSize,
+                    img.data[heroDirection].x * img.data.tileSize,
+                    img.data[heroDirection].y * img.data.tileSize,
                     ...commonData
                 );
             }

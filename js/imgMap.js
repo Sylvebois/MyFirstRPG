@@ -1,5 +1,5 @@
 const newTileset = {
-    tileSize: 32,
+    tileSize: 64,
     wall: { x: 0, y: 0 },
     ground: { x: 1, y: 0 },
     heroGoLeft: { x: 2, y: 0 },
