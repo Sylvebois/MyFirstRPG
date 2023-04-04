@@ -8,7 +8,7 @@ let state = {
     assets: { images: [], musics: [], sounds: [] },
     options: {
         language: 'fr',
-        music: true,
+        music: false,
         sound: false,
     },
     game: {
@@ -24,7 +24,7 @@ let state = {
      }
 };
 
-(async () => {
+(() => {
     let loader = new Loader(state);
     let allPromises = new Array().concat(
         loader.loadImg(state.assets.images),

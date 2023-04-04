@@ -51,11 +51,13 @@ export default class Loader {
                 let url = './assets/musics/' + musicName;
 
                 musics[paramName] = new Audio();
-                musics[paramName].setAttribute('src', url);
-                musics[paramName].setAttribute('type', 'audio/mp3');
-                musics[paramName].setAttribute('loop', 'loop');
-                musics[paramName].addEventListener('loadeddata', e => loadingText.innerText = `Loading ${musicName} ...`)
-                musics[paramName].addEventListener('canplaythrough', e => resolve(console.log(`OK --> ${musicName}`)));
+                musics[paramName].src = url;
+                musics[paramName].type = 'audio/mp3';
+                musics[paramName].loop = true;
+                musics[paramName].addEventListener('canplaythrough', e => {
+                    loadingText.innerText = `Loading ${musicName} ...`
+                    resolve(console.log(`OK --> ${musicName}`))
+                });
                 musics[paramName].addEventListener('error', err => reject(loadingText.innerText = `ERROR loading ${musicName}`));
             })
         })
@@ -71,8 +73,10 @@ export default class Loader {
                 let url = './assets/sounds/' + soundName;
 
                 sounds[paramName] = new Audio();
-                sounds[paramName].addEventListener('loadeddata', e => loadingText.innerText = `Loading ${soundName} ...`)
-                sounds[paramName].addEventListener('canplaythrough', e => resolve(console.log(`OK --> ${soundName}`)));
+                sounds[paramName].addEventListener('canplaythrough', e => {
+                    loadingText.innerText = `Loading ${soundName} ...`
+                    resolve(console.log(`OK --> ${soundName}`))
+                });
                 sounds[paramName].addEventListener('error', err => reject(loadingText.innerText = `ERROR loading ${soundName}`));
                 sounds[paramName].src = url;
             })

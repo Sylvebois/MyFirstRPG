@@ -26,6 +26,7 @@ export default class Game {
 
         window.addEventListener('resize', e => {
             this.setCanvasSize();
+            if(state.game.levels.length === 0) { this.generateLvl(state.game) }
             this.drawLvl(state.game.levels[state.game.currLvl]);
         });
 
@@ -143,8 +144,8 @@ export default class Game {
         const heroAbs = { x: this.dungeon.hero.x * this.tileSizeOnScreen, y: this.dungeon.hero.y * this.tileSizeOnScreen };
         const distToBorder = { x: mapSizeAbs.w - heroAbs.x, y: mapSizeAbs.h - heroAbs.y };
         const cam = {
-            x: (heroAbs.x < mid.w) ? 0 : (distToBorder.x <= mid.w) ? -1 * (mapSizeAbs.w - back.can.w) : mid.w - heroAbs.x,
-            y: (heroAbs.y < mid.h) ? 0 : (distToBorder.y <= mid.h) ? -1 * (mapSizeAbs.h - back.can.h) : mid.h - heroAbs.y
+            x: (heroAbs.x < mid.w) ? 0 : (distToBorder.x <= mid.w) ? -1 * (mapSizeAbs.w - back.can.width) : mid.w - heroAbs.x,
+            y: (heroAbs.y < mid.h) ? 0 : (distToBorder.y <= mid.h) ? -1 * (mapSizeAbs.h - back.can.height) : mid.h - heroAbs.y
         }
 
         lvl.forEach((x, idx) => x.forEach((tile, idy) => {
