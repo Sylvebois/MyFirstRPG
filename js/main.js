@@ -14,7 +14,16 @@ let state = {
     game: {
         levels: [],
         currLvl: 0,
-        player: { name: '', st: 0, dx: 0, iq: 0, hp: 0, vision: 2 }
+        player: { 
+            name: '', 
+            st: 0, 
+            dx: 0, 
+            iq: 0, 
+            hp: 0, 
+            vision: 2,
+            inventory: new Array(10),
+            body: new Array(5)
+         }
     },
     updatePos: (newX, newY) => { 
         state.game.levels[state.game.currLvl][state.game.player.x][state.game.player.y].content.hero = false;

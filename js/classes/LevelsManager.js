@@ -125,17 +125,22 @@ export class DungeonManager {
 
     checkAccess(x, y) {
         if (x >= 0 && x < this.mapSize[0] && y >= 0 && y < this.mapSize[1]) {
-            if (this.lvlMaps[this.currLvl][x][y].type === 'wall') {
-                return 'wall';
+            const cell = this.lvlMaps[this.currLvl][x][y]
+            if (cell.type === 'wall') {
+                return { isAccessible: false, event: 'wall' };
             }
-            else if (this.lvlMaps[this.currLvl][x][y].content.monster) {
-                return 'monster';
+            else if (cell.content.monster) {
+                return { isAccessible: false, event: 'monster' };
             }
             else {
-                return 'move';
+                return { isAccessible: true, event: cell.content.artefact };
             }
         }
-    };
+    }
+
+    checkArtefact(x, y) {
+
+    }
 
     updatePos(lvl, x, y) {
         this.lvlMaps[lvl][this.hero.x][this.hero.y].content.hero = false;

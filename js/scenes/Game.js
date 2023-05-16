@@ -24,6 +24,8 @@ export default class Game {
         buttons[0].addEventListener('click', e => this.goToMenu(state));
         buttons[1].addEventListener('click', e => this.goToInventory(state));
 
+        this.canvases.get('background').can.addEventListener('click', () => console.log('background clicked'));
+
         window.addEventListener('resize', e => {
             this.setCanvasSize();
             if(state.game.levels.length === 0) { this.generateLvl(state.game) }
@@ -59,16 +61,16 @@ export default class Game {
                 else if (e.key === 'o' || e.key === 'O') { this.goToMenu(state); }
                 else if (e.key === 'i' || e.key === 'I') { this.goToInventory(state); }
 
-                if (result === 'move') {
+                if (result.isAccessible) {
                     state.updatePos(newPos.x, newPos.y);
                     this.dungeon.updatePos(state.game.currLvl, newPos.x, newPos.y);
                     this.drawLvl(state.game.levels[state.game.currLvl], newPos.direction);
 
-                    if (state.game.levels[state.game.currLvl][newPos.x][newPos.y].content.artefact === 'stairDown') {
+                    if(result.event) {
 
                     }
                 }
-                else if (result === 'monster') {
+                else if (result.event === 'monster') {
 
                 }
             }
@@ -187,7 +189,7 @@ export default class Game {
                 );
             }
 
-            if(tile.fogLvl > 0) {
+            if (tile.fogLvl > 0) {
                 back.context.fillStyle = tile.fogLvl === 2 ? 'black' : 'rgba(0,0,0,0.5)';
                 back.context.fillRect(
                     this.tileSizeOnScreen * idx + cam.x,
