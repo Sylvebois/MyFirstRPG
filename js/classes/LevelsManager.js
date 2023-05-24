@@ -34,10 +34,7 @@ class Room {
 export class DungeonManager {
     constructor(mapSize) {
         this.mapSize = mapSize;
-        this.lvlMaps = [];
         this.nbWall = 0;
-        this.currLvl = 0;
-        this.hero = { x: 0, y: 0, vision: 2 };
     }
 
     random(min = 0, max = 1, int = true) {
@@ -46,15 +43,16 @@ export class DungeonManager {
             Math.random() * (max - min) + min;
     }
 
-    generateFirstLvl() {
+    generateFirstLvl(hero) {
         const middle = {
             x: Math.floor((this.mapSize[0] - 1) / 2),
             y: Math.floor((this.mapSize[1] - 1) / 2)
         };
 
-        this.generateBasicMap(true);
-        
-        let currMap = this.lvlMaps[this.currLvl];
+        hero.x = middle.x;
+        hero.y = 1;
+
+        let currMap = this.generateBasicMap(true);
 
         currMap[middle.x][0].type = 'ground';
         this.nbWall--;
@@ -66,27 +64,23 @@ export class DungeonManager {
             }
         }
 
-        this.hero.x = middle.x;
-        this.hero.y = 1;
-
         currMap[middle.x][middle.y].content.artefact = 'stairDown';
-        currMap[this.hero.x][this.hero.y].content.hero = true;
+        currMap[hero.x][hero.y].content.hero = true;
 
-        this.cleanFog(this.hero.x, this.hero.y, this.hero.vision);
+        this.cleanFog(currMap, hero);
 
-        return { lvlMap: currMap, heroX: this.hero.x, heroY: this.hero.y };
+        return currMap;
     }
 
-    generateLvl(stairPos) {
-        this.generateBasicMap();
-        let currMap = this.lvlMaps[this.currLvl];
+    generateRandomLvl(hero) {
+        let currMap = this.generateBasicMap(true);
 
         //Step 1 : generate rooms and corridors
         const roomSize = { min: 2, max: 5 };
         const nbRoom = this.random(2, Math.floor(this.mapSize[0] - 1 / roomSize.max));
 
-        const rooms = [new Room(stairPos.x, stairPos.y, 1, 1)];
-
+        const rooms = [new Room(hero.x, hero.y, 1, 1)];
+console.log(rooms)
         for (let i = 0; i <= nbRoom; i++) {
             const w = this.random(roomSize.min, roomSize.max);
             const h = this.random(roomSize.min, roomSize.max);
@@ -102,13 +96,8 @@ export class DungeonManager {
             }
 
             if (!overlappingRooms) {
-                this.createRoom(newRoom.startX, newRoom.startY, newRoom.endX, newRoom.endY);
-
-                if (rooms.length !== 0) {
-                    let prevCenter = rooms[rooms.length - 1].mid;
-                    this.createCorridor(prevCenter, newRoom.mid);
-                }
-
+                this.createRoom(currMap, newRoom.startX, newRoom.startY, newRoom.endX, newRoom.endY);
+                this.createCorridor(currMap, rooms[rooms.length - 1].mid, newRoom.mid);
                 rooms.push(newRoom);
             }
         }
@@ -121,56 +110,58 @@ export class DungeonManager {
         currMap[stairX][stairY].content.artefact = 'stairDown';
         currMap[stairX][stairY].type = 'ground';
 
-        currMap[stairPos.x][stairPos.y].content.artefact = 'stairUp';
-        currMap[stairPos.x][stairPos.y].type = 'ground';
-        currMap[this.hero.x][this.hero.y].content.hero = true;
+        currMap[hero.x][hero.y].content.artefact = 'stairUp';
+        currMap[hero.x][hero.y].type = 'ground';
+        currMap[hero.x][hero.y].content.hero = true;
 
-        this.cleanFog(this.hero.x, this.hero.y, this.hero.vision);
+        this.cleanFog(currMap, hero);
 
         //Step 3 : generate items and monsters
         //this.countFloorTiles();
         //this.generateStuff('item');
         //this.generateStuff('monstre');
-        return { lvlMap: currMap, heroX: this.hero.x, heroY: this.hero.y };
+        return currMap;
     }
 
-    createRoom(x1 = 0, y1 = 0, x2 = 0, y2 = 0) {
-        console.log(`${x1} ${y1} ${x2} ${y2}`)
+    createRoom(currMap, x1 = 0, y1 = 0, x2 = 0, y2 = 0) {
+        console.log(`Room: ${x1} ${y1} ${x2} ${y2}`)
         for (let i = x1; i <= x2; i++) {
             for (let j = y1; j <= y2; j++) {
-                this.lvlMaps[this.currLvl][i][j].type = 'ground';
+                currMap[i][j].type = 'ground';
             }
         }
     }
 
-    createCorridor(centerPrev, centerNew) {
+    createCorridor(currMap, centerPrev, centerNew) {
         if (this.random(0, 1)) {
+            console.log('random 1')
             let midPoint = { x: centerPrev.x, y: centerNew.y };
-            this.vMove(midPoint, centerPrev);
-            this.hMove(midPoint, centerNew);
+            this.vMove(currMap, midPoint, centerPrev);
+            this.hMove(currMap, midPoint, centerNew);
         }
         else {
+            console.log('random 0')
             let midPoint = { x: centerNew.x, y: centerPrev.y };
-            this.vMove(midPoint, centerNew);
-            this.hMove(midPoint, centerPrev);
+            this.vMove(currMap, midPoint, centerNew);
+            this.hMove(currMap, midPoint, centerPrev);
         }
     }
 
-    vMove(aCoord, bCoord) {
+    vMove(currMap, aCoord, bCoord) {
         let i = (aCoord.y <= bCoord.y) ? aCoord.y : bCoord.y;
         const j = (aCoord.y <= bCoord.y) ? bCoord.y : aCoord.y;
-
+        console.log(`vMove i:${i} j:${j}`, aCoord, bCoord)
         for (i; i < j; i++) {
-            this.lvlMaps[this.currLvl][aCoord.x][i].type = 'ground';
+            currMap[aCoord.x][i].type = 'ground';
         }
     }
 
-    hMove(aCoord, bCoord) {
+    hMove(currMap, aCoord, bCoord) {
         let i = (aCoord.x <= bCoord.x) ? aCoord.x : bCoord.x;
         const j = (aCoord.x <= bCoord.x) ? bCoord.x : aCoord.x;
-
+        console.log(`hMove i:${i} j:${j}`, aCoord, bCoord)
         for (i; i < j; i++) {
-            this.lvlMaps[this.currLvl][i][aCoord.y].type = 'ground';
+            currMap[i][aCoord.y].type = 'ground';
         }
     }
 
@@ -186,13 +177,11 @@ export class DungeonManager {
                 currMap[i][j] = new Tile(i, j, 'wall', fog);
             }
         }
-        this.lvlMaps[this.currLvl] = currMap;
+        return currMap;
     }
 
-    cleanFog(x, y, visibility) {
-        let currMap = this.lvlMaps[this.currLvl];
-
-        for (let nbEtage = visibility; nbEtage >= 0; nbEtage--) {
+    cleanFog(currMap, { x, y, vision }) {
+        for (let nbEtage = vision; nbEtage >= 0; nbEtage--) {
             let cmp = 0;
 
             for (let i = x - nbEtage; i <= x + nbEtage; i++) {
@@ -211,7 +200,7 @@ export class DungeonManager {
         }
 
         let cmp = 0;
-        for (let i = x - visibility - 1; i <= x + visibility + 1; i++) {
+        for (let i = x - vision - 1; i <= x + vision + 1; i++) {
             let y1 = y - cmp;
             let y2 = y + cmp;
 
@@ -227,9 +216,9 @@ export class DungeonManager {
         }
     }
 
-    checkAccess(x, y) {
+    checkAccess(currMap, x, y) {
         if (x >= 0 && x < this.mapSize[0] && y >= 0 && y < this.mapSize[1]) {
-            const cell = this.lvlMaps[this.currLvl][x][y]
+            const cell = currMap[x][y]
             if (cell.type === 'wall') {
                 return { isAccessible: false, event: 'wall' };
             }
@@ -244,13 +233,5 @@ export class DungeonManager {
 
     checkArtefact(x, y) {
 
-    }
-
-    updatePos(lvl, x, y) {
-        this.lvlMaps[lvl][this.hero.x][this.hero.y].content.hero = false;
-        this.lvlMaps[lvl][x][y].content.hero = true;
-        this.hero.x = x;
-        this.hero.y = y;
-        this.cleanFog(this.hero.x, this.hero.y, this.hero.vision);
     }
 }

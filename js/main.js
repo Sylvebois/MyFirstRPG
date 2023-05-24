@@ -19,7 +19,9 @@ let state = {
             st: 0, 
             dx: 0, 
             iq: 0, 
-            hp: 0, 
+            hp: 0,
+            x:0,
+            y:0, 
             vision: 2,
             inventory: new Array(10),
             body: new Array(5)

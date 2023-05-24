@@ -74,7 +74,7 @@ export default class Menu {
 
         if(state.game.levels.length === 0) { this.game.generateLvl(state.game) }
         this.game.goToGame(state);
-        this.game.drawLvl(state.game.levels[state.game.currLvl]);
+        this.game.drawLvl(state.game);
     }
 
     setIntroText(state) {
@@ -123,7 +123,6 @@ export default class Menu {
     }
 
     playMusic(music) {
-        console.log(music)
         if (music.paused) { music.play(); }
     }
 
