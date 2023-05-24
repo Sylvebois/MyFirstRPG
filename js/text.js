@@ -36,7 +36,7 @@ De toute façon, le baragouinage des lanceurs de sort ressemble à du troll comm
 
 Vous rassemblez ce qui vous reste de courage et d'honneur et vous retournez dans la caverne, décidé à mettre une raclée à Marcel ...`,
         en:
-        `When the haze in your mind dissipates, you are at home, slumped on the floor with a taste of earth in your mouth... 
+            `When the haze in your mind dissipates, you are at home, slumped on the floor with a taste of earth in your mouth... 
 When you go out to see the priest to find out what happened, the giggles and snickers of your fellow citizens make you realize that your quest did not turn out as planned...
 The priest explains to you: "um, Marcel managed to read a scroll of stupidity, it suppresses all the intelligence of the target. It's a miracle you were able to get home. You would need a protective helmet but I did... uh... lost it."
 Anyway, spellcaster chatter sounds like common troll, so a troll gabbling magic is not surprising in your opinion.
@@ -71,8 +71,14 @@ const dialogs = {
         },
         { fr: "*Soupirs*", en: "*Sig*" }
     ],
-    midLvl:[],
-    lastLvl:[]
+    midLvl: [],
+    lastLvl: []
+};
+
+const inGameTxt = {
+    goDown: { fr: "Descendre ?", en: "Go Down?" },
+    goUp: { fr: "Monter ?", en: "Go Up?" },
+    take: { fr: "Prendre", en: "Take" }
 };
 
 const buttons = {
@@ -107,13 +113,13 @@ const forms = {
     lang: { fr: "Langue : ", en: "Language : " },
     langFr: { fr: "Français", en: "French" },
     langEn: { fr: "Anglais", en: "English" }
-}
+};
 
 const titles = {
     newGame: { fr: "Nouvelle partie", en: "Start a new game" },
     loadGame: { fr: "Charger une partie", en: "Load a game" },
     optionsGame: { fr: "Options", en: "Options" }
-}
+};
 
 const credits = {
     thanks: {
@@ -132,6 +138,6 @@ Graphics :
 OpenGameArt.org
 Dall-E`
     }
-}
+};
 
-export { story, buttons, forms, titles };
+export { story, buttons, forms, titles, inGameTxt };

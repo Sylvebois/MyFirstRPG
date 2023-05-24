@@ -1,4 +1,5 @@
 import { DungeonManager } from '../classes/LevelsManager.js';
+import { inGameTxt } from '../text.js';
 
 export default class Game {
     constructor(state) {
@@ -24,18 +25,25 @@ export default class Game {
         buttons[0].addEventListener('click', e => this.goToMenu(state));
         buttons[1].addEventListener('click', e => this.goToInventory(state));
 
-        this.canvases.get('background').can.addEventListener('click', () => console.log('background clicked'));
+        this.canvases.get('background').can.addEventListener('click', () => {
+            if (state.currScene === 'gameInterface') {
+                //pathFinding
+            }
+            else if (state.currScene === 'inventory') {
+                //dragndrop?
+            }
+        });
 
         window.addEventListener('resize', e => {
             this.setCanvasSize();
-            if(state.game.levels.length === 0) { this.generateLvl(state.game) }
+            if (state.game.levels.length === 0) { this.generateLvl(state.game) }
             this.drawLvl(state.game.levels[state.game.currLvl]);
         });
 
         window.addEventListener('keydown', e => {
             if (state.currScene === 'gameInterface') {
                 let hero = state.game.player;
-                let newPos = { x: hero.x, y: hero.y, direction:'heroGoLeft' };
+                let newPos = { x: hero.x, y: hero.y, direction: 'heroGoLeft' };
                 let result = null;
 
                 if (e.key === 'ArrowUp') {
@@ -66,8 +74,31 @@ export default class Game {
                     this.dungeon.updatePos(state.game.currLvl, newPos.x, newPos.y);
                     this.drawLvl(state.game.levels[state.game.currLvl], newPos.direction);
 
-                    if(result.event) {
+                    if (result.event) {
+                        if (result.event === 'stairDown' &&
+                            window.confirm(inGameTxt.goDown[state.options.language])
+                        ) {
+                            state.game.currLvl++;
+                            this.dungeon.currLvl++;
 
+                            if (!state.game.levels[state.game.currLvl]) {
+                                this.generateLvl(state.game);
+                            }
+
+                            this.drawLvl(state.game.levels[state.game.currLvl], newPos.direction);
+                        }
+                        else if (result.event === 'stairUp' &&
+                            window.confirm(inGameTxt.goUp[state.options.language])
+                        ) {
+                            state.game.currLvl--;
+                            this.dungeon.currLvl--;
+                            this.drawLvl(state.game.levels[state.game.currLvl], newPos.direction);
+                        }
+                        else if (!result.event.startsWith('stair') &&
+                            window.confirm(`${inGameTxt.take[state.options.language]} ${result.event}`)
+                        ) {
+
+                        }
                     }
                 }
                 else if (result.event === 'monster') {
@@ -135,6 +166,10 @@ export default class Game {
 
         if (gameData.levels.length === 0) {
             lvl = this.dungeon.generateFirstLvl();
+        }
+        else {
+            const stairPos = { x: gameData.player.x, y: gameData.player.y };
+            lvl = this.dungeon.generateLvl(stairPos);
         }
 
         gameData.player.x = lvl.heroX;
