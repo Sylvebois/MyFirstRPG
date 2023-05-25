@@ -80,7 +80,7 @@ export class DungeonManager {
         const nbRoom = this.random(2, Math.floor(this.mapSize[0] - 1 / roomSize.max));
 
         const rooms = [new Room(hero.x, hero.y, 1, 1)];
-console.log(rooms)
+
         for (let i = 0; i <= nbRoom; i++) {
             const w = this.random(roomSize.min, roomSize.max);
             const h = this.random(roomSize.min, roomSize.max);
@@ -104,8 +104,8 @@ console.log(rooms)
 
         //Step 2 : generate stair up and down
         let index = this.random(1, rooms.length - 1);
-        let stairX = this.random(rooms[index].x1, rooms[index].x2);
-        let stairY = this.random(rooms[index].y1, rooms[index].y2);
+        let stairX = this.random(rooms[index].startX, rooms[index].endX);
+        let stairY = this.random(rooms[index].startY, rooms[index].endY);
 
         currMap[stairX][stairY].content.artefact = 'stairDown';
         currMap[stairX][stairY].type = 'ground';
@@ -124,7 +124,6 @@ console.log(rooms)
     }
 
     createRoom(currMap, x1 = 0, y1 = 0, x2 = 0, y2 = 0) {
-        console.log(`Room: ${x1} ${y1} ${x2} ${y2}`)
         for (let i = x1; i <= x2; i++) {
             for (let j = y1; j <= y2; j++) {
                 currMap[i][j].type = 'ground';
@@ -134,13 +133,11 @@ console.log(rooms)
 
     createCorridor(currMap, centerPrev, centerNew) {
         if (this.random(0, 1)) {
-            console.log('random 1')
             let midPoint = { x: centerPrev.x, y: centerNew.y };
             this.vMove(currMap, midPoint, centerPrev);
             this.hMove(currMap, midPoint, centerNew);
         }
         else {
-            console.log('random 0')
             let midPoint = { x: centerNew.x, y: centerPrev.y };
             this.vMove(currMap, midPoint, centerNew);
             this.hMove(currMap, midPoint, centerPrev);
@@ -150,8 +147,8 @@ console.log(rooms)
     vMove(currMap, aCoord, bCoord) {
         let i = (aCoord.y <= bCoord.y) ? aCoord.y : bCoord.y;
         const j = (aCoord.y <= bCoord.y) ? bCoord.y : aCoord.y;
-        console.log(`vMove i:${i} j:${j}`, aCoord, bCoord)
-        for (i; i < j; i++) {
+
+        for (i; i <= j; i++) {
             currMap[aCoord.x][i].type = 'ground';
         }
     }
@@ -159,8 +156,8 @@ console.log(rooms)
     hMove(currMap, aCoord, bCoord) {
         let i = (aCoord.x <= bCoord.x) ? aCoord.x : bCoord.x;
         const j = (aCoord.x <= bCoord.x) ? bCoord.x : aCoord.x;
-        console.log(`hMove i:${i} j:${j}`, aCoord, bCoord)
-        for (i; i < j; i++) {
+
+        for (i; i <= j; i++) {
             currMap[i][aCoord.y].type = 'ground';
         }
     }
