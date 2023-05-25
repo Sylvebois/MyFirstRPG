@@ -25,9 +25,18 @@ export default class Game {
         buttons[0].addEventListener('click', e => this.goToMenu(state));
         buttons[1].addEventListener('click', e => this.goToInventory(state));
 
-        this.canvases.get('background').can.addEventListener('click', () => {
+        this.canvases.get('background').can.addEventListener('click', e => {
             if (state.currScene === 'gameInterface') {
                 //pathFinding
+                let currMap = state.game.levels[state.game.currLvl];
+                let hero = state.game.player;
+                let dest = {
+                    x: e.layerX, // should be something like (layerX / tileSizeOnScreen) + camera offset ?
+                    y: e.layerY
+                };
+                const path = this.dungeon.findPath(currMap, hero);
+
+                if (path) { this.moveSequence(currMap, hero, path); }
             }
             else if (state.currScene === 'inventory') {
                 //dragndrop?
@@ -50,7 +59,7 @@ export default class Game {
                 if (e.key === 'ArrowUp') {
                     newPos.y = hero.y - 1;
                     newPos.direction = 'heroGoUp';
-                    result = this.dungeon.checkAccess(currMap,newPos.x, newPos.y);
+                    result = this.dungeon.checkAccess(currMap, newPos.x, newPos.y);
                 }
                 else if (e.key === 'ArrowDown') {
                     newPos.y = hero.y + 1;
@@ -70,7 +79,7 @@ export default class Game {
                 else if (e.key === 'o' || e.key === 'O') { this.goToMenu(state); }
                 else if (e.key === 'i' || e.key === 'I') { this.goToInventory(state); }
 
-                if (result.isAccessible) {
+                if (result && result.isAccessible) {
                     state.updatePos(newPos.x, newPos.y);
                     this.dungeon.cleanFog(currMap, hero);
                     this.drawLvl(state.game, newPos.direction);
@@ -100,7 +109,7 @@ export default class Game {
                         }
                     }
                 }
-                else if (result.event === 'monster') {
+                else if (result && result.event === 'monster') {
 
                 }
             }
@@ -230,5 +239,9 @@ export default class Game {
                 )
             }
         }))
+    }
+
+    moveSequence(currMap, hero, path) {
+
     }
 }

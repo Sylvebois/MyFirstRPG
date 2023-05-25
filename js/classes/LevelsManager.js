@@ -231,4 +231,117 @@ export class DungeonManager {
     checkArtefact(x, y) {
 
     }
+
+    findPath(currMap, { x, y }, dest) {
+        if (currMap[dest.x][dest.y].type === 'wall' || currMap[dest.x][dest.y].fogLvl === 2) {
+            return [];
+        }
+        else {
+            const graph = this.createGraph(currMap);
+            const pathDist = this.createPath({ x, y }, graph)
+            return pathDist > 0 ? this.getPath(dest, graph) : []
+        }
+    }
+
+    createGraph(currMap, dest) {
+        const graph = []
+
+        for (let i = 0; i < this.mapSize[0]; i++) {
+            const line = []
+
+            for (let j = 0; j < this.mapSize[1]; j++) {
+                const data = {
+                    accessible:
+                        currMap[i][j].type === 'wall' ||
+                            currMap[i][j].fogLvl === 2 ||
+                            currMap[i][j].content.monster ?
+                            false : true,
+                    x: j,
+                    y: i,
+                    links: [],
+                    parent: null,
+                    dist: null
+                }
+
+                if (data.accessible) {
+                    if ((data.y - 1 >= 0 &&
+                        currMap[i][data.y - 1].type !== 'wall' &&
+                        currMap[i][data.y - 1].fogLvl < 2 &&
+                        !currMap[i][data.y - 1].content.monster) ||
+                        (dest.x === i && dest.y === data.y - 1)
+                    ) {
+                        data.links.push({ x: data.x, y: data.y - 1 })
+                    }
+
+                    if ((data.y + 1 < this.mapSize[1] &&
+                        currMap[i][data.y + 1].type !== 'wall' &&
+                        currMap[i][data.y + 1].fogLvl < 2 &&
+                        !currMap[i][data.y + 1].content.monster)||
+                        (dest.x === i && dest.y === data.y + 1)
+                    ) {
+                        data.links.push({ x: data.x, y: data.y + 1 })
+                    }
+
+                    if ((data.x - 1 >= 0 &&
+                        currMap[data.x - 1][j].type !== 'wall' &&
+                        currMap[data.x - 1][j].fogLvl < 2 &&
+                        !currMap[data.x - 1][j].content.monster) ||
+                        (dest.x === data.x - 1 && dest.y === j)
+                    ) {
+                        data.links.push({ x: data.x - 1, y: data.y })
+                    }
+                    if ((data.x + 1 < this.mapSize[0] &&
+                        currMap[data.x + 1][j] !== 'wall' &&
+                        !currMap[data.x + 1][j].content.monster) ||
+                        (dest.x === data.x + 1 && dest.y === j)
+                    ) {
+                        data.links.push({ x: data.x + 1, y: data.y })
+                    }
+                }
+                line.push(data)
+            }
+            graph.push(line)
+        }
+        return graph
+    }
+
+    createPath(start, graph) {
+        let score = 0
+        let queue = [graph[start.x][start.y]]
+        queue[0].dist = 1
+
+        while (queue.length > 0) {
+            let node = queue[0]
+            node.visited = true
+
+            queue.shift()
+
+            node.links.forEach(link => {
+                let nextNode = graph[link.x][link.y]
+                if (!nextNode.visited || nextNode.dist > node.dist + 1) {
+                    nextNode.parent = { x: node.x, y: node.y }
+                    nextNode.dist = node.dist + 1
+                    queue.push(nextNode)
+                }
+            })
+
+            if (queue.length === 0) {
+                score = node.dist
+            }
+        }
+
+        return score
+    }
+
+    getPath(end, graph) {
+        const pathArray = [];
+        let node = graph[end.x][end.y];
+
+        while (node.parent) {
+            pathArray.push(node.parent);
+            node = graph[node.parent.x][node.parent.y];
+        }
+
+        return pathArray.reverse();
+    }
 }
