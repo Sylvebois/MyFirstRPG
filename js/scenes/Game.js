@@ -15,6 +15,7 @@ export default class Game {
 
         this.canvases = this.initCanvases();
         this.images = state.assets.images;
+        this.camera = { x: 0, y: 0 }
         this.initEventListeners(state);
     }
 
@@ -31,12 +32,12 @@ export default class Game {
                 let currMap = state.game.levels[state.game.currLvl];
                 let hero = state.game.player;
                 let dest = {
-                    x: e.layerX, // should be something like (layerX / tileSizeOnScreen) + camera offset ?
-                    y: e.layerY
+                    x: Math.floor(e.layerX / this.tileSizeOnScreen) - this.camera.x / this.tileSizeOnScreen, // should be something like (layerX / tileSizeOnScreen) + camera offset ?
+                    y: Math.floor(e.layerY / this.tileSizeOnScreen) - this.camera.y / this.tileSizeOnScreen
                 };
-                const path = this.dungeon.findPath(currMap, hero);
-
-                if (path) { this.moveSequence(currMap, hero, path); }
+                //const path = this.dungeon.findPath(currMap, hero);
+                console.log(dest.x, dest.y , hero.x, hero.y)
+                // if (path) { this.moveSequence(currMap, hero, path); }
             }
             else if (state.currScene === 'inventory') {
                 //dragndrop?
@@ -189,7 +190,7 @@ export default class Game {
         const mapSizeAbs = { w: this.mapSize[0] * this.tileSizeOnScreen, h: this.mapSize[1] * this.tileSizeOnScreen };
         const heroAbs = { x: gameData.player.x * this.tileSizeOnScreen, y: gameData.player.y * this.tileSizeOnScreen };
         const distToBorder = { x: mapSizeAbs.w - heroAbs.x, y: mapSizeAbs.h - heroAbs.y };
-        const cam = {
+        this.camera = {
             x: (heroAbs.x < mid.w) ? 0 : (distToBorder.x <= mid.w) ? -1 * (mapSizeAbs.w - back.can.width) : mid.w - heroAbs.x,
             y: (heroAbs.y < mid.h) ? 0 : (distToBorder.y <= mid.h) ? -1 * (mapSizeAbs.h - back.can.height) : mid.h - heroAbs.y
         }
@@ -198,8 +199,8 @@ export default class Game {
             const commonData = [
                 img.data.tileSize,
                 img.data.tileSize,
-                this.tileSizeOnScreen * idx + cam.x,
-                this.tileSizeOnScreen * idy + cam.y,
+                this.tileSizeOnScreen * idx + this.camera.x,
+                this.tileSizeOnScreen * idy + this.camera.y,
                 this.tileSizeOnScreen,
                 this.tileSizeOnScreen
             ];
@@ -232,8 +233,8 @@ export default class Game {
             if (tile.fogLvl > 0) {
                 back.context.fillStyle = tile.fogLvl === 2 ? 'black' : 'rgba(0,0,0,0.5)';
                 back.context.fillRect(
-                    this.tileSizeOnScreen * idx + cam.x,
-                    this.tileSizeOnScreen * idy + cam.y,
+                    this.tileSizeOnScreen * idx + this.camera.x,
+                    this.tileSizeOnScreen * idy + this.camera.y,
                     this.tileSizeOnScreen,
                     this.tileSizeOnScreen
                 )
