@@ -232,14 +232,13 @@ export class DungeonManager {
 
     }
 
-    findPath(currMap, { x, y }, dest) {
+    findPath(currMap, start, dest) {
         if (currMap[dest.x][dest.y].type === 'wall' || currMap[dest.x][dest.y].fogLvl === 2) {
             return [];
         }
         else {
-            const graph = this.createGraph(currMap);
-            const pathDist = this.createPath({ x, y }, graph)
-            return pathDist > 0 ? this.getPath(dest, graph) : []
+            const graph = this.createGraph(currMap, dest);
+            return this.createPath(start, dest, graph);
         }
     }
 
@@ -247,17 +246,13 @@ export class DungeonManager {
         const graph = []
 
         for (let i = 0; i < this.mapSize[0]; i++) {
-            const line = []
+            const line = [];
 
             for (let j = 0; j < this.mapSize[1]; j++) {
                 const data = {
-                    accessible:
-                        currMap[i][j].type === 'wall' ||
-                            currMap[i][j].fogLvl === 2 ||
-                            currMap[i][j].content.monster ?
-                            false : true,
-                    x: j,
-                    y: i,
+                    accessible: (currMap[i][j].type === 'wall' || currMap[i][j].fogLvl === 2 || currMap[i][j].content.monster) ? false : true,
+                    x: i,
+                    y: j,
                     links: [],
                     parent: null,
                     dist: null
@@ -276,7 +271,7 @@ export class DungeonManager {
                     if ((data.y + 1 < this.mapSize[1] &&
                         currMap[i][data.y + 1].type !== 'wall' &&
                         currMap[i][data.y + 1].fogLvl < 2 &&
-                        !currMap[i][data.y + 1].content.monster)||
+                        !currMap[i][data.y + 1].content.monster) ||
                         (dest.x === i && dest.y === data.y + 1)
                     ) {
                         data.links.push({ x: data.x, y: data.y + 1 })
@@ -291,7 +286,8 @@ export class DungeonManager {
                         data.links.push({ x: data.x - 1, y: data.y })
                     }
                     if ((data.x + 1 < this.mapSize[0] &&
-                        currMap[data.x + 1][j] !== 'wall' &&
+                        currMap[data.x + 1][j].type !== 'wall' &&
+                        currMap[data.x + 1][j].fogLvl < 2 &&
                         !currMap[data.x + 1][j].content.monster) ||
                         (dest.x === data.x + 1 && dest.y === j)
                     ) {
@@ -305,10 +301,9 @@ export class DungeonManager {
         return graph
     }
 
-    createPath(start, graph) {
-        let score = 0
+    createPath(start, dest, graph) {
         let queue = [graph[start.x][start.y]]
-        queue[0].dist = 1
+        queue[0].dist = 0
 
         while (queue.length > 0) {
             let node = queue[0]
@@ -324,22 +319,14 @@ export class DungeonManager {
                     queue.push(nextNode)
                 }
             })
-
-            if (queue.length === 0) {
-                score = node.dist
-            }
         }
 
-        return score
-    }
+        let currNode = graph[dest.x][dest.y];
+        const pathArray = [{ x: currNode.x, y: currNode.y }];
 
-    getPath(end, graph) {
-        const pathArray = [];
-        let node = graph[end.x][end.y];
-
-        while (node.parent) {
-            pathArray.push(node.parent);
-            node = graph[node.parent.x][node.parent.y];
+        while (currNode.parent) {
+            pathArray.push(currNode.parent);
+            currNode = graph[currNode.parent.x][currNode.parent.y];
         }
 
         return pathArray.reverse();

@@ -29,15 +29,17 @@ export default class Game {
         this.canvases.get('background').can.addEventListener('click', e => {
             if (state.currScene === 'gameInterface') {
                 //pathFinding
+                //<TO DO> Should update fog after each move and update the path if necessary
+                //<TO DO> Should unify the move when clicking and when pressing a key
                 let currMap = state.game.levels[state.game.currLvl];
                 let hero = state.game.player;
                 let dest = {
-                    x: Math.floor(e.layerX / this.tileSizeOnScreen) - this.camera.x / this.tileSizeOnScreen, // should be something like (layerX / tileSizeOnScreen) + camera offset ?
-                    y: Math.floor(e.layerY / this.tileSizeOnScreen) - this.camera.y / this.tileSizeOnScreen
+                    x: Math.floor(e.layerX / this.tileSizeOnScreen - this.camera.x / this.tileSizeOnScreen),
+                    y: Math.floor(e.layerY / this.tileSizeOnScreen - this.camera.y / this.tileSizeOnScreen)
                 };
-                //const path = this.dungeon.findPath(currMap, hero);
-                console.log(dest.x, dest.y , hero.x, hero.y)
-                // if (path) { this.moveSequence(currMap, hero, path); }
+                const path = this.dungeon.findPath(currMap, { x: hero.x, y: hero.y }, dest);
+
+                if (path.length) { this.moveSequence(state, hero, path); }
             }
             else if (state.currScene === 'inventory') {
                 //dragndrop?
@@ -90,7 +92,7 @@ export default class Game {
                             window.confirm(inGameTxt.goDown[state.options.language])
                         ) {
                             state.game.currLvl++;
-                            console.log('go down')
+
                             if (!state.game.levels[state.game.currLvl]) {
                                 this.generateLvl(state.game);
                             }
@@ -242,7 +244,16 @@ export default class Game {
         }))
     }
 
-    moveSequence(currMap, hero, path) {
+    moveSequence(state, hero, path) {
+        let cmp = 0;
+        let interval = setInterval(() => {
+            state.updatePos(path[cmp].x, path[cmp].y);
+            this.dungeon.cleanFog(state.game.levels[state.game.currLvl], hero);
+            this.drawLvl(state.game, 'heroGoLeft');
 
+            cmp++;
+
+            if (cmp === path.length) { clearInterval(interval); }
+        }, 100)
     }
 }
