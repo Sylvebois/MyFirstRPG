@@ -1,4 +1,3 @@
-
 class Tile {
     constructor(x, y, type = 'wall', fogLvl = 2) {
         this.posX = parseInt(x);
@@ -6,6 +5,18 @@ class Tile {
         this.type = type;
         this.fogLvl = fogLvl;
         this.content = { hero: false, monster: false, artefact: false };
+    }
+}
+
+class Item {
+    constructor(name) {
+        this.name = name;
+    }
+}
+
+class Monster {
+    constructor(name) {
+        this.name = name;
     }
 }
 
@@ -64,7 +75,7 @@ export class DungeonManager {
             }
         }
 
-        currMap[middle.x][middle.y].content.artefact = 'stairDown';
+        currMap[middle.x][middle.y].content.artefact = new Item('stairDown');
         currMap[hero.x][hero.y].content.hero = true;
 
         this.cleanFog(currMap, hero);
@@ -107,19 +118,66 @@ export class DungeonManager {
         let stairX = this.random(rooms[index].startX, rooms[index].endX);
         let stairY = this.random(rooms[index].startY, rooms[index].endY);
 
-        currMap[stairX][stairY].content.artefact = 'stairDown';
+        currMap[stairX][stairY].content.artefact = new Item('stairDown');
         currMap[stairX][stairY].type = 'ground';
 
-        currMap[hero.x][hero.y].content.artefact = 'stairUp';
+        currMap[hero.x][hero.y].content.artefact = new Item('stairUp');
         currMap[hero.x][hero.y].type = 'ground';
         currMap[hero.x][hero.y].content.hero = true;
 
         this.cleanFog(currMap, hero);
 
         //Step 3 : generate items and monsters
-        //this.countFloorTiles();
-        //this.generateStuff('item');
-        //this.generateStuff('monstre');
+        const difficulty = this.random(1, 5);
+        let availTiles = currMap.flatMap(line => line.filter(cell => cell.type === 'ground' && !cell.content.hero && !cell.content.artefact))
+        availTiles = this.generateItems(availTiles, currMap, difficulty);
+        availTiles = this.generateMonsters(availTiles, currMap, difficulty);
+
+        return currMap;
+    }
+
+    generateItems(availTiles, currMap, difficulty) {
+        const items = ['sword', 'flail', 'book'];
+        const nbMax = Math.ceil(availTiles.length / (difficulty * 15)); //Number of items to create depend on the difficulty (but max 1/15 of the available tiles)
+        const nbToCreate = this.random(0, nbMax);
+
+        for (let i = 0; i < nbToCreate; i++) {
+            const index = this.random(0, availTiles.length - 1);
+            const itemIndex = this.random(0, items.length - 1);
+            currMap[availTiles[index].posX][availTiles[index].posY].content.artefact = new Item(items[itemIndex]);
+            availTiles.splice(index, 1);
+        }
+
+        return availTiles;
+    }
+
+    generateMonsters(availTiles, currMap, difficulty) {
+        const monsters = ['bat', 'slime'];
+        const nbMax = Math.ceil(availTiles.length / 15 * difficulty); //Number of items to create depend on the difficulty (but min 1/15 of the available tiles)
+        const nbToCreate = this.random(0, nbMax);
+
+        for (let i = 0; i < nbToCreate; i++) {
+            const index = this.random(0, availTiles.length - 1);
+            const monsterIndex = this.random(0, monsters.length - 1);
+            currMap[availTiles[index].posX][availTiles[index].posY].content.monster = new Monster(monsters[monsterIndex]);
+            availTiles.splice(index, 1);
+        }
+
+        return availTiles;
+    }
+
+    generateBasicMap(withFog = true) {
+        let fog = withFog ? 2 : 0;
+        let currMap = [];
+        this.nbWall = this.mapSize[0] * this.mapSize[1];
+
+        for (let i = 0; i < this.mapSize[0]; i++) {
+            currMap[i] = [];
+
+            for (let j = 0; j < this.mapSize[1]; j++) {
+                currMap[i][j] = new Tile(i, j, 'wall', fog);
+            }
+        }
         return currMap;
     }
 
@@ -160,21 +218,6 @@ export class DungeonManager {
         for (i; i <= j; i++) {
             currMap[i][aCoord.y].type = 'ground';
         }
-    }
-
-    generateBasicMap(withFog = true) {
-        let fog = withFog ? 2 : 0;
-        let currMap = [];
-        this.nbWall = this.mapSize[0] * this.mapSize[1];
-
-        for (let i = 0; i < this.mapSize[0]; i++) {
-            currMap[i] = [];
-
-            for (let j = 0; j < this.mapSize[1]; j++) {
-                currMap[i][j] = new Tile(i, j, 'wall', fog);
-            }
-        }
-        return currMap;
     }
 
     cleanFog(currMap, { x, y, vision }) {
@@ -223,13 +266,9 @@ export class DungeonManager {
                 return { isAccessible: false, event: 'monster' };
             }
             else {
-                return { isAccessible: true, event: cell.content.artefact };
+                return { isAccessible: true, event: cell.content.artefact.name };
             }
         }
-    }
-
-    checkArtefact(x, y) {
-
     }
 
     findPath(currMap, start, dest) {

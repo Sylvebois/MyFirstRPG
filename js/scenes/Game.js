@@ -28,9 +28,6 @@ export default class Game {
 
         this.canvases.get('background').can.addEventListener('click', e => {
             if (state.currScene === 'gameInterface') {
-                //pathFinding
-                //<TO DO> Should update fog after each move and update the path if necessary
-                //<TO DO> Should unify the move when clicking and when pressing a key
                 let currMap = state.game.levels[state.game.currLvl];
                 let hero = state.game.player;
                 let dest = {
@@ -39,7 +36,26 @@ export default class Game {
                 };
                 const path = this.dungeon.findPath(currMap, { x: hero.x, y: hero.y }, dest);
 
-                if (path.length) { this.moveSequence(state, hero, path); }
+                if (path.length > 1) {
+                    let cmp = 0;
+                    let interval = setInterval(() => {
+                        if (path[cmp].y === hero.y - 1) {
+                            this.moveActionSequence(state, 'ArrowUp');
+                        }
+                        else if (path[cmp].y === hero.y + 1) {
+                            this.moveActionSequence(state, 'ArrowDown');
+                        }
+                        else if (path[cmp].x === hero.x - 1) {
+                            this.moveActionSequence(state, 'ArrowLeft');
+                        }
+                        else if (path[cmp].x === hero.x + 1) {
+                            this.moveActionSequence(state, 'ArrowRight');
+                        }
+                        cmp++;
+
+                        if (cmp === path.length) { clearInterval(interval); }
+                    }, 100)
+                }
             }
             else if (state.currScene === 'inventory') {
                 //dragndrop?
@@ -54,66 +70,16 @@ export default class Game {
 
         window.addEventListener('keydown', e => {
             if (state.currScene === 'gameInterface') {
-                let hero = state.game.player;
-                let currMap = state.game.levels[state.game.currLvl];
-                let newPos = { x: hero.x, y: hero.y, direction: 'heroGoLeft' };
-                let result = null;
+                const moveButtons = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
 
-                if (e.key === 'ArrowUp') {
-                    newPos.y = hero.y - 1;
-                    newPos.direction = 'heroGoUp';
-                    result = this.dungeon.checkAccess(currMap, newPos.x, newPos.y);
+                if (moveButtons.includes(e.key)) {
+                    this.moveActionSequence(state, e.key)
                 }
-                else if (e.key === 'ArrowDown') {
-                    newPos.y = hero.y + 1;
-                    newPos.direction = 'heroGoDown';
-                    result = this.dungeon.checkAccess(currMap, newPos.x, newPos.y);
+                else if (e.key === 'o' || e.key === 'O') {
+                    this.goToMenu(state);
                 }
-                else if (e.key === 'ArrowLeft') {
-                    newPos.x = hero.x - 1;
-                    newPos.direction = 'heroGoLeft';
-                    result = this.dungeon.checkAccess(currMap, newPos.x, newPos.y);
-                }
-                else if (e.key === 'ArrowRight') {
-                    newPos.x = hero.x + 1;
-                    newPos.direction = 'heroGoRight';
-                    result = this.dungeon.checkAccess(currMap, newPos.x, newPos.y);
-                }
-                else if (e.key === 'o' || e.key === 'O') { this.goToMenu(state); }
-                else if (e.key === 'i' || e.key === 'I') { this.goToInventory(state); }
-
-                if (result && result.isAccessible) {
-                    state.updatePos(newPos.x, newPos.y);
-                    this.dungeon.cleanFog(currMap, hero);
-                    this.drawLvl(state.game, newPos.direction);
-
-                    if (result.event) {
-                        if (result.event === 'stairDown' &&
-                            window.confirm(inGameTxt.goDown[state.options.language])
-                        ) {
-                            state.game.currLvl++;
-
-                            if (!state.game.levels[state.game.currLvl]) {
-                                this.generateLvl(state.game);
-                            }
-
-                            this.drawLvl(state.game, newPos.direction);
-                        }
-                        else if (result.event === 'stairUp' &&
-                            window.confirm(inGameTxt.goUp[state.options.language])
-                        ) {
-                            state.game.currLvl--;
-                            this.drawLvl(state.game, newPos.direction);
-                        }
-                        else if (!result.event.startsWith('stair') &&
-                            window.confirm(`${inGameTxt.take[state.options.language]} ${result.event}`)
-                        ) {
-
-                        }
-                    }
-                }
-                else if (result && result.event === 'monster') {
-
+                else if (e.key === 'i' || e.key === 'I') {
+                    this.goToInventory(state);
                 }
             }
             else if (state.currScene === 'inventory') {
@@ -217,8 +183,17 @@ export default class Game {
             if (tile.content.artefact) {
                 back.context.drawImage(
                     img,
-                    img.data[tile.content.artefact].x * img.data.tileSize,
-                    img.data[tile.content.artefact].y * img.data.tileSize,
+                    img.data[tile.content.artefact.name].x * img.data.tileSize,
+                    img.data[tile.content.artefact.name].y * img.data.tileSize,
+                    ...commonData
+                );
+            }
+
+            if (tile.content.monster) {
+                back.context.drawImage(
+                    img,
+                    img.data[tile.content.monster.name].x * img.data.tileSize,
+                    img.data[tile.content.monster.name].y * img.data.tileSize,
                     ...commonData
                 );
             }
@@ -244,16 +219,54 @@ export default class Game {
         }))
     }
 
-    moveSequence(state, hero, path) {
-        let cmp = 0;
-        let interval = setInterval(() => {
-            state.updatePos(path[cmp].x, path[cmp].y);
+    moveActionSequence(state, direction) {
+        let hero = state.game.player;
+        let currMap = state.game.levels[state.game.currLvl];
+        let newPos = { x: hero.x, y: hero.y, direction };
+
+        switch (direction) {
+            case 'ArrowUp':
+                newPos.y = hero.y - 1;
+                newPos.direction = 'heroGoLeft';
+                break;
+            case 'ArrowDown':
+                newPos.y = hero.y + 1;
+                newPos.direction = 'heroGoLeft';
+                break;
+            case 'ArrowLeft':
+                newPos.x = hero.x - 1;
+                newPos.direction = 'heroGoLeft';
+                break;
+            case 'ArrowRight':
+                newPos.x = hero.x + 1;
+                newPos.direction = 'heroGoRight';
+                break;
+        }
+
+        const result = this.dungeon.checkAccess(currMap, newPos.x, newPos.y);
+
+        if (result && result.isAccessible) {
+            state.updatePos(newPos.x, newPos.y);
             this.dungeon.cleanFog(state.game.levels[state.game.currLvl], hero);
-            this.drawLvl(state.game, 'heroGoLeft');
+            this.drawLvl(state.game, newPos.direction);
 
-            cmp++;
-
-            if (cmp === path.length) { clearInterval(interval); }
-        }, 100)
+            if (result.event) {
+                if (result.event === 'stairDown' && window.confirm(inGameTxt.goDown[state.options.language])) {
+                    state.game.currLvl++;
+                    if (!state.game.levels[state.game.currLvl]) { this.generateLvl(state.game); }
+                    this.drawLvl(state.game, newPos.direction);
+                }
+                else if (result.event === 'stairUp' && window.confirm(inGameTxt.goUp[state.options.language])) {
+                    state.game.currLvl--;
+                    this.drawLvl(state.game, newPos.direction);
+                }
+                else if (!result.event.startsWith('stair') && window.confirm(`${inGameTxt.take[state.options.language]} ${result.event}`)) {
+                    //<TO DO>
+                }
+            }
+        }
+        else if (result && result.event === 'monster') {
+            this.fightActionSequence(hero,currMap[newPos.x][newPos.y])
+        }
     }
 }
