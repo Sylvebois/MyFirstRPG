@@ -8,7 +8,7 @@ export class CreationFormManager {
     update(e) {
         let inputs = document.querySelectorAll('#creationForm input[type="range"]');
         let nbPoints = document.getElementById('nbPoints');
-        let points = 25;
+        let points = 24;
 
         inputs.forEach(elem => {
             points -= parseInt(elem.value);

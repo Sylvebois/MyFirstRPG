@@ -101,8 +101,8 @@ const forms = {
     iq: { fr: "Intellect : ", en: "Intellect : " },
     ht: { fr: "Santé : ", en: "Health : " },
     pointsLeft: {
-        fr: 'Il vous reste <span id="nbPoints">25</span> points à répartir.',
-        en: 'There is still <span id="nbPoints">25</span> points to dispatch.'
+        fr: 'Il vous reste <span id="nbPoints">20</span> points à répartir.',
+        en: 'There is still <span id="nbPoints">20</span> points to dispatch.'
     },
     music: { fr: "Musique : ", en: "Music : " },
     musicOn: { fr: "ON", en: "ON" },
