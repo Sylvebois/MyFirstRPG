@@ -176,14 +176,6 @@ canvas {
     padding: 0;
 }
 
-#background {
-    z-index: 1;
-}
-
-#foreground {
-    z-index: 2;
-}
-
 /* Loading screen */
 #loading {
     font-size: 5vh;
