@@ -3,6 +3,16 @@ export class CreationFormManager {
         this.form = document.getElementById('createHero');
         this.form.addEventListener('change', this.update);
         this.reset(); // Reset on the first run in case the user reloaded the page
+
+        const formBlock = document.getElementById('creationForm');
+        this.formObserver = new MutationObserver(mList => {
+            for(const mutation of mList) {
+                if(mutation.attributeName === 'style' && formBlock.style.display === 'block') {
+                    document.getElementById('name').focus();
+                }
+            }
+        });
+        this.formObserver.observe(formBlock, { attributes: true })
     }
 
     update(e) {
@@ -43,7 +53,7 @@ export class CreationFormManager {
         let inputs = document.querySelectorAll('#creationForm input[type="range"]');
         inputs.forEach(elem => {
             elem.value = 1;
-            elem.max = 22;
+            elem.max = 21;
             elem.nextSibling.innerHTML = '1';
         })
         this.form.querySelector('input[type="text"').value = '';

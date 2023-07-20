@@ -139,7 +139,7 @@ export class DungeonManager {
             y: Math.floor((this.mapSize[1] - 1) / 2)
         };
 
-        let currMap = this.generateBasicMap(false);
+        let currMap = this.generateBasicMap(true);
 
         //Room creation
         for (let i = 1; i < this.mapSize[0] - 1; i++) {
@@ -160,6 +160,8 @@ export class DungeonManager {
         currMap[hero.x][hero.y].content.artefact = new Item('stairUp');
         currMap[hero.x][hero.y].content.hero = true;
 
+        this.cleanFog(currMap, hero);
+        
         return currMap;
     }
 
