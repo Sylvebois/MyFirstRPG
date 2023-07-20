@@ -42,7 +42,7 @@ export class CreationFormManager {
     setData(state) {
         let inputs = this.form.querySelectorAll('input[type="range"]');
         inputs.forEach(elem => state.game.player[elem.id] = parseInt(elem.value));
-        state.game.player.name = this.form.querySelector('input[type="text"').value;
+        state.game.player.name = this.form.querySelector('input[type="text"]').value;
     }
 
     reset() {
@@ -56,6 +56,6 @@ export class CreationFormManager {
             elem.max = 21;
             elem.nextSibling.innerHTML = '1';
         })
-        this.form.querySelector('input[type="text"').value = '';
+        this.form.querySelector('input[type="text"]').value = '';
     }
 }
