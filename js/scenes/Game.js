@@ -144,6 +144,12 @@ export default class Game {
         if (gameData.levels.length === 0) {
             lvl = this.dungeon.generateFirstLvl(gameData.player);
         }
+        else if (gameData.currLvl === 4) {
+            lvl = this.dungeon.generateMidLvl(gameData.player);
+        }
+        else if (gameData.currLvl === 1) {
+            lvl = this.dungeon.generateLastLvl(gameData.player);
+        }
         else {
             lvl = this.dungeon.generateRandomLvl(gameData.player);
         }
@@ -253,11 +259,26 @@ export default class Game {
             if (result.event) {
                 if (result.event === 'stairDown' && window.confirm(inGameTxt.goDown[state.options.language])) {
                     state.game.currLvl++;
+
                     if (!state.game.levels[state.game.currLvl]) { this.generateLvl(state.game); }
+
+                    const stairPos = state.game.levels[state.game.currLvl]
+                        .flatMap(line => line.filter(cell => cell.content.artefact.name === 'stairUp'))[0];
+
+                    state.game.player.x = stairPos.posX;
+                    state.game.player.y = stairPos.posY;
+
                     this.drawLvl(state.game, newPos.direction);
                 }
                 else if (result.event === 'stairUp' && window.confirm(inGameTxt.goUp[state.options.language])) {
                     state.game.currLvl--;
+
+                    const stairPos = state.game.levels[state.game.currLvl]
+                        .flatMap(line => line.filter(cell => cell.content.artefact.name === 'stairDown'))[0];
+
+                    state.game.player.x = stairPos.posX;
+                    state.game.player.y = stairPos.posY;
+
                     this.drawLvl(state.game, newPos.direction);
                 }
                 else if (!result.event.startsWith('stair') && window.confirm(`${inGameTxt.take[state.options.language]} ${result.event}`)) {
@@ -266,7 +287,12 @@ export default class Game {
             }
         }
         else if (result && result.event === 'monster') {
-            this.fightActionSequence(hero,currMap[newPos.x][newPos.y])
+            this.fightActionSequence(state, newPos)
         }
+    }
+
+    fightActionSequence(state, fightZone) {
+        state.game.levels[state.game.currLvl][fightZone.x][fightZone.y].content.monster = false;
+        this.drawLvl(state.game, fightZone.direction);
     }
 }

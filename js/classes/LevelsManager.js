@@ -83,6 +83,86 @@ export class DungeonManager {
         return currMap;
     }
 
+    generateMidLvl(hero) {
+        const middle = {
+            x: Math.floor((this.mapSize[0] - 1) / 2),
+            y: Math.floor((this.mapSize[1] - 1) / 2)
+        };
+
+        let currMap = this.generateBasicMap(true);
+
+        for (let i = 1; i < this.mapSize[0] - 1; i++) {
+            //Rooms creation
+            if ((i > 0 && i < 5) || (i > this.mapSize[0] - 6 && i < this.mapSize[0] - 1)) {
+                for (let j = 1; j < 5; j++) {
+                    currMap[i][j].type = 'ground';
+                    currMap[i][this.mapSize[1] - j - 1].type = 'ground';
+                }
+            }
+
+            if (i >= middle.x - 3 && i < middle.x + 3) {
+                for (let j = middle.y - 3; j < middle.y + 3; j++) {
+                    currMap[i][j].type = 'ground';
+                }
+            }
+
+            //Corridors creation
+            if (i > 3 && i < this.mapSize[0] - 4) {
+                currMap[i][2].type = 'ground';
+                currMap[i][this.mapSize[1] - 3].type = 'ground';
+            }
+        }
+
+        for (let i = 4; i < this.mapSize[1] - 4; i++) {
+            currMap[2][i].type = 'ground';
+            currMap[this.mapSize[0] - 3][i].type = 'ground';
+        }
+
+
+        //Adding stairs and hero
+        currMap[1][1].content.artefact = new Item('stairUp');
+        currMap[this.mapSize[0] - 2][this.mapSize[1] - 2].content.artefact = new Item('stairDown');
+
+        //Positionning Hero
+        hero.x = 1;
+        hero.y = 1;
+        currMap[hero.x][hero.y].content.hero = true;
+
+        this.cleanFog(currMap, hero);
+
+        return currMap;
+    }
+
+    generateLastLvl(hero) {
+        const middle = {
+            x: Math.floor((this.mapSize[0] - 1) / 2),
+            y: Math.floor((this.mapSize[1] - 1) / 2)
+        };
+
+        let currMap = this.generateBasicMap(false);
+
+        //Room creation
+        for (let i = 1; i < this.mapSize[0] - 1; i++) {
+            for (let j = 1; j < this.mapSize[1] - 1; j++) {
+                if (
+                    ((i > middle.x - 4 && i < middle.x + 4)) ||
+                    (i > middle.x - 6 && i < middle.x + 6 && j % 3 === 0)
+                ) {
+                    currMap[i][j].type = 'ground';
+                }
+            }
+        }
+
+        //Adding stair and hero
+        hero.x = middle.x;
+        hero.y = this.mapSize[1] - 2;
+
+        currMap[hero.x][hero.y].content.artefact = new Item('stairUp');
+        currMap[hero.x][hero.y].content.hero = true;
+
+        return currMap;
+    }
+
     generateRandomLvl(hero) {
         let currMap = this.generateBasicMap(true);
 
@@ -137,7 +217,7 @@ export class DungeonManager {
     }
 
     generateItems(availTiles, currMap, difficulty) {
-        const items = ['sword', 'flail', 'book'];
+        const items = ['sword', 'axe', 'book', 'heart'];
         const nbMax = Math.ceil(availTiles.length / (difficulty * 15)); //Number of items to create depend on the difficulty (but max 1/15 of the available tiles)
         const nbToCreate = this.random(0, nbMax);
 
@@ -152,7 +232,7 @@ export class DungeonManager {
     }
 
     generateMonsters(availTiles, currMap, difficulty) {
-        const monsters = ['bat', 'slime'];
+        const monsters = ['bat', 'slime', 'skeleton'];
         const nbMax = Math.ceil(availTiles.length / 15 * difficulty); //Number of items to create depend on the difficulty (but min 1/15 of the available tiles)
         const nbToCreate = this.random(0, nbMax);
 
