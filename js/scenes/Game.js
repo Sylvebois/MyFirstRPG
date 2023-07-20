@@ -147,7 +147,7 @@ export default class Game {
         else if (gameData.currLvl === 4) {
             lvl = this.dungeon.generateMidLvl(gameData.player);
         }
-        else if (gameData.currLvl === 1) {
+        else if (gameData.currLvl === 9) {
             lvl = this.dungeon.generateLastLvl(gameData.player);
         }
         else {
