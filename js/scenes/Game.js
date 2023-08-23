@@ -291,8 +291,168 @@ export default class Game {
         }
     }
 
+    drawFight(gameData, heroAbs, heroDirection = 'heroGoLeft', dest, scratchOpacity, text) {
+        const back = this.canvases.get('background');
+        const img = this.images['newTileset'];
+
+        gameData.levels[gameData.currLvl].forEach((x, idx) => x.forEach((tile, idy) => {
+            const commonData = [
+                img.data.tileSize,
+                img.data.tileSize,
+                this.tileSizeOnScreen * idx + this.camera.x,
+                this.tileSizeOnScreen * idy + this.camera.y,
+                this.tileSizeOnScreen,
+                this.tileSizeOnScreen
+            ];
+
+            back.context.drawImage(
+                img,
+                img.data[tile.type].x * img.data.tileSize,
+                img.data[tile.type].y * img.data.tileSize,
+                ...commonData
+            );
+
+            if (tile.content.artefact) {
+                back.context.drawImage(
+                    img,
+                    img.data[tile.content.artefact.name].x * img.data.tileSize,
+                    img.data[tile.content.artefact.name].y * img.data.tileSize,
+                    ...commonData
+                );
+            }
+
+            if (tile.content.monster) {
+                back.context.drawImage(
+                    img,
+                    img.data[tile.content.monster.name].x * img.data.tileSize,
+                    img.data[tile.content.monster.name].y * img.data.tileSize,
+                    ...commonData
+                );
+            }
+
+            if (tile.fogLvl > 0) {
+                back.context.fillStyle = tile.fogLvl === 2 ? 'black' : 'rgba(0,0,0,0.5)';
+                back.context.fillRect(
+                    this.tileSizeOnScreen * idx + this.camera.x,
+                    this.tileSizeOnScreen * idy + this.camera.y,
+                    this.tileSizeOnScreen,
+                    this.tileSizeOnScreen
+                )
+            }
+        }))
+
+        back.context.drawImage(
+            img,
+            img.data[heroDirection].x * img.data.tileSize,
+            img.data[heroDirection].y * img.data.tileSize,
+            img.data.tileSize,
+            img.data.tileSize,
+            heroAbs.x + this.camera.x,
+            heroAbs.y + this.camera.y,
+            this.tileSizeOnScreen,
+            this.tileSizeOnScreen
+        );
+
+        if (scratchOpacity > 0) {
+            back.context.fillStyle = `rgba(255,0,0,${scratchOpacity})`
+            back.context.fillRect(
+                dest.x + this.camera.x,
+                dest.y + this.camera.y,
+                5,
+                this.tileSizeOnScreen
+            )
+        }
+
+        if (text.opacity > 0) {
+            back.context.font = "5vw serif";
+            back.context.fillStyle = `rgba(255,0,0,${text.opacity})`
+            back.context.fillText(
+                text.text,
+                text.x + this.camera.x,
+                text.y + this.camera.y,
+            )
+        }
+    }
+
     fightActionSequence(state, fightZone) {
-        state.game.levels[state.game.currLvl][fightZone.x][fightZone.y].content.monster = false;
-        this.drawLvl(state.game, fightZone.direction);
+        /*
+            Fight animation could be:
+            - translate hero to monster + make red scratch on monster + audio (sword + monster)
+            - fade in text with qty of damage or "miss"
+            - translate + fade out text above monster
+            - translate hero to his initial position
+
+            Timeline :
+            - 0 to 500 : play attack sound
+            - 0 to 250 : hero move to monster
+            - 200 to 250 : scratch fade in
+            - 250 to 500 : hero move back
+            - 300 to 350 : scratch fade out
+            - 300 to 350 : text fade in and move up
+            - 400 to 450 : text fade out
+         */
+        let heroAnim = {
+            start: {
+                x: state.game.player.x * this.tileSizeOnScreen,
+                y: state.game.player.y * this.tileSizeOnScreen
+            },
+            end: {
+                x: fightZone.x * this.tileSizeOnScreen,
+                y: fightZone.y * this.tileSizeOnScreen
+            },
+            current: {
+                x: state.game.player.x * this.tileSizeOnScreen,
+                y: state.game.player.y * this.tileSizeOnScreen
+            },
+            oneWayDuration: 250
+        }
+
+        let moveDir = {
+            x: heroAnim.start.x === heroAnim.end.x ? 0 : heroAnim.start.x < heroAnim.end.x ? 1 : -1,
+            y: heroAnim.start.y === heroAnim.end.y ? 0 : heroAnim.start.y < heroAnim.end.y ? 1 : -1,
+        }
+
+        let startTime
+        let comeBack = false
+        let scratchAnim = { in: 50, out: 100, opacity: 0 }
+        let textAnim = { in: 150, out: 300, opacity: 0, x: heroAnim.end.x, y: heroAnim.end.y, text: 'miss' }
+
+        const animation = (timestamp) => {
+            if (!startTime) { startTime = timestamp }
+
+            const elapsed = timestamp - startTime
+
+            // Basic scratch animation
+            if (elapsed <= scratchAnim.in) {
+                scratchAnim.opacity += 1 / scratchAnim.in
+            }
+            else if (elapsed <= scratchAnim.out) {
+                scratchAnim.opacity -= 1 / scratchAnim.out
+                textAnim.opacity += 1 / textAnim.in
+            }
+            else if (elapsed <= textAnim.in) {
+                textAnim.opacity += 1 / textAnim.in
+            }
+            /* else if (elapsed <= textAnim.out) {
+                 textAnim.opacity -= 1 / textAnim.out
+             }*/
+
+            // Basic text display and movements
+
+            // Basic Hero movements
+            if (comeBack === false && heroAnim.current.x === heroAnim.end.x && heroAnim.current.y === heroAnim.end.y) {
+                comeBack = true
+                moveDir = { x: -1 * moveDir.x, y: -1 * moveDir.y }
+            }
+            else if (comeBack === true && heroAnim.current.x === heroAnim.start.x && heroAnim.current.y === heroAnim.start.y) {
+                return
+            }
+
+            heroAnim.current.x += moveDir.x
+            heroAnim.current.y += moveDir.y
+            this.drawFight(state.game, heroAnim.current, fightZone.direction, heroAnim.end, scratchAnim.opacity, textAnim)
+            requestAnimationFrame(animation)
+        }
+        requestAnimationFrame(animation)
     }
 }
