@@ -291,7 +291,7 @@ export default class Game {
         }
     }
 
-    drawFight(gameData, heroAbs, heroDirection = 'heroGoLeft', dest, scratchOpacity, text) {
+    drawFight(gameData, hero, heroDirection = 'heroGoLeft', scratch, text) {
         const back = this.canvases.get('background');
         const img = this.images['newTileset'];
 
@@ -347,24 +347,40 @@ export default class Game {
             img.data[heroDirection].y * img.data.tileSize,
             img.data.tileSize,
             img.data.tileSize,
-            heroAbs.x + this.camera.x,
-            heroAbs.y + this.camera.y,
+            hero.current.x + this.camera.x,
+            hero.current.y + this.camera.y,
             this.tileSizeOnScreen,
             this.tileSizeOnScreen
         );
 
-        if (scratchOpacity > 0) {
-            back.context.fillStyle = `rgba(255,0,0,${scratchOpacity})`
-            back.context.fillRect(
-                dest.x + this.camera.x,
-                dest.y + this.camera.y,
-                5,
-                this.tileSizeOnScreen
-            )
+        if (scratch.opacity > 0) {
+            const start = {
+                x: 5 + hero.end.x + this.camera.x,
+                y: 5 + hero.end.y + this.camera.y
+            }
+            const p1 = {
+                x: start.x + this.tileSizeOnScreen / 30,
+                y: start.y + this.tileSizeOnScreen / 3
+            }
+            const p2 = {
+                x: start.x + this.tileSizeOnScreen / 3,
+                y: start.y + this.tileSizeOnScreen / 30
+            }
+            const end = {
+                x: start.x + this.tileSizeOnScreen - 5,
+                y: start.y + this.tileSizeOnScreen - 5
+            }
+            back.context.fillStyle = `rgba(255,0,0,${scratch.opacity})`
+            back.context.beginPath()
+            back.context.moveTo(start.x, start.y)
+            back.context.bezierCurveTo(p1.x, p1.y, end.x, end.y, end.x, end.y)
+            back.context.moveTo(start.x, start.y)
+            back.context.bezierCurveTo(p2.x, p2.y, end.x, end.y, end.x, end.y)
+            back.context.fill()
         }
 
         if (text.opacity > 0) {
-            back.context.font = "5vw serif";
+            back.context.font = "2vw serif";
             back.context.fillStyle = `rgba(255,0,0,${text.opacity})`
             back.context.fillText(
                 text.text,
@@ -376,81 +392,103 @@ export default class Game {
 
     fightActionSequence(state, fightZone) {
         /*
-            Fight animation could be:
-            - translate hero to monster + make red scratch on monster + audio (sword + monster)
-            - fade in text with qty of damage or "miss"
-            - translate + fade out text above monster
-            - translate hero to his initial position
+            Animation :
+            - A sound is played
+            - Hero move to monster and go back
+            - Scratch fade in and out
+            - Damage text fade in and out
+        */
+        const tileSize = this.tileSizeOnScreen
 
-            Timeline :
-            - 0 to 500 : play attack sound
-            - 0 to 250 : hero move to monster
-            - 200 to 250 : scratch fade in
-            - 250 to 500 : hero move back
-            - 300 to 350 : scratch fade out
-            - 300 to 350 : text fade in and move up
-            - 400 to 450 : text fade out
-         */
         let heroAnim = {
             start: {
-                x: state.game.player.x * this.tileSizeOnScreen,
-                y: state.game.player.y * this.tileSizeOnScreen
+                x: state.game.player.x * tileSize,
+                y: state.game.player.y * tileSize
             },
             end: {
-                x: fightZone.x * this.tileSizeOnScreen,
-                y: fightZone.y * this.tileSizeOnScreen
+                x: fightZone.x * tileSize,
+                y: fightZone.y * tileSize
             },
             current: {
-                x: state.game.player.x * this.tileSizeOnScreen,
-                y: state.game.player.y * this.tileSizeOnScreen
+                x: state.game.player.x * tileSize,
+                y: state.game.player.y * tileSize
             },
-            oneWayDuration: 250
+            distance: {
+                x: (fightZone.x - state.game.player.x) * tileSize,
+                y: (fightZone.y - state.game.player.y) * tileSize
+            },
+            oneWayDuration: 250,
+            comingBack: false
         }
 
-        let moveDir = {
-            x: heroAnim.start.x === heroAnim.end.x ? 0 : heroAnim.start.x < heroAnim.end.x ? 1 : -1,
-            y: heroAnim.start.y === heroAnim.end.y ? 0 : heroAnim.start.y < heroAnim.end.y ? 1 : -1,
+        let scratchAnim = {
+            duration: 50,
+            opacity: 0
+        }
+
+        let textAnim = {
+            duration: 50,
+            opacity: 0,
+            x: heroAnim.end.x,
+            y: heroAnim.end.y + tileSize / 5,
+            text: 'miss'
         }
 
         let startTime
-        let comeBack = false
-        let scratchAnim = { in: 50, out: 100, opacity: 0 }
-        let textAnim = { in: 150, out: 300, opacity: 0, x: heroAnim.end.x, y: heroAnim.end.y, text: 'miss' }
 
         const animation = (timestamp) => {
             if (!startTime) { startTime = timestamp }
 
             const elapsed = timestamp - startTime
 
-            // Basic scratch animation
-            if (elapsed <= scratchAnim.in) {
-                scratchAnim.opacity += 1 / scratchAnim.in
-            }
-            else if (elapsed <= scratchAnim.out) {
-                scratchAnim.opacity -= 1 / scratchAnim.out
-                textAnim.opacity += 1 / textAnim.in
-            }
-            else if (elapsed <= textAnim.in) {
-                textAnim.opacity += 1 / textAnim.in
-            }
-            /* else if (elapsed <= textAnim.out) {
-                 textAnim.opacity -= 1 / textAnim.out
-             }*/
+            if (elapsed > 2 * heroAnim.oneWayDuration + 100) { return }
 
-            // Basic text display and movements
-
-            // Basic Hero movements
-            if (comeBack === false && heroAnim.current.x === heroAnim.end.x && heroAnim.current.y === heroAnim.end.y) {
-                comeBack = true
-                moveDir = { x: -1 * moveDir.x, y: -1 * moveDir.y }
-            }
-            else if (comeBack === true && heroAnim.current.x === heroAnim.start.x && heroAnim.current.y === heroAnim.start.y) {
-                return
+            // Sound
+            if (elapsed <= 500) { 
+                state.assets.sounds.ogre.play()
             }
 
-            heroAnim.current.x += moveDir.x
-            heroAnim.current.y += moveDir.y
-            this.drawFight(state.game, heroAnim.current, fightZone.direction, heroAnim.end, scratchAnim.opacity, textAnim)
+            // Hero
+            if (elapsed <= heroAnim.oneWayDuration) {
+                const progress = elapsed / heroAnim.oneWayDuration
+                heroAnim.current.x = heroAnim.start.x + heroAnim.distance.x * progress
+                heroAnim.current.y = heroAnim.start.y + heroAnim.distance.y * progress
+            }
+            else if (elapsed > heroAnim.oneWayDuration && elapsed <= 2 * heroAnim.oneWayDuration) {
+                const progress = elapsed / heroAnim.oneWayDuration
+                heroAnim.current.x = heroAnim.end.x - heroAnim.distance.x / 2 * progress
+                heroAnim.current.y = heroAnim.end.y - heroAnim.distance.y / 2 * progress
+            }
+
+            // Scratch
+            if (elapsed >= heroAnim.oneWayDuration - scratchAnim.duration &&
+                elapsed <= heroAnim.oneWayDuration) {
+                scratchAnim.opacity = elapsed / heroAnim.oneWayDuration
+            }
+            else if (elapsed > heroAnim.oneWayDuration &&
+                elapsed <= 2 * heroAnim.oneWayDuration - scratchAnim.duration) {
+                scratchAnim.opacity = heroAnim.oneWayDuration / elapsed
+            }
+            else {
+                scratchAnim.opacity = 0
+            }
+
+            // Text
+            if (elapsed >= heroAnim.oneWayDuration - textAnim.duration &&
+                elapsed <= heroAnim.oneWayDuration) {
+                const progress = elapsed / heroAnim.oneWayDuration
+                textAnim.opacity = progress
+                textAnim.y = heroAnim.end.y - (tileSize * progress) / 2
+            }
+            else if (elapsed > heroAnim.oneWayDuration &&
+                elapsed <= 2 * heroAnim.oneWayDuration) {
+                textAnim.opacity = heroAnim.oneWayDuration / elapsed
+            }
+            else {
+                textAnim.opacity = 0
+            }
+
+            this.drawFight(state.game, heroAnim, fightZone.direction, scratchAnim, textAnim)
             requestAnimationFrame(animation)
         }
         requestAnimationFrame(animation)
