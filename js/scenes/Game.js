@@ -17,6 +17,8 @@ export default class Game {
         this.images = state.assets.images;
         this.camera = { x: 0, y: 0 }
         this.initEventListeners(state);
+
+        this.animationRunning = false;
     }
 
     initEventListeners(state) {
@@ -27,6 +29,8 @@ export default class Game {
         buttons[1].addEventListener('click', e => this.goToInventory(state));
 
         this.canvases.get('background').can.addEventListener('click', e => {
+            if (this.animationRunning) { return }
+
             if (state.currScene === 'gameInterface') {
                 let currMap = state.game.levels[state.game.currLvl];
                 let hero = state.game.player;
@@ -69,6 +73,8 @@ export default class Game {
         });
 
         window.addEventListener('keydown', e => {
+            if (this.animationRunning) { return }
+
             if (state.currScene === 'gameInterface') {
                 const moveButtons = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
 
@@ -391,6 +397,7 @@ export default class Game {
     }
 
     fightActionSequence(state, fightZone) {
+        this.animationRunning = true
         /*
             Animation :
             - A sound is played
@@ -441,10 +448,13 @@ export default class Game {
 
             const elapsed = timestamp - startTime
 
-            if (elapsed > 2 * heroAnim.oneWayDuration + 100) { return }
+            if (elapsed > 2 * heroAnim.oneWayDuration + 100) {
+                this.animationRunning = false
+                return
+            }
 
             // Sound
-            if (elapsed <= 500) { 
+            if (elapsed <= 500) {
                 state.assets.sounds.ogre.play()
             }
 
