@@ -1,6 +1,7 @@
 import Loader from './scenes/Loader.js';
 import Menu from './scenes/Menu.js';
 import Game from './scenes/Game.js';
+import { Hero } from './classes/CharacterManager.js';
 
 let state = {
     currScene: 'loading',
@@ -15,18 +16,7 @@ let state = {
         levels: [],
         currLvl: 0,
         firstRun: true,
-        player: {
-            name: '',
-            st: 0,
-            dx: 0,
-            iq: 0,
-            hp: 0,
-            x: 0,
-            y: 0,
-            vision: 2,
-            inventory: new Array(10),
-            body: new Array(5)
-        }
+        player: new Hero()
     },
     updatePos: (newX, newY) => {
         state.game.levels[state.game.currLvl][state.game.player.x][state.game.player.y].content.hero = false;

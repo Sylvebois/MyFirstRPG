@@ -1,3 +1,5 @@
+import { Monster } from './CharacterManager.js'
+
 class Tile {
     constructor(x, y, type = 'wall', fogLvl = 2) {
         this.posX = parseInt(x);
@@ -9,12 +11,6 @@ class Tile {
 }
 
 class Item {
-    constructor(name) {
-        this.name = name;
-    }
-}
-
-class Monster {
     constructor(name) {
         this.name = name;
     }
@@ -161,7 +157,7 @@ export class DungeonManager {
         currMap[hero.x][hero.y].content.hero = true;
 
         this.cleanFog(currMap, hero);
-        
+
         return currMap;
     }
 
@@ -220,7 +216,7 @@ export class DungeonManager {
 
     generateItems(availTiles, currMap, difficulty) {
         const items = ['sword', 'axe', 'book', 'heart'];
-        const nbMax = Math.ceil(availTiles.length / (difficulty * 15)); //Number of items to create depend on the difficulty (but max 1/15 of the available tiles)
+        const nbMax = Math.ceil(availTiles.length / 15 * difficulty); //Number of items to create depend on the difficulty (but max 1/15 of the available tiles)
         const nbToCreate = this.random(0, nbMax);
 
         for (let i = 0; i < nbToCreate; i++) {
@@ -235,13 +231,22 @@ export class DungeonManager {
 
     generateMonsters(availTiles, currMap, difficulty) {
         const monsters = ['bat', 'slime', 'skeleton'];
-        const nbMax = Math.ceil(availTiles.length / 15 * difficulty); //Number of items to create depend on the difficulty (but min 1/15 of the available tiles)
+        const nbMax = Math.ceil(availTiles.length / 10 * difficulty); //Number of monsters to create depend on the difficulty (but min 1/10 of the available tiles)
         const nbToCreate = this.random(0, nbMax);
 
         for (let i = 0; i < nbToCreate; i++) {
             const index = this.random(0, availTiles.length - 1);
             const monsterIndex = this.random(0, monsters.length - 1);
-            currMap[availTiles[index].posX][availTiles[index].posY].content.monster = new Monster(monsters[monsterIndex]);
+
+            currMap[availTiles[index].posX][availTiles[index].posY].content.monster = new Monster(
+                monsters[monsterIndex],
+                this.random(1, 10, true),
+                this.random(1, 10, true),
+                this.random(1, 10, true),
+                this.random(1, 10, true),
+                true
+            );
+
             availTiles.splice(index, 1);
         }
 
