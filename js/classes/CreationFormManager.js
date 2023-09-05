@@ -41,8 +41,11 @@ export class CreationFormManager {
 
     setData(state) {
         let inputs = this.form.querySelectorAll('input[type="range"]');
-        inputs.forEach(elem => state.game.player[elem.id] = parseInt(elem.value));
+        inputs.forEach(elem => state.game.player.modSpecs(elem.id, parseInt(elem.value)));
         state.game.player.name = this.form.querySelector('input[type="text"]').value;
+
+        let healthDisplay = document.getElementsByClassName('health')[0]
+        healthDisplay.textContent = `${state.game.player.hpLeft}/${state.game.player.end}`
     }
 
     reset() {

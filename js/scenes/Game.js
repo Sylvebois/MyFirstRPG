@@ -503,4 +503,8 @@ export default class Game {
         }
         requestAnimationFrame(animation)
     }
+
+    updateHud(hpLeft, hpTot) {
+        this.hud.getElementsByClassName('health')[0].textContent = `${hpLeft}/${hpTot}`
+    }
 }
