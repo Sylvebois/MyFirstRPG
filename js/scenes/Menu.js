@@ -1,5 +1,6 @@
 import { buttons as buttonsText, forms as formsText, titles as titlesText, story } from "../text.js";
 import { CreationFormManager } from "../classes/CreationFormManager.js";
+import { Hero } from '../classes/CharacterManager.js';
 
 export default class Menu {
     constructor(state, game) {
@@ -28,14 +29,7 @@ export default class Menu {
                     levels: [],
                     currLvl: 0,
                     firstRun: true,
-                    player: { 
-                        name: '', 
-                        st: 0, dx: 0, iq: 0, hp: 0, 
-                        x: 0, y: 0, 
-                        vision: 2, 
-                        inventory: new Array(10),
-                        body: new Array(5)
-                    }
+                    player: new Hero()
                 }
             }
             else if (buttonClass === 'start') {
