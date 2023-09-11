@@ -421,7 +421,7 @@ export default class Game {
         const damages = this.figthResult(hero, monster)
 
         const tileSize = this.tileSizeOnScreen
-
+console.log(damages, monster, hero)
         let heroAnim = {
             name: fightZone.direction,
             start: {
@@ -472,7 +472,7 @@ export default class Game {
             opacity: 0,
             x: heroAnim.end.x,
             y: heroAnim.end.y + tileSize / 5,
-            text: damages.dmgToMonster
+            text: damages.dmgToMonster === 0 ? 'miss' : damages.dmgToMonster
         }
 
         let heroAttackStartTime, monsterAttackStartTime, dieStartTime, gameoverStartTime
@@ -495,7 +495,7 @@ export default class Game {
                     textAnim.opacity = 0
                     textAnim.x = monsterAnim.end.x
                     textAnim.y = monsterAnim.end.y + tileSize / 5
-                    textAnim.text = damages.dmgToHero
+                    textAnim.text = damages.dmgToHero === 0 ? 'miss' : damages.dmgToHero
 
                     requestAnimationFrame(monsterAttack)
                 }
@@ -666,8 +666,8 @@ export default class Game {
     }
 
     figthResult(hero, monster) {
-        let dmgToMonster = (hero.atk - monster.def < 0) ? "miss" : hero.atk - monster.def
-        let dmgToHero = (monster.atk - hero.atk < 0) ? "miss" : monster.atk - hero.def
+        let dmgToMonster = (hero.atk - monster.def < 0) ? 0 : hero.atk - monster.def
+        let dmgToHero = (monster.atk - hero.atk < 0) ? 0 : monster.atk - hero.def
         return { dmgToHero, dmgToMonster }
     }
 }
