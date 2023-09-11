@@ -297,7 +297,7 @@ export default class Game {
         }
     }
 
-    drawFight(gameData, hero, heroDirection = 'heroGoLeft', scratch, text) {
+    drawFight(gameData, anim, heroDirection, scratch, text, monsterOrHero) {
         const back = this.canvases.get('background');
         const img = this.images['newTileset'];
 
@@ -328,10 +328,21 @@ export default class Game {
             }
 
             if (tile.content.monster) {
+                if (monsterOrHero !== 'monster' || idx !== anim.x || idy !== anim.y) {
+                    back.context.drawImage(
+                        img,
+                        img.data[tile.content.monster.name].x * img.data.tileSize,
+                        img.data[tile.content.monster.name].y * img.data.tileSize,
+                        ...commonData
+                    );
+                }
+            }
+
+            if (tile.content.hero && monsterOrHero === 'monster') {
                 back.context.drawImage(
                     img,
-                    img.data[tile.content.monster.name].x * img.data.tileSize,
-                    img.data[tile.content.monster.name].y * img.data.tileSize,
+                    img.data[heroDirection].x * img.data.tileSize,
+                    img.data[heroDirection].y * img.data.tileSize,
                     ...commonData
                 );
             }
@@ -349,20 +360,20 @@ export default class Game {
 
         back.context.drawImage(
             img,
-            img.data[heroDirection].x * img.data.tileSize,
-            img.data[heroDirection].y * img.data.tileSize,
+            img.data[anim.name].x * img.data.tileSize,
+            img.data[anim.name].y * img.data.tileSize,
             img.data.tileSize,
             img.data.tileSize,
-            hero.current.x + this.camera.x,
-            hero.current.y + this.camera.y,
+            anim.current.x + this.camera.x,
+            anim.current.y + this.camera.y,
             this.tileSizeOnScreen,
             this.tileSizeOnScreen
         );
 
         if (scratch.opacity > 0) {
             const start = {
-                x: 5 + hero.end.x + this.camera.x,
-                y: 5 + hero.end.y + this.camera.y
+                x: 5 + scratch.x + this.camera.x,
+                y: 5 + scratch.y + this.camera.y
             }
             const p1 = {
                 x: start.x + this.tileSizeOnScreen / 30,
@@ -405,9 +416,14 @@ export default class Game {
             - Scratch fade in and out
             - Damage text fade in and out
         */
+        const hero = state.game.player
+        const monster = state.game.levels[state.game.currLvl][fightZone.x][fightZone.y].content.monster
+        const damages = this.figthResult(hero, monster)
+
         const tileSize = this.tileSizeOnScreen
 
         let heroAnim = {
+            name: fightZone.direction,
             start: {
                 x: state.game.player.x * tileSize,
                 y: state.game.player.y * tileSize
@@ -424,12 +440,30 @@ export default class Game {
                 x: (fightZone.x - state.game.player.x) * tileSize,
                 y: (fightZone.y - state.game.player.y) * tileSize
             },
-            oneWayDuration: 250,
-            comingBack: false
+            oneWayDuration: 250
+        }
+
+        let monsterAnim = {
+            name: monster.name,
+            x: fightZone.x,
+            y: fightZone.y,
+            start: heroAnim.end,
+            end: heroAnim.start,
+            current: {
+                x: fightZone.x * tileSize,
+                y: fightZone.y * tileSize
+            },
+            distance: {
+                x: (state.game.player.x - fightZone.x) * tileSize,
+                y: (state.game.player.y - fightZone.y) * tileSize
+            },
+            oneWayDuration: 250
         }
 
         let scratchAnim = {
             duration: 50,
+            x: heroAnim.end.x,
+            y: heroAnim.end.y,
             opacity: 0
         }
 
@@ -438,18 +472,36 @@ export default class Game {
             opacity: 0,
             x: heroAnim.end.x,
             y: heroAnim.end.y + tileSize / 5,
-            text: 'miss'
+            text: damages.dmgToMonster
         }
 
-        let startTime
+        let heroAttackStartTime, monsterAttackStartTime, dieStartTime, gameoverStartTime
 
-        const animation = (timestamp) => {
-            if (!startTime) { startTime = timestamp }
+        const heroAttack = (timestamp) => {
+            if (!heroAttackStartTime) { heroAttackStartTime = timestamp }
 
-            const elapsed = timestamp - startTime
+            const elapsed = timestamp - heroAttackStartTime
 
             if (elapsed > 2 * heroAnim.oneWayDuration + 100) {
                 this.animationRunning = false
+
+                if (monster.hpLeft - damages.dmgToMonster > 0) {
+                    this.animationRunning = true
+
+                    scratchAnim.opacity = 0
+                    scratchAnim.x = monsterAnim.end.x
+                    scratchAnim.y = monsterAnim.end.y
+
+                    textAnim.opacity = 0
+                    textAnim.x = monsterAnim.end.x
+                    textAnim.y = monsterAnim.end.y + tileSize / 5
+                    textAnim.text = damages.dmgToHero
+
+                    requestAnimationFrame(monsterAttack)
+                }
+                else {
+                    damagesValidation()
+                }
                 return
             }
 
@@ -498,13 +550,124 @@ export default class Game {
                 textAnim.opacity = 0
             }
 
-            this.drawFight(state.game, heroAnim, fightZone.direction, scratchAnim, textAnim)
-            requestAnimationFrame(animation)
+            this.drawFight(state.game, heroAnim, fightZone.direction, scratchAnim, textAnim, 'hero')
+            requestAnimationFrame(heroAttack)
         }
-        requestAnimationFrame(animation)
+
+        const monsterAttack = (timestamp) => {
+            if (!monsterAttackStartTime) { monsterAttackStartTime = timestamp }
+
+            const elapsed = timestamp - monsterAttackStartTime
+
+            if (elapsed > 2 * monsterAnim.oneWayDuration + 100) {
+                this.animationRunning = false
+                damagesValidation()
+                return
+            }
+
+            // Sound
+            if (elapsed <= 500) {
+                state.assets.sounds.ogre.play()
+            }
+
+            // Monster
+            if (elapsed <= monsterAnim.oneWayDuration) {
+                const progress = elapsed / monsterAnim.oneWayDuration
+                monsterAnim.current.x = monsterAnim.start.x + monsterAnim.distance.x * progress
+                monsterAnim.current.y = monsterAnim.start.y + monsterAnim.distance.y * progress
+            }
+            else if (elapsed > monsterAnim.oneWayDuration && elapsed <= 2 * monsterAnim.oneWayDuration) {
+                const progress = elapsed / monsterAnim.oneWayDuration
+                monsterAnim.current.x = monsterAnim.end.x - monsterAnim.distance.x / 2 * progress
+                monsterAnim.current.y = monsterAnim.end.y - monsterAnim.distance.y / 2 * progress
+            }
+
+            // Scratch
+            if (elapsed >= monsterAnim.oneWayDuration - scratchAnim.duration &&
+                elapsed <= monsterAnim.oneWayDuration) {
+                scratchAnim.opacity = elapsed / monsterAnim.oneWayDuration
+            }
+            else if (elapsed > monsterAnim.oneWayDuration &&
+                elapsed <= 2 * monsterAnim.oneWayDuration - scratchAnim.duration) {
+                scratchAnim.opacity = monsterAnim.oneWayDuration / elapsed
+            }
+            else {
+                scratchAnim.opacity = 0
+            }
+
+            // Text
+            if (elapsed >= monsterAnim.oneWayDuration - textAnim.duration &&
+                elapsed <= monsterAnim.oneWayDuration) {
+                const progress = elapsed / monsterAnim.oneWayDuration
+                textAnim.opacity = progress
+                textAnim.y = monsterAnim.end.y - (tileSize * progress) / 2
+            }
+            else if (elapsed > monsterAnim.oneWayDuration &&
+                elapsed <= 2 * monsterAnim.oneWayDuration) {
+                textAnim.opacity = monsterAnim.oneWayDuration / elapsed
+            }
+            else {
+                textAnim.opacity = 0
+            }
+
+            this.drawFight(state.game, monsterAnim, fightZone.direction, scratchAnim, textAnim, 'monster')
+            requestAnimationFrame(monsterAttack)
+        }
+
+        const dying = (timestamp) => {
+            if (!dieStartTime) { dieStartTime = timestamp }
+
+            const elapsed = timestamp - dieStartTime
+
+            if (elapsed > 100) {
+                this.animationRunning = false
+                return
+            }
+        }
+
+        const gameover = (timestamp) => {
+            if (!gameoverStartTime) { gameoverStartTime = timestamp }
+
+            const elapsed = timestamp - gameoverStartTime
+
+            if (elapsed > 100) {
+                this.animationRunning = false
+                return
+            }
+        }
+
+        requestAnimationFrame(heroAttack)
+
+        const damagesValidation = () => {
+            monster.hpLeft -= damages.dmgToMonster
+
+            if(monster.hpLeft > 0) {
+                hero.hpLeft -= damages.dmgToHero
+    
+                if(hero.hpLeft > 0) {
+                    this.updateHud(hero.hpLeft, hero.end)
+                }
+                else {
+                   // this.animationRunning = true
+                   // requestAnimationFrame(gameover)
+                }
+            }
+            else {
+               // this.animationRunning = true
+               // requestAnimationFrame(dying)
+                state.game.levels[state.game.currLvl][fightZone.x][fightZone.y].content.monster = false
+                this.drawLvl(state.game, fightZone.direction)
+            }
+        }
     }
 
     updateHud(hpLeft, hpTot) {
         this.hud.getElementsByClassName('health')[0].textContent = `${hpLeft}/${hpTot}`
+    }
+
+    figthResult(hero, monster) {
+        let dmgToMonster = (hero.atk - monster.def < 0) ? "miss" : hero.atk - monster.def
+        let dmgToHero = (monster.atk - hero.atk < 0) ? "miss" : monster.atk - hero.def
+        return { dmgToHero, dmgToMonster }
     }
 }
