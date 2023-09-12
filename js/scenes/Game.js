@@ -71,26 +71,29 @@ export default class Game {
 
         window.addEventListener('resize', e => {
             this.setCanvasSize();
-            if (state.game.levels.length === 0) { this.generateLvl(state.game) }
+            if (state.game.levels.length === 0) {
+                this.generateLvl(state.game)
+                this.dialogSequence(state.game, state.options.language)
+            }
             this.drawLvl(state.game);
         });
 
         window.addEventListener('keydown', e => {
-            if (this.animationRunning) { 
-                return 
+            if (this.animationRunning) {
+                return
             }
             else if (this.dialogBox.style.display === 'block') {
                 const exitKeys = ['Enter', ' ', 'Escape'];
 
-                if(exitKeys.includes(e.key)) {
+                if (exitKeys.includes(e.key)) {
                     this.dialogBox.style.display = 'none';
                     this.canvases.get('background').can.focus();
                 }
             }
             else if (state.currScene === 'gameInterface') {
                 const moveKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-                const menuKeys = ['o','O','Escape'];
-                const invKeys = ['i','I'];
+                const menuKeys = ['o', 'O', 'Escape'];
+                const invKeys = ['i', 'I'];
 
                 if (moveKeys.includes(e.key)) {
                     this.moveActionSequence(state, e.key)
@@ -180,10 +183,10 @@ export default class Game {
     dialogSequence(gameData, currLanguage) {
         let dialogText = '';
 
-        if(gameData.currLvl === 0) {
+        if (gameData.currLvl === 0) {
             dialogText += 'firstLvl';
         }
-        else if(gameData.currLvl === 4) {
+        else if (gameData.currLvl === 4) {
             dialogText += 'midLvl';
         }
         else if (gameData.currLvl === 9) {
@@ -193,10 +196,10 @@ export default class Game {
             return;
         }
 
-        dialogText += (gameData.firstRun === true) ? 'firstRun' : 'lastRun';
-    
+        dialogText += (gameData.firstRun === true) ? 'FirstRun' : 'LastRun';
+
         this.dialogBox.style.display = 'block';
-        this.dialogBox.innerText = dialogs[dialogText][currLanguage];
+        this.dialogBox.innerText = dialogs[dialogText][0][currLanguage];
     }
 
     drawLvl(gameData, heroDirection = 'heroGoLeft') {
@@ -302,7 +305,10 @@ export default class Game {
                 if (result.event === 'stairDown' && window.confirm(inGameTxt.goDown[state.options.language])) {
                     state.game.currLvl++;
 
-                    if (!state.game.levels[state.game.currLvl]) { this.generateLvl(state.game); }
+                    if (!state.game.levels[state.game.currLvl]) {
+                        this.generateLvl(state.game);
+                        this.dialogSequence(state.game, state.options.language);
+                    }
 
                     const stairPos = state.game.levels[state.game.currLvl]
                         .flatMap(line => line.filter(cell => cell.content.artefact.name === 'stairUp'))[0];

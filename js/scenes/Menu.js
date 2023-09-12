@@ -28,11 +28,11 @@ export default class Menu {
                     levels: [],
                     currLvl: 0,
                     firstRun: true,
-                    player: { 
-                        name: '', 
-                        st: 0, dx: 0, iq: 0, hp: 0, 
-                        x: 0, y: 0, 
-                        vision: 2, 
+                    player: {
+                        name: '',
+                        st: 0, dx: 0, iq: 0, hp: 0,
+                        x: 0, y: 0,
+                        vision: 2,
                         inventory: new Array(10),
                         body: new Array(5)
                     }
@@ -84,9 +84,10 @@ export default class Menu {
         document.getElementById('menu').style.display = 'none';
         document.getElementById(state.currScene).style.display = 'none';
 
-        if(state.game.levels.length === 0) { this.game.generateLvl(state.game) }
+        if (state.game.levels.length === 0) { this.game.generateLvl(state.game) }
         this.game.goToGame(state);
         this.game.drawLvl(state.game);
+        this.game.dialogSequence(state.game, state.options.language);
     }
 
     setIntroText(state) {
