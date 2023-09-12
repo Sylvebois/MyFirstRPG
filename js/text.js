@@ -27,7 +27,7 @@ C'est l'occasion rêvée de prouver à ces pecnots que vous avez l'étoffe d'un 
 
 It's the perfect opportunity to prove to these hicks that you have the right stuff to be a hero. You head towards Marcel's cave, at the entrance of the village...`
     },
-    firstRun: {
+    firstRunEnding: {
         fr:
             `Quand la brume dans votre esprit se disperse, vous êtes chez vous, affalé sur le sol avec un goût de terre en bouche ... 
 Quand vous sortez voir le prêtre pour comprendre ce qui s'est passé, les gloussements et ricanements de vos concitoyens vous font dire que votre quête ne s'est pas déroulée comme prévu ...
@@ -64,15 +64,15 @@ END`
 };
 
 const dialogs = {
-    firstLvl: [
+    firstLvlFirstRun: [
         {
             fr: "Sérieusement, ce donjon commence avec une chauve-souris ?!? Et puis quoi après ? Un blob ?",
             en: "Seriously, this dungeon start with a bat ?!? And what then ? A blob ?"
         },
         { fr: "*Soupirs*", en: "*Sig*" }
     ],
-    midLvl: [],
-    lastLvl: []
+    midLvlFirstRun: [],
+    lastLvlFirstRun: []
 };
 
 const inGameTxt = {
@@ -140,4 +140,4 @@ Dall-E`
     }
 };
 
-export { story, buttons, forms, titles, inGameTxt };
+export { story, buttons, forms, titles, dialogs, inGameTxt };
