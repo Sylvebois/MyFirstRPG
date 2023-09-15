@@ -57,7 +57,7 @@ export class DungeonManager {
         };
 
         hero.x = middle.x;
-        hero.y = 1;
+        hero.y = 0;
 
         let currMap = this.generateBasicMap(true);
 

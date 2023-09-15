@@ -27,7 +27,7 @@ C'est l'occasion rêvée de prouver à ces pecnots que vous avez l'étoffe d'un 
 
 It's the perfect opportunity to prove to these hicks that you have the right stuff to be a hero. You head towards Marcel's cave, at the entrance of the village...`
     },
-    firstRun: {
+    firstRunEnding: {
         fr:
             `Quand la brume dans votre esprit se disperse, vous êtes chez vous, affalé sur le sol avec un goût de terre en bouche ... 
 Quand vous sortez voir le prêtre pour comprendre ce qui s'est passé, les gloussements et ricanements de vos concitoyens vous font dire que votre quête ne s'est pas déroulée comme prévu ...
@@ -64,15 +64,43 @@ END`
 };
 
 const dialogs = {
-    firstLvl: [
+    firstLvlFirstRun: [
         {
-            fr: "Sérieusement, ce donjon commence avec une chauve-souris ?!? Et puis quoi après ? Un blob ?",
-            en: "Seriously, this dungeon start with a bat ?!? And what then ? A blob ?"
+            fr: `Sérieusement, ce donjon commence avec une chauve-souris ?!? 
+
+            Et puis quoi après ? Un blob ?`,
+            en: `Seriously, this dungeon start with a bat ?!? 
+
+            And what then ? A blob ?`
         },
         { fr: "*Soupirs*", en: "*Sig*" }
     ],
-    midLvl: [],
-    lastLvl: []
+    midLvlFirstRun: [
+        {
+            fr: `Tiens, cet étage m'a l'air bizarre ...
+            ...
+            ...
+            Nan, je me fais sûrement des idées ...  `,
+            en: `Well, this level looks odd...
+            ...
+            ...
+            Nah, I'm probably just imagining things...`
+        }
+    ],
+    lastLvlFirstRun: [
+        {
+            fr: `Ah, te voilà Marcel !
+            Rends-moi tous les vieux bibelots du prêtre et je ne te ferai pas trop mal.`,
+            en: `So, there you are Marcel!
+            Give me back all the priest's old knick-knacks and I won't hurt you too bad.`
+        },
+        { fr: `Marcel, lâche ce parchemin ...`, en: `Marcel, drop that scroll...` },
+        { fr: `JE TE DIS DE LÂCHER CE TRUC !`, en: `I'M TELLING YOU TO DROP THAT THING!` },
+        { fr: `Gbrlbrl ... Gne... Gah...`, en: `Gbrlbrl ... Gne... Gah...` }
+    ],
+    firstLvlLastRun: [],
+    midLvlLastRun: [],
+    lastLvlLastRun: [],
 };
 
 const inGameTxt = {
@@ -101,8 +129,8 @@ const forms = {
     iq: { fr: "Intellect : ", en: "Intellect : " },
     ht: { fr: "Santé : ", en: "Health : " },
     pointsLeft: {
-        fr: 'Il vous reste <span id="nbPoints">20</span> points à répartir.',
-        en: 'There is still <span id="nbPoints">20</span> points to dispatch.'
+        fr: `Il vous reste <span id="nbPoints">20</span> points à répartir.`,
+        en: `There is still <span id="nbPoints">20</span> points to dispatch.`
     },
     music: { fr: "Musique : ", en: "Music : " },
     musicOn: { fr: "ON", en: "ON" },
@@ -140,4 +168,4 @@ Dall-E`
     }
 };
 
-export { story, buttons, forms, titles, inGameTxt };
+export { story, buttons, forms, titles, dialogs, inGameTxt };

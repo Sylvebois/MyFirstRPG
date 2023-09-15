@@ -1,5 +1,5 @@
 import { DungeonManager } from '../classes/LevelsManager.js';
-import { inGameTxt } from '../text.js';
+import { inGameTxt, dialogs } from '../text.js';
 
 export default class Game {
     constructor(state) {
@@ -19,10 +19,14 @@ export default class Game {
         this.initEventListeners(state);
 
         this.animationRunning = false;
+        this.playedDialogs = [];
     }
 
     initEventListeners(state) {
-        this.dialogBox.addEventListener('click', e => this.dialogBox.style.display = 'none');
+        this.dialogBox.addEventListener('click', e => {
+            this.dialogBox.style.display = 'none'
+            this.canvases.get('background').can.focus();
+        });
 
         const buttons = this.hud.getElementsByTagName('button');
         buttons[0].addEventListener('click', e => this.goToMenu(state));
@@ -30,7 +34,6 @@ export default class Game {
 
         this.canvases.get('background').can.addEventListener('click', e => {
             if (this.animationRunning) { return }
-
             if (state.currScene === 'gameInterface') {
                 let currMap = state.game.levels[state.game.currLvl];
                 let hero = state.game.player;
@@ -68,23 +71,37 @@ export default class Game {
 
         window.addEventListener('resize', e => {
             this.setCanvasSize();
-            if (state.game.levels.length === 0) { this.generateLvl(state.game) }
+            if (state.game.levels.length === 0) {
+                this.generateLvl(state.game)
+                this.dialogSequence(state.game, state.options.language)
+            }
             this.drawLvl(state.game);
         });
 
         window.addEventListener('keydown', e => {
-            if (this.animationRunning) { return }
+            if (this.animationRunning) {
+                return
+            }
+            else if (this.dialogBox.style.display === 'block') {
+                const exitKeys = ['Enter', ' ', 'Escape'];
 
-            if (state.currScene === 'gameInterface') {
-                const moveButtons = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+                if (exitKeys.includes(e.key)) {
+                    this.dialogBox.style.display = 'none';
+                    this.canvases.get('background').can.focus();
+                }
+            }
+            else if (state.currScene === 'gameInterface') {
+                const moveKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+                const menuKeys = ['o', 'O', 'Escape'];
+                const invKeys = ['i', 'I'];
 
-                if (moveButtons.includes(e.key)) {
+                if (moveKeys.includes(e.key)) {
                     this.moveActionSequence(state, e.key)
                 }
-                else if (e.key === 'o' || e.key === 'O') {
+                else if (menuKeys.includes(e.key)) {
                     this.goToMenu(state);
                 }
-                else if (e.key === 'i' || e.key === 'I') {
+                else if (invKeys.includes(e.key)) {
                     this.goToInventory(state);
                 }
             }
@@ -161,6 +178,28 @@ export default class Game {
         }
 
         gameData.levels.push(lvl);
+    }
+
+    dialogSequence(gameData, currLanguage) {
+        let dialogText = '';
+
+        if (gameData.currLvl === 0) {
+            dialogText += 'firstLvl';
+        }
+        else if (gameData.currLvl === 4) {
+            dialogText += 'midLvl';
+        }
+        else if (gameData.currLvl === 9) {
+            dialogText += 'lastLvl';
+        }
+        else {
+            return;
+        }
+
+        dialogText += (gameData.firstRun === true) ? 'FirstRun' : 'LastRun';
+
+        this.dialogBox.style.display = 'block';
+        this.dialogBox.innerText = dialogs[dialogText][0][currLanguage];
     }
 
     drawLvl(gameData, heroDirection = 'heroGoLeft') {
@@ -266,7 +305,10 @@ export default class Game {
                 if (result.event === 'stairDown' && window.confirm(inGameTxt.goDown[state.options.language])) {
                     state.game.currLvl++;
 
-                    if (!state.game.levels[state.game.currLvl]) { this.generateLvl(state.game); }
+                    if (!state.game.levels[state.game.currLvl]) {
+                        this.generateLvl(state.game);
+                        this.dialogSequence(state.game, state.options.language);
+                    }
 
                     const stairPos = state.game.levels[state.game.currLvl]
                         .flatMap(line => line.filter(cell => cell.content.artefact.name === 'stairUp'))[0];
