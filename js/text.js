@@ -64,43 +64,37 @@ END`
 };
 
 const dialogs = {
-    firstLvlFirstRun: [
-        {
-            fr: `Sérieusement, ce donjon commence avec une chauve-souris ?!? 
+    firstLvlFirstRun0: {
+        fr: `Sérieusement, ce donjon commence avec une chauve-souris ?!? 
 
             Et puis quoi après ? Un blob ?`,
-            en: `Seriously, this dungeon start with a bat ?!? 
+        en: `Seriously, this dungeon start with a bat ?!? 
 
             And what then ? A blob ?`
-        },
-        { fr: "*Soupirs*", en: "*Sig*" }
-    ],
-    midLvlFirstRun: [
-        {
-            fr: `Tiens, cet étage m'a l'air bizarre ...
+    },
+    firstLvlFirstRun1: { fr: "*Soupirs*", en: "*Sig*" },
+    midLvlFirstRun0: {
+        fr: `Tiens, cet étage m'a l'air bizarre ...
             ...
             ...
             Nan, je me fais sûrement des idées ...  `,
-            en: `Well, this level looks odd...
+        en: `Well, this level looks odd...
             ...
             ...
             Nah, I'm probably just imagining things...`
-        }
-    ],
-    lastLvlFirstRun: [
-        {
+    },
+    lastLvlFirstRun0: {
             fr: `Ah, te voilà Marcel !
             Rends-moi tous les vieux bibelots du prêtre et je ne te ferai pas trop mal.`,
             en: `So, there you are Marcel!
             Give me back all the priest's old knick-knacks and I won't hurt you too bad.`
         },
-        { fr: `Marcel, lâche ce parchemin ...`, en: `Marcel, drop that scroll...` },
-        { fr: `JE TE DIS DE LÂCHER CE TRUC !`, en: `I'M TELLING YOU TO DROP THAT THING!` },
-        { fr: `Gbrlbrl ... Gne... Gah...`, en: `Gbrlbrl ... Gne... Gah...` }
-    ],
-    firstLvlLastRun: [],
-    midLvlLastRun: [],
-    lastLvlLastRun: [],
+    lastLvlFirstRun1: { fr: `Marcel, lâche ce parchemin ...`, en: `Marcel, drop that scroll...` },
+    lastLvlFirstRun2:{ fr: `JE TE DIS DE LÂCHER CE TRUC !`, en: `I'M TELLING YOU TO DROP THAT THING!` },
+    lastLvlFirstRun3:{ fr: `Gbrlbrl ... Gne... Gah...`, en: `Gbrlbrl ... Gne... Gah...` },
+    firstLvlLastRun0: {},
+    midLvlLastRun0: {},
+    lastLvlLastRun0: {},
 };
 
 const inGameTxt = {

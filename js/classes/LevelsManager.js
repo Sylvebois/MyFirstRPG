@@ -72,6 +72,8 @@ export class DungeonManager {
         }
 
         currMap[middle.x][middle.y].content.artefact = new Item('stairDown');
+        currMap[hero.x][hero.y + 1].content.monster = new Monster('bat', 0, 0, 0, 1);
+        currMap[hero.x][hero.y + 4].content.monster = new Monster('slime', 0, 0, 0, 1);
         currMap[hero.x][hero.y].content.hero = true;
 
         this.cleanFog(currMap, hero);

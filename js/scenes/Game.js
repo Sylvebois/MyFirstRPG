@@ -15,7 +15,7 @@ export default class Game {
 
         this.canvases = this.initCanvases();
         this.images = state.assets.images;
-        this.camera = { x: 0, y: 0 }
+        this.camera = { x: 0, y: 0 };
         this.initEventListeners(state);
 
         this.animationRunning = false;
@@ -24,7 +24,7 @@ export default class Game {
 
     initEventListeners(state) {
         this.dialogBox.addEventListener('click', e => {
-            this.dialogBox.style.display = 'none'
+            this.dialogBox.style.display = 'none';
             this.canvases.get('background').can.focus();
         });
 
@@ -73,7 +73,6 @@ export default class Game {
             this.setCanvasSize();
             if (state.game.levels.length === 0) {
                 this.generateLvl(state.game)
-                this.dialogSequence(state.game, state.options.language)
             }
             this.drawLvl(state.game);
         });
@@ -180,26 +179,31 @@ export default class Game {
         gameData.levels.push(lvl);
     }
 
-    dialogSequence(gameData, currLanguage) {
-        let dialogText = '';
+    dialogSequence(gameData, currLanguage, number = 0) {
+        let dialogName = '';
 
         if (gameData.currLvl === 0) {
-            dialogText += 'firstLvl';
+            dialogName += 'firstLvl';
         }
         else if (gameData.currLvl === 4) {
-            dialogText += 'midLvl';
+            dialogName += 'midLvl';
         }
         else if (gameData.currLvl === 9) {
-            dialogText += 'lastLvl';
+            dialogName += 'lastLvl';
         }
         else {
             return;
         }
 
-        dialogText += (gameData.firstRun === true) ? 'FirstRun' : 'LastRun';
+        dialogName += (gameData.firstRun === true) ? 'FirstRun' : 'LastRun';
+        dialogName += number
 
-        this.dialogBox.style.display = 'block';
-        this.dialogBox.innerText = dialogs[dialogText][0][currLanguage];
+        if (!this.playedDialogs.includes(dialogName)) {
+            this.dialogBox.style.display = 'block';
+            this.dialogBox.innerText = dialogs[dialogName][currLanguage];
+
+            this.playedDialogs.push(dialogName);
+        }
     }
 
     drawLvl(gameData, heroDirection = 'heroGoLeft') {
@@ -300,6 +304,10 @@ export default class Game {
             state.updatePos(newPos.x, newPos.y);
             this.dungeon.cleanFog(state.game.levels[state.game.currLvl], hero);
             this.drawLvl(state.game, newPos.direction);
+
+            if(state.game.currLvl === 0 && currMap[this.mapSize/2][4].fogLvl < 2) {
+                this.dialogSequence(state.game, state.options.language, 1);
+            }
 
             if (result.event) {
                 if (result.event === 'stairDown' && window.confirm(inGameTxt.goDown[state.options.language])) {
@@ -463,7 +471,7 @@ export default class Game {
         const damages = this.figthResult(hero, monster)
 
         const tileSize = this.tileSizeOnScreen
-console.log(damages, monster, hero)
+        console.log(damages, monster, hero)
         let heroAnim = {
             name: fightZone.direction,
             start: {
@@ -683,22 +691,26 @@ console.log(damages, monster, hero)
         const damagesValidation = () => {
             monster.hpLeft -= damages.dmgToMonster
 
-            if(monster.hpLeft > 0) {
+            if (monster.hpLeft > 0) {
                 hero.hpLeft -= damages.dmgToHero
-    
-                if(hero.hpLeft > 0) {
+
+                if (hero.hpLeft > 0) {
                     this.updateHud(hero.hpLeft, hero.end)
                 }
                 else {
-                   // this.animationRunning = true
-                   // requestAnimationFrame(gameover)
+                    // this.animationRunning = true
+                    // requestAnimationFrame(gameover)
                 }
             }
             else {
-               // this.animationRunning = true
-               // requestAnimationFrame(dying)
+                // this.animationRunning = true
+                // requestAnimationFrame(dying)
                 state.game.levels[state.game.currLvl][fightZone.x][fightZone.y].content.monster = false
                 this.drawLvl(state.game, fightZone.direction)
+
+                if (state.game.currLvl === 0) {
+                    this.dialogSequence(state.game, state.options.language);
+                }
             }
         }
     }
