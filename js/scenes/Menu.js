@@ -78,6 +78,11 @@ export default class Menu {
         document.getElementById('menu').style.display = 'none';
         document.getElementById(state.currScene).style.display = 'none';
 
+        if (state.options.music) {
+            this.stopMusic(state.assets.musics)
+            this.playMusic(state.assets.musics.bossCave)
+        }
+
         if (state.game.levels.length === 0) { this.game.generateLvl(state.game) }
         this.game.goToGame(state);
         this.game.drawLvl(state.game);
@@ -112,7 +117,7 @@ export default class Menu {
                 }
                 else {
                     options.music = false;
-                    this.stopMusic(state.assets.musics.menu);
+                    this.stopMusic(state.assets.musics);
                 }
             })
         });
@@ -133,8 +138,10 @@ export default class Menu {
         if (music.paused) { music.play(); }
     }
 
-    stopMusic(music) {
-        if (!music.paused) { music.pause(); }
+    stopMusic(musics) {
+        for(const musicName in musics) {
+            if (!musics[musicName].paused) { musics[musicName].pause(); } 
+        }
     }
 
     updateText(newLang) {
