@@ -548,8 +548,8 @@ console.log(damages, monster, hero)
             }
 
             // Sound
-            if (elapsed <= 500) {
-                state.assets.sounds.ogre.play()
+            if (elapsed <= 200) {
+                state.assets.sounds.swing.play()
             }
 
             // Hero
