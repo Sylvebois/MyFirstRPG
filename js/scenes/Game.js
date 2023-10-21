@@ -148,13 +148,14 @@ export default class Game {
 
     goToInventory(state) {
         state.currScene = 'inventory';
-        this.gameInterface.style.visibility = 'hidden';
+        DrawManager.drawInventory(this.canvases.get('background'), this.tileSizeOnScreen, state)
     }
 
     goToGame(state) {
         state.gameIsRunning = true;
         state.currScene = 'gameInterface';
         this.gameInterface.style.visibility = 'visible';
+        DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state)
     }
 
     goToMenu(state) {
@@ -506,7 +507,7 @@ export default class Game {
                 textAnim,
                 'monster'
             )
-            
+
             requestAnimationFrame(monsterAttack)
         }
 

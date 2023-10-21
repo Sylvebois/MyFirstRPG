@@ -95,7 +95,7 @@ class Hero extends Character {
     this.x = x
     this.y = y
     this.vision = 2
-    this.inventory = new Array(10)
+    this.inventory = new Array(10).fill(null)
   }
 
   heal() {
