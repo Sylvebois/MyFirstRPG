@@ -1,6 +1,7 @@
 import { buttons as buttonsText, forms as formsText, titles as titlesText, story } from "../text.js";
 import { CreationFormManager } from "../classes/CreationFormManager.js";
 import { Hero } from '../classes/CharacterManager.js';
+import { DrawManager } from "../classes/DrawManager.js";
 
 export default class Menu {
     constructor(state, game) {
@@ -85,7 +86,7 @@ export default class Menu {
 
         if (state.game.levels.length === 0) { this.game.generateLvl(state.game) }
         this.game.goToGame(state);
-        this.game.drawLvl(state.game);
+        DrawManager.drawLvl(this.game.canvases.get('background'), this.game.tileSizeOnScreen, state);
     }
 
     setIntroText(state) {
