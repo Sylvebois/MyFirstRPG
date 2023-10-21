@@ -19,11 +19,13 @@ export default class Game {
         this.initEventListeners(state);
 
         this.animationRunning = false;
+        this.dialogBoxOpen = false;
         this.playedDialogs = [];
     }
 
     initEventListeners(state) {
         this.dialogBox.addEventListener('click', e => {
+            this.dialogBoxOpen = false;
             this.dialogBox.style.display = 'none';
             this.canvases.get('background').can.focus();
         });
@@ -33,7 +35,8 @@ export default class Game {
         buttons[1].addEventListener('click', e => this.goToInventory(state));
 
         this.canvases.get('background').can.addEventListener('click', e => {
-            if (this.animationRunning) { return }
+            if (this.animationRunning || this.dialogBoxOpen) { return }
+            
             if (state.currScene === 'gameInterface') {
                 let currMap = state.game.levels[state.game.currLvl];
                 let hero = state.game.player;
@@ -199,6 +202,7 @@ export default class Game {
         dialogName += number
 
         if (!this.playedDialogs.includes(dialogName)) {
+            this.dialogBoxOpen = true;
             this.dialogBox.style.display = 'block';
             this.dialogBox.innerText = dialogs[dialogName][currLanguage];
 
@@ -304,8 +308,8 @@ export default class Game {
             state.updatePos(newPos.x, newPos.y);
             this.dungeon.cleanFog(state.game.levels[state.game.currLvl], hero);
             this.drawLvl(state.game, newPos.direction);
-
-            if(state.game.currLvl === 0 && currMap[this.mapSize/2][4].fogLvl < 2) {
+            
+            if(state.game.currLvl === 0 && currMap[this.mapSize[0]/2][4].fogLvl < 2) {
                 this.dialogSequence(state.game, state.options.language, 1);
             }
 
@@ -669,10 +673,13 @@ export default class Game {
 
             const elapsed = timestamp - dieStartTime
 
-            if (elapsed > 100) {
+            if (elapsed > 1000) {
                 this.animationRunning = false
                 return
             }
+
+            const progress = elapsed / 1000
+            requestAnimationFrame(dying)
         }
 
         const gameover = (timestamp) => {

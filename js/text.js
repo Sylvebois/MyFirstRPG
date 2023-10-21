@@ -84,14 +84,14 @@ const dialogs = {
             Nah, I'm probably just imagining things...`
     },
     lastLvlFirstRun0: {
-            fr: `Ah, te voilà Marcel !
-            Rends-moi tous les vieux bibelots du prêtre et je ne te ferai pas trop mal.`,
-            en: `So, there you are Marcel!
-            Give me back all the priest's old knick-knacks and I won't hurt you too bad.`
-        },
+        fr: `Ah, te voilà Marcel !
+        Rends-moi tous les vieux bibelots du prêtre et je ne te ferai pas trop mal.`,
+        en: `So, there you are Marcel!
+        Give me back all the priest's old knick-knacks and I won't hurt you too bad.`
+    },
     lastLvlFirstRun1: { fr: `Marcel, lâche ce parchemin ...`, en: `Marcel, drop that scroll...` },
-    lastLvlFirstRun2:{ fr: `JE TE DIS DE LÂCHER CE TRUC !`, en: `I'M TELLING YOU TO DROP THAT THING!` },
-    lastLvlFirstRun3:{ fr: `Gbrlbrl ... Gne... Gah...`, en: `Gbrlbrl ... Gne... Gah...` },
+    lastLvlFirstRun2: { fr: `JE TE DIS DE LÂCHER CE TRUC !`, en: `I'M TELLING YOU TO DROP THAT THING!` },
+    lastLvlFirstRun3: { fr: `Gbrlbrl ... Gne... Gah...`, en: `Gbrlbrl ... Gne... Gah...` },
     firstLvlLastRun0: {},
     midLvlLastRun0: {},
     lastLvlLastRun0: {},
