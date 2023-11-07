@@ -194,9 +194,11 @@ export class DrawManager {
     const img = state.assets.images['newTileset'];
     const hero = state.game.player;
     const lvlDim = { w: state.game.levels[0].length, h: state.game.levels[0][0].length };
-    const slotSize = 1.5 * tileSizeOnScreen;
-    const slotCentering = canvas.can.width / 2 - (hero.inventory.length / 2 * slotSize);
-
+    const slotSize = Math.floor(Math.min(canvas.can.width / 12, canvas.can.height / 5));
+    const centering = {
+      h: canvas.can.width / 2 - (hero.inventory.length / 2 * slotSize),
+      v: canvas.can.height / 2 - (Object.entries(hero.body).length / 2 * slotSize)
+    }
     canvas.context.clearRect(0, 0, canvas.can.width, canvas.can.height);
 
     //Draw background
@@ -220,11 +222,22 @@ export class DrawManager {
     canvas.context.fillStyle = '#65AED8';
 
     let cmp = 0;
-    for (const prop in hero.body) {
-      const x = (cmp % 2 === 0) ? slotCentering + (hero.inventory.length - 1) * slotSize  : slotCentering;
-      const y = Math.floor(1.5 * cmp) + 1;
+    const marginBottomLeft = Math.floor((canvas.can.height - (4 * slotSize)) / 4);
+    const marginBottomRight = Math.floor((canvas.can.height - (5 * slotSize)) / 5);
 
-      const commonData = [ x, y * tileSizeOnScreen, slotSize, slotSize ]
+    for (const prop in hero.body) {
+      let x, y;
+
+      if (cmp % 2 === 0) {
+        x = centering.h + (hero.inventory.length - 1) * slotSize;
+        y = (cmp / 2) * (marginBottomRight + slotSize);
+      }
+      else {
+        x = centering.h;
+        y = marginBottomLeft + Math.floor(cmp / 2) * (marginBottomLeft + slotSize);
+      }
+
+      const commonData = [x, y, slotSize, slotSize];
 
       canvas.context.strokeRect(...commonData);
       canvas.context.fillRect(...commonData);
@@ -245,7 +258,7 @@ export class DrawManager {
 
     hero.inventory.forEach((slot, index) => {
       const commonData = [
-        slotCentering + index * slotSize,
+        centering.h + index * slotSize,
         canvas.can.height - 1 - slotSize,
         slotSize,
         slotSize
@@ -268,21 +281,18 @@ export class DrawManager {
     //Draw details
     canvas.context.drawImage(
       state.assets.images['invThrow'],
-      slotCentering + hero.inventory.length * slotSize,
+      centering.h + hero.inventory.length * slotSize,
       canvas.can.height - 1 - slotSize,
       slotSize,
       slotSize
     );
+
     canvas.context.drawImage(
       state.assets.images['invBody'],
-      canvas.can.width / 2 - state.assets.images['invBody'].width / 2,
+      canvas.can.width / 2 - 1.5 * slotSize,
       0,
       3 * slotSize,
       canvas.can.height - slotSize
     );
   }
 }
-/*
-uiInventaire(hero) {
-  
-};*/

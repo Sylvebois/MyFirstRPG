@@ -20,10 +20,10 @@ class Character {
       'HEAD': 0,
       'NECK': 0,
       'TORSO': 0,
+      'LHAND': 0,
+      'RHAND': 0,
       'LEGS': 0,
       'FOOT': 0,
-      'LHAND': 0,
-      'RHAND': 0
     }
   }
 
