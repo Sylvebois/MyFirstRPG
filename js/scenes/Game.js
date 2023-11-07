@@ -295,7 +295,7 @@ export default class Game {
         */
         const hero = state.game.player
         const monster = state.game.levels[state.game.currLvl][fightZone.x][fightZone.y].content.monster
-        const damages = this.figthResult(hero, monster)
+        const damages = this.fightResult(hero, monster)
 
         const tileSize = this.tileSizeOnScreen
         console.log(damages, monster, hero)
@@ -568,7 +568,7 @@ export default class Game {
         this.hud.getElementsByClassName('health')[0].textContent = `${hpLeft}/${hpTot}`
     }
 
-    figthResult(hero, monster) {
+    fightResult(hero, monster) {
         let dmgToMonster = (hero.atk - monster.def < 0) ? 0 : hero.atk - monster.def
         let dmgToHero = (monster.atk - hero.atk < 0) ? 0 : monster.atk - hero.def
         return { dmgToHero, dmgToMonster }
