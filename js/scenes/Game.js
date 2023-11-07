@@ -16,7 +16,6 @@ export default class Game {
 
         this.canvases = this.initCanvases();
         this.images = state.assets.images;
-        this.camera = { x: 0, y: 0 };
         this.initEventListeners(state);
 
         this.animationRunning = false;
@@ -42,8 +41,8 @@ export default class Game {
                 let currMap = state.game.levels[state.game.currLvl];
                 let hero = state.game.player;
                 let dest = {
-                    x: Math.floor(e.layerX / this.tileSizeOnScreen - this.camera.x / this.tileSizeOnScreen),
-                    y: Math.floor(e.layerY / this.tileSizeOnScreen - this.camera.y / this.tileSizeOnScreen)
+                    x: Math.floor(e.layerX / this.tileSizeOnScreen - DrawManager.camera.x / this.tileSizeOnScreen),
+                    y: Math.floor(e.layerY / this.tileSizeOnScreen - DrawManager.camera.y / this.tileSizeOnScreen)
                 };
                 const path = this.dungeon.findPath(currMap, { x: hero.x, y: hero.y }, dest);
 
