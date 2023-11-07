@@ -100,7 +100,8 @@ const dialogs = {
 const inGameTxt = {
     goDown: { fr: "Descendre ?", en: "Go Down?" },
     goUp: { fr: "Monter ?", en: "Go Up?" },
-    take: { fr: "Prendre", en: "Take" }
+    take: { fr: "Prendre", en: "Take" },
+    noMoreRoom: { fr: "Il n'y a plus de place dans l'inventaire", en: "No More Room in the inventory" }
 };
 
 const buttons = {

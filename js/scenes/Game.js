@@ -258,8 +258,8 @@ export default class Game {
                     const stairPos = state.game.levels[state.game.currLvl]
                         .flatMap(line => line.filter(cell => cell.content.artefact.name === 'stairUp'))[0];
 
-                    state.game.player.x = stairPos.posX;
-                    state.game.player.y = stairPos.posY;
+                    hero.x = stairPos.posX;
+                    hero.y = stairPos.posY;
 
                     DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state, newPos.direction);
                 }
@@ -269,13 +269,29 @@ export default class Game {
                     const stairPos = state.game.levels[state.game.currLvl]
                         .flatMap(line => line.filter(cell => cell.content.artefact.name === 'stairDown'))[0];
 
-                    state.game.player.x = stairPos.posX;
-                    state.game.player.y = stairPos.posY;
+                    hero.x = stairPos.posX;
+                    hero.y = stairPos.posY;
 
                     DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state, newPos.direction);
                 }
                 else if (!result.event.startsWith('stair') && window.confirm(`${inGameTxt.take[state.options.language]} ${result.event}`)) {
-                    //<TO DO>
+                    if(result.event === 'heart') {
+                        if(hero.hpLeft < hero.end) {
+                            hero.hpLeft++;
+                            currMap[newPos.x][newPos.y].content.artefact = false;
+                        }
+                        DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state, newPos.direction);
+                    }
+                    else if(hero.inventory.filter(slot => slot === null).length === 0) {
+                        window.alert(inGameTxt.noMoreRoom[state.options.language]);
+                    }
+                    else {
+                        const emptySlot = hero.inventory.indexOf(null);
+                        hero.inventory[emptySlot] = currMap[newPos.x][newPos.y].content.artefact;
+                        currMap[newPos.x][newPos.y].content.artefact = false;
+
+                        DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state, newPos.direction);
+                    }
                 }
             }
         }
