@@ -1,6 +1,7 @@
 import Loader from './scenes/Loader.js';
 import Menu from './scenes/Menu.js';
 import Game from './scenes/Game.js';
+import DrawManager from './classes/DrawManager.js';
 import { Hero } from './classes/CharacterManager.js';
 
 let state = {
@@ -42,8 +43,11 @@ let state = {
                 document.querySelector('#loading svg + div').innerText = failed[0].reason;
             }
             else {
-                let game = new Game(state);
-                let menu = new Menu(state, game);
+                const defaultTileSize = 64;
+                const canvas = document.getElementById("background");
+                let drawer = new DrawManager(state, canvas, defaultTileSize);
+                let game = new Game(state, drawer, defaultTileSize);
+                let menu = new Menu(state, game, drawer);
 
                 menu.updateText(state.options.language);
                 loader.hideSpinner();

@@ -1,10 +1,11 @@
 import { buttons as buttonsText, forms as formsText, titles as titlesText, story } from "../text.js";
 import { CreationFormManager } from "../classes/CreationFormManager.js";
 import { Hero } from '../classes/CharacterManager.js';
-import { DrawManager } from "../classes/DrawManager.js";
+//import { DrawManager } from "../classes/DrawManager.js";
 
 export default class Menu {
-    constructor(state, game) {
+    constructor(state, game, drawer) {
+        this.drawer = drawer;
         this.game = game;
         this.initEventListeners(state);
         this.creationForm = new CreationFormManager();
@@ -86,7 +87,7 @@ export default class Menu {
 
         if (state.game.levels.length === 0) { this.game.generateLvl(state.game) }
         this.game.goToGame(state);
-        DrawManager.drawLvl(this.game.canvases.get('background'), this.game.tileSizeOnScreen, state);
+        this.drawer.drawLvl();
     }
 
     setIntroText(state) {

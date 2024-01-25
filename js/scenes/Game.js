@@ -1,10 +1,11 @@
 import { DungeonManager } from '../classes/LevelsManager.js';
-import { DrawManager } from '../classes/DrawManager.js';
+//import { DrawManager } from '../classes/DrawManager.js';
 import { inGameTxt, dialogs } from '../text.js';
 
 export default class Game {
-    constructor(state) {
-        this.tileSizeOnScreen = 64;
+    constructor(state, drawer, tileSize) {
+        this.drawer = drawer;
+        this.tileSizeOnScreen = tileSize;
         this.mapSize = [30, 20];
         this.dungeon = new DungeonManager(this.mapSize);
 
@@ -41,8 +42,8 @@ export default class Game {
                 let currMap = state.game.levels[state.game.currLvl];
                 let hero = state.game.player;
                 let dest = {
-                    x: Math.floor(e.layerX / this.tileSizeOnScreen - DrawManager.camera.x / this.tileSizeOnScreen),
-                    y: Math.floor(e.layerY / this.tileSizeOnScreen - DrawManager.camera.y / this.tileSizeOnScreen)
+                    x: Math.floor(e.layerX / this.tileSizeOnScreen - this.drawer.camera.x / this.tileSizeOnScreen),
+                    y: Math.floor(e.layerY / this.tileSizeOnScreen - this.drawer.camera.y / this.tileSizeOnScreen)
                 };
                 const path = this.dungeon.findPath(currMap, { x: hero.x, y: hero.y }, dest);
 
@@ -77,7 +78,7 @@ export default class Game {
             if (state.game.levels.length === 0) {
                 this.generateLvl(state.game)
             }
-            DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state);
+            this.drawer.drawLvl();
         });
 
         window.addEventListener('keydown', e => {
@@ -147,14 +148,14 @@ export default class Game {
 
     goToInventory(state) {
         state.currScene = 'inventory';
-        DrawManager.drawInventory(this.canvases.get('background'), this.tileSizeOnScreen, state)
+        this.drawer.drawInventory();
     }
 
     goToGame(state) {
         state.gameIsRunning = true;
         state.currScene = 'gameInterface';
         this.gameInterface.style.visibility = 'visible';
-        DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state)
+        this.drawer.drawLvl();
     }
 
     goToMenu(state) {
@@ -240,7 +241,7 @@ export default class Game {
         if (result && result.isAccessible) {
             state.updatePos(newPos.x, newPos.y);
             this.dungeon.cleanFog(state.game.levels[state.game.currLvl], hero);
-            DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state, newPos.direction);
+            this.drawer.drawLvl(newPos.direction);
 
             if (state.game.currLvl === 0 && currMap[this.mapSize[0] / 2][4].fogLvl < 2) {
                 this.dialogSequence(state.game, state.options.language, 1);
@@ -261,7 +262,7 @@ export default class Game {
                     hero.x = stairPos.posX;
                     hero.y = stairPos.posY;
 
-                    DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state, newPos.direction);
+                    this.drawer.drawLvl(newPos.direction);
                 }
                 else if (result.event === 'stairUp' && window.confirm(inGameTxt.goUp[state.options.language])) {
                     state.game.currLvl--;
@@ -272,17 +273,17 @@ export default class Game {
                     hero.x = stairPos.posX;
                     hero.y = stairPos.posY;
 
-                    DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state, newPos.direction);
+                    this.drawer.drawLvl(newPos.direction);
                 }
                 else if (!result.event.startsWith('stair') && window.confirm(`${inGameTxt.take[state.options.language]} ${result.event}`)) {
-                    if(result.event === 'heart') {
-                        if(hero.hpLeft < hero.end) {
+                    if (result.event === 'heart') {
+                        if (hero.hpLeft < hero.end) {
                             hero.hpLeft++;
                             currMap[newPos.x][newPos.y].content.artefact = false;
                         }
-                        DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state, newPos.direction);
+                        this.drawer.drawLvl(newPos.direction);
                     }
-                    else if(hero.inventory.filter(slot => slot === null).length === 0) {
+                    else if (hero.inventory.filter(slot => slot === null).length === 0) {
                         window.alert(inGameTxt.noMoreRoom[state.options.language]);
                     }
                     else {
@@ -290,7 +291,7 @@ export default class Game {
                         hero.inventory[emptySlot] = currMap[newPos.x][newPos.y].content.artefact;
                         currMap[newPos.x][newPos.y].content.artefact = false;
 
-                        DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state, newPos.direction);
+                        this.drawer.drawLvl(newPos.direction);
                     }
                 }
             }
@@ -443,10 +444,7 @@ export default class Game {
                 textAnim.opacity = 0
             }
 
-            DrawManager.drawFight(
-                this.canvases.get('background'),
-                this.tileSizeOnScreen,
-                state,
+            this.drawer.drawFight(
                 heroAnim,
                 fightZone.direction,
                 scratchAnim,
@@ -513,10 +511,8 @@ export default class Game {
                 textAnim.opacity = 0
             }
 
-            DrawManager.drawFight(
-                this.canvases.get('background'),
-                this.tileSizeOnScreen,
-                state, monsterAnim,
+            this.drawer.drawFight(
+                monsterAnim,
                 fightZone.direction,
                 scratchAnim,
                 textAnim,
@@ -571,7 +567,7 @@ export default class Game {
                 // this.animationRunning = true
                 // requestAnimationFrame(dying)
                 state.game.levels[state.game.currLvl][fightZone.x][fightZone.y].content.monster = false
-                DrawManager.drawLvl(this.canvases.get('background'), this.tileSizeOnScreen, state, fightZone.direction);
+                this.drawer.drawLvl(fightZone.direction);
 
                 if (state.game.currLvl === 0) {
                     this.dialogSequence(state.game, state.options.language);
