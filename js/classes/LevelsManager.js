@@ -44,7 +44,7 @@ export class DungeonManager {
         this.nbWall = 0;
     }
 
-    random(min = 0, max = 1, int = true) {
+    #random(min = 0, max = 1, int = true) {
         return (int) ?
             Math.floor(Math.random() * (max - min + 1)) + min :
             Math.random() * (max - min) + min;
@@ -59,7 +59,7 @@ export class DungeonManager {
         hero.x = middle.x;
         hero.y = 0;
 
-        let currMap = this.generateBasicMap(true);
+        let currMap = this.#generateBasicMap(true);
 
         currMap[middle.x][0].type = 'ground';
         this.nbWall--;
@@ -87,7 +87,7 @@ export class DungeonManager {
             y: Math.floor((this.mapSize[1] - 1) / 2)
         };
 
-        let currMap = this.generateBasicMap(true);
+        let currMap = this.#generateBasicMap(true);
 
         for (let i = 1; i < this.mapSize[0] - 1; i++) {
             //Rooms creation
@@ -137,7 +137,7 @@ export class DungeonManager {
             y: Math.floor((this.mapSize[1] - 1) / 2)
         };
 
-        let currMap = this.generateBasicMap(true);
+        let currMap = this.#generateBasicMap(true);
 
         //Room creation
         for (let i = 1; i < this.mapSize[0] - 1; i++) {
@@ -164,19 +164,19 @@ export class DungeonManager {
     }
 
     generateRandomLvl(hero) {
-        let currMap = this.generateBasicMap(true);
+        let currMap = this.#generateBasicMap(true);
 
         //Step 1 : generate rooms and corridors
         const roomSize = { min: 2, max: 5 };
-        const nbRoom = this.random(2, Math.floor(this.mapSize[0] - 1 / roomSize.max));
+        const nbRoom = this.#random(2, Math.floor(this.mapSize[0] - 1 / roomSize.max));
 
         const rooms = [new Room(hero.x, hero.y, 1, 1)];
 
         for (let i = 0; i <= nbRoom; i++) {
-            const w = this.random(roomSize.min, roomSize.max);
-            const h = this.random(roomSize.min, roomSize.max);
-            const x = this.random(1, this.mapSize[0] - w - 2);
-            const y = this.random(1, this.mapSize[1] - h - 2);
+            const w = this.#random(roomSize.min, roomSize.max);
+            const h = this.#random(roomSize.min, roomSize.max);
+            const x = this.#random(1, this.mapSize[0] - w - 2);
+            const y = this.#random(1, this.mapSize[1] - h - 2);
             const newRoom = new Room(x, y, w, h);
 
             let overlappingRooms = false;
@@ -187,16 +187,16 @@ export class DungeonManager {
             }
 
             if (!overlappingRooms) {
-                this.createRoom(currMap, newRoom.startX, newRoom.startY, newRoom.endX, newRoom.endY);
-                this.createCorridor(currMap, rooms[rooms.length - 1].mid, newRoom.mid);
+                this.#createRoom(currMap, newRoom.startX, newRoom.startY, newRoom.endX, newRoom.endY);
+                this.#createCorridor(currMap, rooms[rooms.length - 1].mid, newRoom.mid);
                 rooms.push(newRoom);
             }
         }
 
         //Step 2 : generate stair up and down
-        let index = this.random(1, rooms.length - 1);
-        let stairX = this.random(rooms[index].startX, rooms[index].endX);
-        let stairY = this.random(rooms[index].startY, rooms[index].endY);
+        let index = this.#random(1, rooms.length - 1);
+        let stairX = this.#random(rooms[index].startX, rooms[index].endX);
+        let stairY = this.#random(rooms[index].startY, rooms[index].endY);
 
         currMap[stairX][stairY].content.artefact = new Item('stairDown');
         currMap[stairX][stairY].type = 'ground';
@@ -208,22 +208,22 @@ export class DungeonManager {
         this.cleanFog(currMap, hero);
 
         //Step 3 : generate items and monsters
-        const difficulty = this.random(1, 5);
+        const difficulty = this.#random(1, 5);
         let availTiles = currMap.flatMap(line => line.filter(cell => cell.type === 'ground' && !cell.content.hero && !cell.content.artefact))
-        availTiles = this.generateItems(availTiles, currMap, difficulty);
-        availTiles = this.generateMonsters(availTiles, currMap, difficulty);
+        availTiles = this.#generateItems(availTiles, currMap, difficulty);
+        availTiles = this.#generateMonsters(availTiles, currMap, difficulty);
 
         return currMap;
     }
 
-    generateItems(availTiles, currMap, difficulty) {
+    #generateItems(availTiles, currMap, difficulty) {
         const items = ['sword', 'axe', 'book', 'heart'];
         const nbMax = Math.ceil(availTiles.length / 15 * difficulty); //Number of items to create depend on the difficulty (but max 1/15 of the available tiles)
-        const nbToCreate = this.random(0, nbMax);
+        const nbToCreate = this.#random(0, nbMax);
 
         for (let i = 0; i < nbToCreate; i++) {
-            const index = this.random(0, availTiles.length - 1);
-            const itemIndex = this.random(0, items.length - 1);
+            const index = this.#random(0, availTiles.length - 1);
+            const itemIndex = this.#random(0, items.length - 1);
             currMap[availTiles[index].posX][availTiles[index].posY].content.artefact = new Item(items[itemIndex]);
             availTiles.splice(index, 1);
         }
@@ -231,21 +231,21 @@ export class DungeonManager {
         return availTiles;
     }
 
-    generateMonsters(availTiles, currMap, difficulty) {
+    #generateMonsters(availTiles, currMap, difficulty) {
         const monsters = ['bat', 'slime', 'skeleton'];
         const nbMax = Math.ceil(availTiles.length / 10 * difficulty); //Number of monsters to create depend on the difficulty (but min 1/10 of the available tiles)
-        const nbToCreate = this.random(0, nbMax);
+        const nbToCreate = this.#random(0, nbMax);
 
         for (let i = 0; i < nbToCreate; i++) {
-            const index = this.random(0, availTiles.length - 1);
-            const monsterIndex = this.random(0, monsters.length - 1);
+            const index = this.#random(0, availTiles.length - 1);
+            const monsterIndex = this.#random(0, monsters.length - 1);
 
             currMap[availTiles[index].posX][availTiles[index].posY].content.monster = new Monster(
                 monsters[monsterIndex],
-                this.random(1, 10, true),
-                this.random(1, 10, true),
-                this.random(1, 10, true),
-                this.random(1, 10, true),
+                this.#random(1, 10, true),
+                this.#random(1, 10, true),
+                this.#random(1, 10, true),
+                this.#random(1, 10, true),
                 true
             );
 
@@ -255,7 +255,7 @@ export class DungeonManager {
         return availTiles;
     }
 
-    generateBasicMap(withFog = true) {
+    #generateBasicMap(withFog = true) {
         let fog = withFog ? 2 : 0;
         let currMap = [];
         this.nbWall = this.mapSize[0] * this.mapSize[1];
@@ -270,7 +270,7 @@ export class DungeonManager {
         return currMap;
     }
 
-    createRoom(currMap, x1 = 0, y1 = 0, x2 = 0, y2 = 0) {
+    #createRoom(currMap, x1 = 0, y1 = 0, x2 = 0, y2 = 0) {
         for (let i = x1; i <= x2; i++) {
             for (let j = y1; j <= y2; j++) {
                 currMap[i][j].type = 'ground';
@@ -278,20 +278,20 @@ export class DungeonManager {
         }
     }
 
-    createCorridor(currMap, centerPrev, centerNew) {
-        if (this.random(0, 1)) {
+    #createCorridor(currMap, centerPrev, centerNew) {
+        if (this.#random(0, 1)) {
             let midPoint = { x: centerPrev.x, y: centerNew.y };
-            this.vMove(currMap, midPoint, centerPrev);
-            this.hMove(currMap, midPoint, centerNew);
+            this.#vMove(currMap, midPoint, centerPrev);
+            this.#hMove(currMap, midPoint, centerNew);
         }
         else {
             let midPoint = { x: centerNew.x, y: centerPrev.y };
-            this.vMove(currMap, midPoint, centerNew);
-            this.hMove(currMap, midPoint, centerPrev);
+            this.#vMove(currMap, midPoint, centerNew);
+            this.#hMove(currMap, midPoint, centerPrev);
         }
     }
 
-    vMove(currMap, aCoord, bCoord) {
+    #vMove(currMap, aCoord, bCoord) {
         let i = (aCoord.y <= bCoord.y) ? aCoord.y : bCoord.y;
         const j = (aCoord.y <= bCoord.y) ? bCoord.y : aCoord.y;
 
@@ -300,7 +300,7 @@ export class DungeonManager {
         }
     }
 
-    hMove(currMap, aCoord, bCoord) {
+    #hMove(currMap, aCoord, bCoord) {
         let i = (aCoord.x <= bCoord.x) ? aCoord.x : bCoord.x;
         const j = (aCoord.x <= bCoord.x) ? bCoord.x : aCoord.x;
 
@@ -365,12 +365,12 @@ export class DungeonManager {
             return [];
         }
         else {
-            const graph = this.createGraph(currMap, dest);
-            return this.createPath(start, dest, graph);
+            const graph = this.#createGraph(currMap, dest);
+            return this.#createPath(start, dest, graph);
         }
     }
 
-    createGraph(currMap, dest) {
+    #createGraph(currMap, dest) {
         const graph = []
 
         for (let i = 0; i < this.mapSize[0]; i++) {
@@ -429,7 +429,7 @@ export class DungeonManager {
         return graph
     }
 
-    createPath(start, dest, graph) {
+    #createPath(start, dest, graph) {
         let queue = [graph[start.x][start.y]]
         queue[0].dist = 0
 
