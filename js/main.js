@@ -47,7 +47,7 @@ let state = {
                 const canvas = document.getElementById("background");
                 let drawer = new DrawManager(state, canvas, defaultTileSize);
                 let game = new Game(state, drawer, defaultTileSize);
-                let menu = new Menu(state, game, drawer);
+                let menu = new Menu(state, game);
 
                 menu.updateText(state.options.language);
                 loader.hideSpinner();

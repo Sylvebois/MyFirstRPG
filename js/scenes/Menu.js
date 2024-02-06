@@ -4,8 +4,7 @@ import { Hero } from '../classes/CharacterManager.js';
 //import { DrawManager } from "../classes/DrawManager.js";
 
 export default class Menu {
-    constructor(state, game, drawer) {
-        this.drawer = drawer;
+    constructor(state, game) {
         this.game = game;
         this.initEventListeners(state);
         this.creationForm = new CreationFormManager();
@@ -87,7 +86,7 @@ export default class Menu {
 
         if (state.game.levels.length === 0) { this.game.generateLvl(state.game) }
         this.game.goToGame(state);
-        this.drawer.drawLvl();
+        this.game.drawer.drawLvl();
     }
 
     setIntroText(state) {
