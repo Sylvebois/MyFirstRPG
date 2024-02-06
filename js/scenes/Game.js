@@ -33,7 +33,10 @@ export default class Game {
 
         const buttons = this.hud.getElementsByTagName('button');
         buttons[0].addEventListener('click', e => this.goToMenu(state));
-        buttons[1].addEventListener('click', e => this.goToInventory(state));
+        buttons[1].addEventListener('click', e => {
+            if (state.currScene === 'inventory') { this.goToGame(state) }
+            else { this.goToInventory(state) }
+        });
 
         this.canvases.get('background').can.addEventListener('click', e => {
             if (this.animationRunning || this.dialogBoxOpen) { return }
@@ -537,24 +540,25 @@ export default class Game {
         }
 
         let maxTxtSize = 0;
+        const gameOverDuration = 5000;
         const gameover = (timestamp) => {
             if (!gameoverStartTime) { gameoverStartTime = timestamp }
 
             const elapsed = timestamp - gameoverStartTime;
-
+            const progress = elapsed / gameOverDuration
             //black screen
             this.drawer.ctx.save();
             this.drawer.ctx.fillStyle = "black";
-            this.drawer.ctx.globalAlpha = elapsed / gameoverStartTime;
+            this.drawer.ctx.globalAlpha = progress;
             this.drawer.ctx.fillRect(0, 0, this.drawer.canvas.width, this.drawer.canvas.height);
             this.drawer.ctx.restore();
 
             //text
             this.drawer.ctx.save();
-            const currTxtSize = elapsed / gameoverStartTime * 100;
+            const currTxtSize = progress * 100;
 
             this.drawer.ctx.fillStyle = "white";
-            this.drawer.ctx.font = `${elapsed / gameoverStartTime * 100}vw Sans serif`;
+            this.drawer.ctx.font = `${currTxtSize}vw Sans serif`;
             this.drawer.ctx.textAlign = "center";
             this.drawer.ctx.textBaseline = "middle";
 
@@ -570,8 +574,9 @@ export default class Game {
             this.drawer.ctx.fillText("GAME OVER", this.drawer.canvas.width / 2, this.drawer.canvas.height / 2, this.drawer.canvas.width);
             this.drawer.ctx.restore();
 
-            if (elapsed > 5000) {
+            if (elapsed > gameOverDuration) {
                 this.animationRunning = false;
+                this.playedDialogs = [];
                 state.clear();
                 document.getElementById('menu').style.display = 'block';
                 document.getElementById(state.currScene).style.display = 'block';
@@ -595,7 +600,7 @@ export default class Game {
                 }
                 else {
                     this.animationRunning = true
-                    this.updateHud(0,hero.end)
+                    this.updateHud(0, hero.end)
                     requestAnimationFrame(gameover)
                 }
             }
