@@ -536,14 +536,49 @@ export default class Game {
             requestAnimationFrame(dying)
         }
 
+        let maxTxtSize = 0;
         const gameover = (timestamp) => {
             if (!gameoverStartTime) { gameoverStartTime = timestamp }
 
-            const elapsed = timestamp - gameoverStartTime
+            const elapsed = timestamp - gameoverStartTime;
 
-            if (elapsed > 100) {
-                this.animationRunning = false
-                return
+            //black screen
+            this.drawer.ctx.save();
+            this.drawer.ctx.fillStyle = "black";
+            this.drawer.ctx.globalAlpha = elapsed / gameoverStartTime;
+            this.drawer.ctx.fillRect(0, 0, this.drawer.canvas.width, this.drawer.canvas.height);
+            this.drawer.ctx.restore();
+
+            //text
+            this.drawer.ctx.save();
+            const currTxtSize = elapsed / gameoverStartTime * 100;
+
+            this.drawer.ctx.fillStyle = "white";
+            this.drawer.ctx.font = `${elapsed / gameoverStartTime * 100}vw Sans serif`;
+            this.drawer.ctx.textAlign = "center";
+            this.drawer.ctx.textBaseline = "middle";
+
+            const txtWidth = this.drawer.ctx.measureText("GAME OVER").width;
+
+            if (txtWidth > this.drawer.canvas.width) {
+                this.drawer.ctx.font = `${maxTxtSize}vw Sans serif`;
+            }
+            else {
+                maxTxtSize = currTxtSize;
+            }
+
+            this.drawer.ctx.fillText("GAME OVER", this.drawer.canvas.width / 2, this.drawer.canvas.height / 2, this.drawer.canvas.width);
+            this.drawer.ctx.restore();
+
+            if (elapsed > 5000) {
+                this.animationRunning = false;
+                state.clear();
+                document.getElementById('menu').style.display = 'block';
+                document.getElementById(state.currScene).style.display = 'block';
+                this.gameInterface.style.visibility = 'hidden';
+            }
+            else {
+                requestAnimationFrame(gameover);
             }
         }
 
@@ -559,8 +594,9 @@ export default class Game {
                     this.updateHud(hero.hpLeft, hero.end)
                 }
                 else {
-                    // this.animationRunning = true
-                    // requestAnimationFrame(gameover)
+                    this.animationRunning = true
+                    this.updateHud(0,hero.end)
+                    requestAnimationFrame(gameover)
                 }
             }
             else {

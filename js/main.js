@@ -24,6 +24,14 @@ let state = {
         state.game.levels[state.game.currLvl][newX][newY].content.hero = true;
         state.game.player.x = newX;
         state.game.player.y = newY;
+    },
+    clear: () => {
+        state.currScene = 'mainMenu';
+        state.gameIsRunning= false,
+        state.game.levels = [];
+        state.game.currLvl = 0;
+        state.game.firstRun = true,
+        state.game.player = new Hero()
     }
 };
 
