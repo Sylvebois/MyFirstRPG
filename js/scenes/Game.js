@@ -525,18 +525,19 @@ export default class Game {
             requestAnimationFrame(monsterAttack)
         }
 
+        const dyingDuration = 3000;
         const dying = (timestamp) => {
             if (!dieStartTime) { dieStartTime = timestamp }
 
-            const elapsed = timestamp - dieStartTime
+            const elapsed = timestamp - dieStartTime;
+            const progress = elapsed / dyingDuration;
 
-            if (elapsed > 1000) {
-                this.animationRunning = false
-                return
+            if (elapsed > dyingDuration) {
+                requestAnimationFrame(gameover);
             }
-
-            const progress = elapsed / 1000
-            requestAnimationFrame(dying)
+            else {
+                requestAnimationFrame(dying);
+            }
         }
 
         let maxTxtSize = 0;
@@ -545,7 +546,8 @@ export default class Game {
             if (!gameoverStartTime) { gameoverStartTime = timestamp }
 
             const elapsed = timestamp - gameoverStartTime;
-            const progress = elapsed / gameOverDuration
+            const progress = elapsed / gameOverDuration;
+
             //black screen
             this.drawer.ctx.save();
             this.drawer.ctx.fillStyle = "black";
@@ -601,12 +603,10 @@ export default class Game {
                 else {
                     this.animationRunning = true
                     this.updateHud(0, hero.end)
-                    requestAnimationFrame(gameover)
+                    requestAnimationFrame(dying)
                 }
             }
             else {
-                // this.animationRunning = true
-                // requestAnimationFrame(dying)
                 state.game.levels[state.game.currLvl][fightZone.x][fightZone.y].content.monster = false
                 this.drawer.drawLvl(fightZone.direction);
 

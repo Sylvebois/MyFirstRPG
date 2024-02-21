@@ -2,6 +2,7 @@ import Loader from './scenes/Loader.js';
 import Menu from './scenes/Menu.js';
 import Game from './scenes/Game.js';
 import DrawManager from './classes/DrawManager.js';
+import AnimationManager from './classes/AnimationManager.js';
 import { Hero } from './classes/CharacterManager.js';
 
 let state = {
@@ -54,6 +55,7 @@ let state = {
                 const defaultTileSize = 64;
                 const canvas = document.getElementById("background");
                 let drawer = new DrawManager(state, canvas, defaultTileSize);
+                let animator = new AnimationManager(state, drawer, defaultTileSize);
                 let game = new Game(state, drawer, defaultTileSize);
                 let menu = new Menu(state, game);
 
