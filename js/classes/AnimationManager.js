@@ -89,7 +89,7 @@ export default class AnimationManager {
                 y: heroAbs.y + this.tileSizeOnScreen / 2,
                 vx: this.#random(-1, 3),
                 vy: this.#random(-10, 0),
-                size: 10,
+                size: 15,
                 imageData: heartImgData
             };
         }
