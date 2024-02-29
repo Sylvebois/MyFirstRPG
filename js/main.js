@@ -16,6 +16,7 @@ let state = {
     },
     game: {
         levels: [],
+        playedDialogs: [],
         currLvl: 0,
         firstRun: true,
         player: new Hero()
@@ -28,11 +29,12 @@ let state = {
     },
     clear: () => {
         state.currScene = 'mainMenu';
-        state.gameIsRunning= false,
+        state.gameIsRunning= false;
         state.game.levels = [];
+        state.game.playedDialogs = [];
         state.game.currLvl = 0;
-        state.game.firstRun = true,
-        state.game.player = new Hero()
+        state.game.firstRun = true;
+        state.game.player = new Hero();
     }
 };
 
@@ -56,7 +58,7 @@ let state = {
                 const canvas = document.getElementById("background");
                 let drawer = new DrawManager(state, canvas, defaultTileSize);
                 let animator = new AnimationManager(state, drawer, defaultTileSize);
-                let game = new Game(state, drawer, defaultTileSize);
+                let game = new Game(state, drawer, animator, defaultTileSize);
                 let menu = new Menu(state, game);
 
                 menu.updateText(state.options.language);

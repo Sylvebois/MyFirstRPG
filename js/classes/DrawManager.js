@@ -7,7 +7,7 @@ export default class DrawManager {
     this.camera = { x: 0, y: 0 };
   }
 
-  drawLvl(heroDirection = 'heroGoLeft') {
+  drawLvl(heroDirection = 'heroGoLeft', drawHero = true) {
     const width = this.canvas.width;
     const height = this.canvas.height;
     const mid = { w: width / 2, h: height / 2 };
@@ -36,7 +36,7 @@ export default class DrawManager {
       y: (heroAbs.y < mid.h) ? 0 : (distToBorder.y <= mid.h) ? -1 * (mapSizeAbs.h - height) : mid.h - heroAbs.y
     }
 
-    this.#drawCurrentLevel(gameData.levels[gameData.currLvl], img, heroDirection);
+    this.#drawCurrentLevel(gameData.levels[gameData.currLvl], img, heroDirection, drawHero);
   }
 
   drawFight(anim, heroDirection, scratch, text, monsterOrHero) {
@@ -240,7 +240,7 @@ export default class DrawManager {
     );
   }
 
-  #drawCurrentLevel(level, img, heroDirection) {
+  #drawCurrentLevel(level, img, heroDirection, drawHero) {
     level.forEach((x, idx) => x.forEach((tile, idy) => {
       const commonData = [
         img.data.tileSize,
@@ -276,7 +276,7 @@ export default class DrawManager {
         );
       }
 
-      if (tile.content.hero) {
+      if (tile.content.hero && drawHero) {
         this.ctx.drawImage(
           img,
           img.data[heroDirection].x * img.data.tileSize,

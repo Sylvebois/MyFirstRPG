@@ -1,10 +1,11 @@
 import { DungeonManager } from '../classes/LevelsManager.js';
-//import { DrawManager } from '../classes/DrawManager.js';
 import { inGameTxt, dialogs } from '../text.js';
 
 export default class Game {
-    constructor(state, drawer, tileSize) {
+    constructor(state, drawer, animator, tileSize) {
+        this.state = state,
         this.drawer = drawer;
+        this.animator = animator;
         this.tileSizeOnScreen = tileSize;
         this.mapSize = [30, 20];
         this.dungeon = new DungeonManager(this.mapSize);
@@ -19,9 +20,7 @@ export default class Game {
         this.images = state.assets.images;
         this.initEventListeners(state);
 
-        this.animationRunning = false;
         this.dialogBoxOpen = false;
-        this.playedDialogs = [];
     }
 
     initEventListeners(state) {
@@ -39,7 +38,7 @@ export default class Game {
         });
 
         this.canvases.get('background').can.addEventListener('click', e => {
-            if (this.animationRunning || this.dialogBoxOpen) { return }
+            if (this.animator.gameIsRunning || this.dialogBoxOpen) { return }
 
             if (state.currScene === 'gameInterface') {
                 let currMap = state.game.levels[state.game.currLvl];
@@ -85,7 +84,7 @@ export default class Game {
         });
 
         window.addEventListener('keydown', e => {
-            if (this.animationRunning) {
+            if (this.animator.isRunning) {
                 return
             }
             else if (this.dialogBox.style.display === 'block') {
@@ -188,6 +187,7 @@ export default class Game {
     }
 
     dialogSequence(gameData, currLanguage, number = 0) {
+        let playedDialogs = this.state.game.playedDialogs
         let dialogName = '';
 
         if (gameData.currLvl === 0) {
@@ -206,12 +206,12 @@ export default class Game {
         dialogName += (gameData.firstRun === true) ? 'FirstRun' : 'LastRun';
         dialogName += number
 
-        if (!this.playedDialogs.includes(dialogName)) {
+        if (!playedDialogs.includes(dialogName)) {
             this.dialogBoxOpen = true;
             this.dialogBox.style.display = 'block';
             this.dialogBox.innerText = dialogs[dialogName][currLanguage];
 
-            this.playedDialogs.push(dialogName);
+            playedDialogs.push(dialogName);
         }
     }
 
@@ -305,7 +305,7 @@ export default class Game {
     }
 
     fightActionSequence(state, fightZone) {
-        this.animationRunning = true
+        this.animator.isRunning = true;
         /*
             Animation :
             - A sound is played
@@ -372,7 +372,7 @@ export default class Game {
             text: damages.dmgToMonster === 0 ? 'miss' : damages.dmgToMonster
         }
 
-        let heroAttackStartTime, monsterAttackStartTime, dieStartTime, gameoverStartTime
+        let heroAttackStartTime, monsterAttackStartTime, dieStartTime;
 
         const heroAttack = (timestamp) => {
             if (!heroAttackStartTime) { heroAttackStartTime = timestamp }
@@ -380,10 +380,10 @@ export default class Game {
             const elapsed = timestamp - heroAttackStartTime
 
             if (elapsed > 2 * heroAnim.oneWayDuration + 100) {
-                this.animationRunning = false
+                this.animator.isRunning = false
 
                 if (monster.hpLeft - damages.dmgToMonster > 0) {
-                    this.animationRunning = true
+                    this.animator.isRunning = true
 
                     scratchAnim.opacity = 0
                     scratchAnim.x = monsterAnim.end.x
@@ -464,7 +464,7 @@ export default class Game {
             const elapsed = timestamp - monsterAttackStartTime
 
             if (elapsed > 2 * monsterAnim.oneWayDuration + 100) {
-                this.animationRunning = false
+                this.animator.isRunning = false
                 damagesValidation()
                 return
             }
@@ -533,59 +533,10 @@ export default class Game {
             const progress = elapsed / dyingDuration;
 
             if (elapsed > dyingDuration) {
-                requestAnimationFrame(gameover);
+                this.animator.gameover();
             }
             else {
                 requestAnimationFrame(dying);
-            }
-        }
-
-        let maxTxtSize = 0;
-        const gameOverDuration = 5000;
-        const gameover = (timestamp) => {
-            if (!gameoverStartTime) { gameoverStartTime = timestamp }
-
-            const elapsed = timestamp - gameoverStartTime;
-            const progress = elapsed / gameOverDuration;
-
-            //black screen
-            this.drawer.ctx.save();
-            this.drawer.ctx.fillStyle = "black";
-            this.drawer.ctx.globalAlpha = progress;
-            this.drawer.ctx.fillRect(0, 0, this.drawer.canvas.width, this.drawer.canvas.height);
-            this.drawer.ctx.restore();
-
-            //text
-            this.drawer.ctx.save();
-            const currTxtSize = progress * 100;
-
-            this.drawer.ctx.fillStyle = "white";
-            this.drawer.ctx.font = `${currTxtSize}vw Sans serif`;
-            this.drawer.ctx.textAlign = "center";
-            this.drawer.ctx.textBaseline = "middle";
-
-            const txtWidth = this.drawer.ctx.measureText("GAME OVER").width;
-
-            if (txtWidth > this.drawer.canvas.width) {
-                this.drawer.ctx.font = `${maxTxtSize}vw Sans serif`;
-            }
-            else {
-                maxTxtSize = currTxtSize;
-            }
-
-            this.drawer.ctx.fillText("GAME OVER", this.drawer.canvas.width / 2, this.drawer.canvas.height / 2, this.drawer.canvas.width);
-            this.drawer.ctx.restore();
-
-            if (elapsed > gameOverDuration) {
-                this.animationRunning = false;
-                this.playedDialogs = [];
-                state.clear();
-                document.getElementById('menu').style.display = 'block';
-                document.getElementById(state.currScene).style.display = 'block';
-                this.gameInterface.style.visibility = 'hidden';
-            }
-            else {
-                requestAnimationFrame(gameover);
             }
         }
 
@@ -601,9 +552,8 @@ export default class Game {
                     this.updateHud(hero.hpLeft, hero.end)
                 }
                 else {
-                    this.animationRunning = true
                     this.updateHud(0, hero.end)
-                    requestAnimationFrame(dying)
+                    this.animator.dying()
                 }
             }
             else {
